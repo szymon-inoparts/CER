@@ -1,0 +1,248 @@
+<!-- index.html - CER full interface with sidebar A1, 3 pages, comments -->
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CER – System Reklamacji</title>
+  <!-- Łączenie CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- SIDEBAR (A1 – ikony + tekst po hover) -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">C</div>
+    <div class="sidebar-logo-text">CER</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <button type="button" class="sidebar-item sidebar-item-active" onclick="switchPage(1)">
+      <span class="sidebar-item-icon">➕</span>
+      <span class="sidebar-item-label">Dodaj zgłoszenie</span>
+    </button>
+    <button type="button" class="sidebar-item" onclick="switchPage(2)">
+      <span class="sidebar-item-icon">📄</span>
+      <span class="sidebar-item-label">Ewidencja</span>
+    </button>
+    <button type="button" class="sidebar-item" onclick="switchPage(3)">
+      <span class="sidebar-item-icon">✍️</span>
+      <span class="sidebar-item-label">Generator odpowiedzi</span>
+    </button>
+  </nav>
+</aside>
+
+<!-- GŁÓWNY OBSZAR STRONY -->
+<div class="layout-main">
+
+  <!-- STRONA 1: DODAJ ZGŁOSZENIE -->
+  <section id="page-1" class="page page-active">
+    <h1>Dodaj nowe zgłoszenie</h1>
+    <p class="section-desc">Uzupełnij dane i zapisz nowe zgłoszenie reklamacyjne</p>
+
+    <!-- Numer zamówienia + pobieranie danych -->
+    <div class="field">
+      <label>Numer zamówienia</label>
+      <div class="row-inline">
+        <input id="s1-order" type="text" placeholder="Wpisz numer zamówienia..." />
+        <button class="btn" id="s1-fetch">Pobierz dane zamówienia</button>
+      </div>
+    </div>
+
+    <!-- Sekcja która rozwija się po pobraniu danych -->
+    <div id="s1-order-data" class="box hidden">
+      <h3>Dane zamówienia</h3>
+
+      <!-- Lista produktów -->
+      <div class="field">
+        <label>Produkty w zamówieniu</label>
+        <div id="s1-products"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Koszt wysyłki</label>
+          <input id="s1-shipping" type="text" disabled />
+        </div>
+        <div class="field">
+          <label>Data zamówienia</label>
+          <input id="s1-date" type="text" disabled />
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Kraj</label>
+          <input id="s1-country" type="text" disabled />
+        </div>
+        <div class="field">
+          <label>Platforma sprzedaży</label>
+          <input id="s1-platform" type="text" disabled />
+        </div>
+      </div>
+
+      <h3>Dane klienta</h3>
+      <div class="grid-2">
+        <div class="field">
+          <label>Imię i nazwisko</label>
+          <input id="s1-client-name" type="text" disabled />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input id="s1-client-email" type="text" disabled />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Telefon</label>
+          <input id="s1-client-phone" type="text" disabled />
+        </div>
+        <div class="field">
+          <label>Nick klienta</label>
+          <input id="s1-client-nick" type="text" disabled />
+        </div>
+      </div>
+    </div>
+
+    <!-- Pola uzupełniane ręcznie -->
+    <div class="box">
+      <h3>Dane zgłoszenia</h3>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Data zgłoszenia</label>
+          <input id="s1-report-date" type="date" />
+        </div>
+        <div class="field">
+          <label>Typ reklamacji</label>
+          <select id="s1-type">
+            <option value="1">Typ 1</option>
+            <option value="2">Typ 2</option>
+            <option value="3">Typ 3</option>
+            <option value="4">Typ 4</option>
+            <option value="5">Typ 5</option>
+            <option value="6">Typ 6</option>
+            <option value="7">Typ 7</option>
+            <option value="8">Typ 8</option>
+            <option value="9">Typ 9</option>
+            <option value="10">Typ 10</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Powód reklamacji</label>
+        <textarea id="s1-reason" placeholder="Opisz powód reklamacji..."></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Osoba odpowiedzialna</label>
+          <input id="s1-employee" type="text" />
+        </div>
+        <div class="field">
+          <label>Notatka</label>
+          <textarea id="s1-note" placeholder="Dodatkowe uwagi..."></textarea>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="s1-save">Zapisz zgłoszenie</button>
+    </div>
+  </section>
+
+  <!-- STRONA 2: EWIDENCJA -->
+  <section id="page-2" class="page">
+    <h1>Ewidencja zgłoszeń</h1>
+
+    <div class="field">
+      <label>Szukaj pojedynczego zgłoszenia</label>
+      <div class="row-inline">
+        <input id="s2-search" type="text" placeholder="Numer reklamacji lub zamówienia" />
+        <button class="btn" id="s2-search-btn">Pobierz</button>
+      </div>
+    </div>
+
+    <div id="s2-single-result" class="box hidden"></div>
+
+    <hr />
+
+    <h3>Pobierz wiele zgłoszeń</h3>
+
+    <div class="row-inline">
+      <select id="s2-range">
+        <option value="last-7">Ostatnie 7 dni</option>
+        <option value="last-14">Ostatnie 14 dni</option>
+        <option value="last-month">Ostatni miesiąc</option>
+        <option value="last-20">Ostatnie 20 reklamacji</option>
+        <option value="last-50">Ostatnie 50 reklamacji</option>
+      </select>
+      <button class="btn" id="s2-range-btn">Pobierz listę</button>
+    </div>
+
+    <div id="s2-list" class="table-box hidden"></div>
+  </section>
+
+  <!-- STRONA 3: GENERATOR ODPOWIEDZI -->
+  <section id="page-3" class="page">
+    <h1>Generator odpowiedzi</h1>
+
+    <div class="field">
+      <label>Numer reklamacji / zamówienia</label>
+      <div class="row-inline">
+        <input id="s3-number" type="text" placeholder="np. RMA-123" />
+        <button class="btn" id="s3-fetch">Pokaż dane</button>
+      </div>
+    </div>
+
+    <div id="s3-details" class="box hidden"></div>
+
+    <hr />
+
+    <h3>Generowanie odpowiedzi</h3>
+
+    <div class="field">
+      <label>Decyzja</label>
+      <select id="s3-decision">
+        <option value="pozytywna">Pozytywna</option>
+        <option value="negatywna">Negatywna</option>
+      </select>
+    </div>
+
+    <div class="field-inline">
+      <input id="s3-noresp" type="checkbox" />
+      <label for="s3-noresp">Brak odpowiedzi klienta – wstaw automat</label>
+    </div>
+
+    <div class="field">
+      <label>Odpowiedź (PL)</label>
+      <textarea id="s3-answer" placeholder="Tu wpisz odpowiedź..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Język tłumaczenia</label>
+      <div class="row-inline">
+        <button class="lang-btn" data-lang="PL">PL</button>
+        <button class="lang-btn" data-lang="CZ">CZ</button>
+        <button class="lang-btn" data-lang="DE">DE</button>
+        <button class="lang-btn" data-lang="SK">SK</button>
+        <button class="lang-btn" data-lang="HU">HU</button>
+        <button class="lang-btn" data-lang="EN">EN</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="s3-generate">Generuj PDF</button>
+  </section>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-dot" id="toast-dot"></div>
+  <span id="toast-text">Komunikat</span>
+</div>
+
+<!-- JS -->
+<script src="app.js"></script>
+</body>
+</html>
