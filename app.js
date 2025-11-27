@@ -90,7 +90,7 @@ s1FetchBtn.addEventListener("click", async () => {
   if (!num) return showToast("Wpisz numer zamówienia", "error");
 
   try {
-    const res = await fetch(`${N8N_BASE_URL}$`/pobierz-z-sellasist`);
+    const res = await fetch(`${N8N_BASE_URL}/pobierz-z-sellasist=${num}`);
     const data = await res.json();
 
     // Wyświetlenie boxa
