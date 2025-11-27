@@ -113,7 +113,7 @@ s1FetchBtn.addEventListener("click", async () => {
         <div class="product-row">
           <label>
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-            ${p.name} (${p.sku}) – zamówiono: ${p.quantity}
+            ${p.name} (${p.sku}) - ${p.price ?? ""} zamowiono: ${p.quantity}
           </label>
           <input type="number" class="s1-prod-qty" data-index="${idx}" min="0" max="${p.quantity}" value="0" />
         </div>
@@ -156,7 +156,8 @@ s1SaveBtn.addEventListener("click", async () => {
         qty: Number(qty.value),
         sku: meta.sku,
         name: meta.name,
-        orderedQuantity: meta.quantity
+        orderedQuantity: meta.quantity,
+        price: meta.price
       };
     })
   };
@@ -336,3 +337,4 @@ s3GenBtn.addEventListener("click", async () => {
     showToast("Błąd generowania", "error");
   }
 });
+
