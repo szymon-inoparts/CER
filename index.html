@@ -8,33 +8,45 @@
   <!-- Łączenie CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="auth-locked">
 
-<!-- SIDEBAR (A1 – ikony + tekst po hover) -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="sidebar-logo-icon">C</div>
-    <div class="sidebar-logo-text">CER</div>
+<!-- BLOKADA HASŁEM -->
+<div id="password-overlay" class="auth-overlay">
+  <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title" aria-describedby="auth-desc">
+    <h2 id="auth-title">Wprowadź hasło</h2>
+    <p id="auth-desc">Aby przejść do systemu CER, wpisz hasło dostępu.</p>
+    <input id="password-input" type="password" placeholder="Hasło" autocomplete="off" />
+    <button class="btn btn-primary" id="password-submit">Odblokuj</button>
+    <p id="password-error" class="auth-error hidden">Nieprawidłowe hasło. Spróbuj ponownie.</p>
   </div>
+</div>
 
-  <nav class="sidebar-nav">
-    <button type="button" class="sidebar-item sidebar-item-active" onclick="switchPage(1)">
-      <span class="sidebar-item-icon">➕</span>
-      <span class="sidebar-item-label">Dodaj zgłoszenie</span>
-    </button>
-    <button type="button" class="sidebar-item" onclick="switchPage(2)">
-      <span class="sidebar-item-icon">📄</span>
-      <span class="sidebar-item-label">Ewidencja</span>
-    </button>
-    <button type="button" class="sidebar-item" onclick="switchPage(3)">
-      <span class="sidebar-item-icon">✍️</span>
-      <span class="sidebar-item-label">Generator odpowiedzi</span>
-    </button>
-  </nav>
-</aside>
+<div class="app-shell">
+  <!-- SIDEBAR (A1 – ikony + tekst po hover) -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">C</div>
+      <div class="sidebar-logo-text">CER</div>
+    </div>
 
-<!-- GŁÓWNY OBSZAR STRONY -->
-<div class="layout-main">
+    <nav class="sidebar-nav">
+      <button type="button" class="sidebar-item sidebar-item-active" onclick="switchPage(1)">
+        <span class="sidebar-item-icon">➕</span>
+        <span class="sidebar-item-label">Dodaj zgłoszenie</span>
+      </button>
+      <button type="button" class="sidebar-item" onclick="switchPage(2)">
+        <span class="sidebar-item-icon">📄</span>
+        <span class="sidebar-item-label">Ewidencja</span>
+      </button>
+      <button type="button" class="sidebar-item" onclick="switchPage(3)">
+        <span class="sidebar-item-icon">✍️</span>
+        <span class="sidebar-item-label">Generator odpowiedzi</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- GŁÓWNY OBSZAR STRONY -->
+  <div class="layout-main">
 
   <!-- STRONA 1: DODAJ ZGŁOSZENIE -->
   <section id="page-1" class="page page-active">
@@ -234,6 +246,7 @@
     <button class="btn btn-primary" id="s3-generate">Generuj PDF</button>
   </section>
 
+  </div>
 </div>
 
 <!-- TOAST -->
