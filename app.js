@@ -7,6 +7,7 @@
 ------------------------------------------------------------ */
 const N8N_BASE_URL = "https://kamil-inoparts.app.n8n.cloud/webhook"; // <<< PODMIENISZ
 const SELLASIST_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-z-sellasist";
+const SEND_TO_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/przeslij-do-CER";
 
 /* ------------------------------------------------------------
    BLOKADA HASŁEM – proste sprawdzenie na wejściu
@@ -156,7 +157,7 @@ s1SaveBtn.addEventListener("click", async () => {
   };
 
   try {
-    await fetch(`${N8N_BASE_URL}/przeslij-do-CER`, {
+    await fetch(SEND_TO_CER_WEBHOOK, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
