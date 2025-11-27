@@ -8,6 +8,34 @@
 const N8N_BASE_URL = "https://kamil-inoparts.app.n8n.cloud/webhook"; // <<< PODMIENISZ
 
 /* ------------------------------------------------------------
+   BLOKADA HASŁEM – proste sprawdzenie na wejściu
+------------------------------------------------------------ */
+const PASSWORD_VALUE = "inoparts";
+const passwordOverlay = document.getElementById("password-overlay");
+const passwordInput = document.getElementById("password-input");
+const passwordSubmit = document.getElementById("password-submit");
+const passwordError = document.getElementById("password-error");
+
+function unlockApp() {
+  if (passwordInput.value.trim() === PASSWORD_VALUE) {
+    passwordOverlay.classList.add("hidden");
+    passwordError.classList.add("hidden");
+    passwordInput.value = "";
+  } else {
+    passwordError.classList.remove("hidden");
+    passwordInput.value = "";
+    passwordInput.focus();
+  }
+}
+
+passwordSubmit.addEventListener("click", unlockApp);
+passwordInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") unlockApp();
+});
+
+window.addEventListener("load", () => passwordInput.focus());
+
+/* ------------------------------------------------------------
    TOAST – powiadomienia w rogu
 ------------------------------------------------------------ */
 function showToast(msg, type = "success") {
