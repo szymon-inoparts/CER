@@ -85,6 +85,7 @@ const s1OrderBox = document.getElementById("s1-order-data");
 const s1Products = document.getElementById("s1-products");
 
 const s1SaveBtn = document.getElementById("s1-save");
+let s1FetchedOrder = null;
 
 /* Pobieranie danych zamówienia */
 s1FetchBtn.addEventListener("click", async () => {
@@ -95,6 +96,7 @@ s1FetchBtn.addEventListener("click", async () => {
     // U�>ycie jawnego linku webhooka pomaga unika�> b��dnych sk�'adek i pokazuje pe�'ny adres dla GitHub Pages
     const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
+    s1FetchedOrder = data;
 
     // Wyświetlenie boxa
     s1OrderBox.classList.remove("hidden");
