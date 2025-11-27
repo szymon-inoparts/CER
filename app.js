@@ -113,7 +113,7 @@ s1FetchBtn.addEventListener("click", async () => {
         <div class="product-row">
           <label>
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-            ${p.name} (${p.sku}) - ${p.price ?? ""} zamowiono: ${p.quantity}
+            ${p.name} (${p.sku}) - ${p.price ?? ""} zl zamowiono: ${p.quantity}
           </label>
           <input type="number" class="s1-prod-qty" data-index="${idx}" min="0" max="${p.quantity}" value="0" />
         </div>
@@ -157,7 +157,7 @@ s1SaveBtn.addEventListener("click", async () => {
         sku: meta.sku,
         name: meta.name,
         orderedQuantity: meta.quantity,
-        price: meta.price
+        price: Number(meta.price ?? 0)
       };
     })
   };
