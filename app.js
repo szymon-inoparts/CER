@@ -6,6 +6,7 @@
    GLOBALNE USTAWIENIA – uzupełnisz swoim linkiem do webhooka
 ------------------------------------------------------------ */
 const N8N_BASE_URL = "https://kamil-inoparts.app.n8n.cloud/webhook"; // <<< PODMIENISZ
+const SELLASIST_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-z-sellasist";
 
 /* ------------------------------------------------------------
    BLOKADA HASŁEM – proste sprawdzenie na wejściu
@@ -90,7 +91,8 @@ s1FetchBtn.addEventListener("click", async () => {
   if (!num) return showToast("Wpisz numer zamówienia", "error");
 
   try {
-    const res = await fetch(`${N8N_BASE_URL}/pobierz-z-sellasist=${num}`);
+    // U�>ycie jawnego linku webhooka pomaga unika�> b��dnych sk�'adek i pokazuje pe�'ny adres dla GitHub Pages
+    const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
 
     // Wyświetlenie boxa
