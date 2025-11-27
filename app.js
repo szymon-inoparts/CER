@@ -140,22 +140,25 @@ s1FetchBtn.addEventListener("click", async () => {
 s1SaveBtn.addEventListener("click", async () => {
   const payload = {
     order: s1OrderInput.value,
+    orderDetails: s1FetchedOrder,
     reportDate: document.getElementById("s1-report-date").value,
     type: document.getElementById("s1-type").value,
     reason: document.getElementById("s1-reason").value,
     employee: document.getElementById("s1-employee").value,
     note: document.getElementById("s1-note").value,
 
-    products: Array.from(document.querySelectorAll(".product-row")).map(
-      (row) => {
-        const check = row.querySelector(".s1-prod-check");
-        const qty = row.querySelector(".s1-prod-qty");
-        return {
-          include: check.checked,
-          qty: Number(qty.value)
-        };
-      }
-    )
+    products: Array.from(document.querySelectorAll(".product-row")).map((row, idx) => {
+      const check = row.querySelector(".s1-prod-check");
+      const qty = row.querySelector(".s1-prod-qty");
+      const meta = s1FetchedOrder?.products?.[idx] || {};
+      return {
+        include: check.checked,
+        qty: Number(qty.value),
+        sku: meta.sku,
+        name: meta.name,
+        orderedQuantity: meta.quantity
+      };
+    })
   };
 
   try {
