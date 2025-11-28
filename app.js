@@ -8,6 +8,8 @@
 const N8N_BASE_URL = "https://kamil-inoparts.app.n8n.cloud/webhook"; // <<< PODMIENISZ
 const SELLASIST_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-z-sellasist";
 const SEND_TO_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/przeslij-do-CER";
+const GET_LAST_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-ostatnie-z-CER";
+const SHOW_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/wy%C5%9Bwietl";
 
 /* ------------------------------------------------------------
    BLOKADA HASŁEM – proste sprawdzenie na wejściu
@@ -130,7 +132,7 @@ s1FetchBtn.addEventListener("click", async () => {
     document.getElementById("s1-platform").value = data.platform;
     document.getElementById("s1-shipping").value = data.shippingCost;
 
-    showToast("Pobrano dane zamówienia");
+    showToast("Pobrano dane zamowienia");
   } catch (err) {
     showToast("Błąd pobierania", "error");
   }
@@ -205,7 +207,7 @@ s2SearchBtn.addEventListener("click", async () => {
         <button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${data.caseNumber}'">Generuj odpowiedź</button>
       </div>`;
 
-    showToast("Pobrano zgłoszenie");
+    showToast("Pobrano zgloszenie");
   } catch {
     showToast("Nie znaleziono", "error");
   }
@@ -216,7 +218,7 @@ s2RangeBtn.addEventListener("click", async () => {
   const range = s2RangeSelect.value;
 
   try {
-    const res = await fetch(`${N8N_BASE_URL}/pobierz-ostatnie-z-CER=${range}`);
+    const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?range=${encodeURIComponent(range)}`);
     const list = await res.json();
 
     s2ListBox.classList.remove("hidden");
@@ -249,7 +251,7 @@ s2RangeBtn.addEventListener("click", async () => {
     html += `</table>`;
 
     s2ListBox.innerHTML = html;
-    showToast("Pobrano listę zgłoszeń");
+    showToast("Pobrano liste zgloszen");
   } catch {
     showToast("Błąd pobierania", "error");
   }
@@ -281,7 +283,7 @@ s3FetchBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   try {
-    const res = await fetch(`${N8N_BASE_URL}/wyświetl=${num}`);
+    const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}?number=${encodeURIComponent(num)}`);
     const data = await res.json();
 
     s3DetailsBox.classList.remove("hidden");
