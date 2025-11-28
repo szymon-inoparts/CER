@@ -195,7 +195,7 @@ s2SearchBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   try {
-    const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?number=${encodeURIComponent(num)}`);
+    const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
 
     s2SingleBox.classList.remove("hidden");
