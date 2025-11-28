@@ -9,6 +9,7 @@ const N8N_BASE_URL = "https://kamil-inoparts.app.n8n.cloud/webhook"; // <<< PODM
 const SELLASIST_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-z-sellasist";
 const SEND_TO_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/przeslij-do-CER";
 const GET_LAST_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-ostatnie-z-CER";
+const GET_ONE_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-jedno-z-CER";
 const SHOW_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/wy%C5%9Bwietl";
 
 /* ------------------------------------------------------------
@@ -194,7 +195,7 @@ s2SearchBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   try {
-    const res = await fetch(`${N8N_BASE_URL}/pobierz-jedno-z-CER=${num}`);
+    const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?number=${encodeURIComponent(num)}`);
     const data = await res.json();
 
     s2SingleBox.classList.remove("hidden");
