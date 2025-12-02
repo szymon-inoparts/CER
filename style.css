@@ -489,19 +489,23 @@ th {
   margin-top: 16px;
 }
 
-.expand-cell {
+.action-cell {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .expand-btn {
   border: 1px solid var(--border);
   background: #fff;
   border-radius: 8px;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
 }
 
 .expand-row td {

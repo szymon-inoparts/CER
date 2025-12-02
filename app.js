@@ -340,7 +340,7 @@ function toggleRowDetails(id, btn) {
   if (!row) return;
   const isOpen = row.style.display !== "none";
   row.style.display = isOpen ? "none" : "table-row";
-  if (btn) btn.textContent = isOpen ? "▸" : "▾";
+  if (btn) btn.textContent = isOpen ? "▼" : "▲";
 }
 window.toggleRowDetails = toggleRowDetails;
 
@@ -601,10 +601,7 @@ ${escapeHtml(rawText)}</pre>
       const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
       html += `
         <tr>
-          <td class="expand-cell">
-            <button class="expand-btn" onclick="toggleRowDetails('${expId}', this)">▸</button>
-            <span>${claim.rowNumber ?? idx + 1}</span>
-          </td>
+          <td>${claim.rowNumber ?? idx + 1}</td>
           <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId}'">${claim.claimId || "-"}</td>
           <td>${claim.orderId || "-"}</td>
           <td>${claim.customer || "-"}</td>
@@ -614,7 +611,12 @@ ${escapeHtml(rawText)}</pre>
           <td>${formatDate(claim.decisionDue)}</td>
           <td>${formatDate(claim.resolvedAt)}</td>
           <td>${formatCurrency(claim.value)}</td>
-          <td><button class="btn" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button></td>
+          <td>
+            <div class="action-cell">
+              <button class="expand-btn" onclick="toggleRowDetails('${expId}', this)">▼</button>
+              <button class="btn" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button>
+            </div>
+          </td>
         </tr>
         <tr class="expand-row" data-exp-id="${expId}" style="display:none">
           <td colspan="11">
