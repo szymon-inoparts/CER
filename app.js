@@ -103,6 +103,20 @@ function safeJsonParse(text) {
   }
 }
 
+function parseObjectsFromText(rawText) {
+  const matches = String(rawText ?? "").match(/{[^]*?}/g);
+  if (!matches) return [];
+  const out = [];
+  matches.forEach((m) => {
+    try {
+      out.push(JSON.parse(m));
+    } catch {
+      // ignore broken chunk
+    }
+  });
+  return out;
+}
+
 // Rozwiniecie odpowiedzi n8n niezaleznie od ksztaltu (tablica, data[], items[], elementy z json)
 function toArray(payload) {
   if (Array.isArray(payload)) return payload;
@@ -386,10 +400,31 @@ s2RangeBtn.addEventListener("click", async () => {
     const params = new URLSearchParams({ preset: range, range });
     const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
     const rawText = await res.text();
-    const { value: parsed, error: parseError } = safeJsonParse(rawText);
-    let rows = unwrapArray(parsed);
-    if (!rows.length && parsed && typeof parsed === "object") {
+
+    // proste parsowanie: json -> array | object -> array; jak nie, to wyciągnij obiekty z tekstu
+    let parsed;
+    let parseError = null;
+    try {
+      parsed = JSON.parse(rawText);
+    } catch (err) {
+      parseError = err;
+      parsed = rawText;
+    }
+
+    let rows = [];
+    if (Array.isArray(parsed)) {
+      rows = parsed;
+    } else if (parsed && typeof parsed === "object") {
       rows = [parsed];
+    }
+
+    if (!rows.length) {
+      rows = parseObjectsFromText(rawText);
+    }
+
+    // ostateczny fallback – spróbuj unwrap n8n
+    if (!rows.length) {
+      rows = unwrapArray(parsed);
     }
 
     s2ListBox.classList.remove("hidden");
