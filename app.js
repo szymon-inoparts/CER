@@ -82,7 +82,7 @@ function normalizeClaim(raw = {}) {
     customer: raw.customer || raw.client || raw.clientName || "",
     marketplace: raw.marketplace || raw.platform || "",
     status: raw.status || (raw.isClosed ? "Zakonczone" : ""),
-    value: raw.valueNumber ?? raw.valueRaw,
+    value: raw.value ?? raw.valueNumber ?? raw.valueRaw,
     reason: raw.reason,
     type: raw.type,
     decision: raw.decision,
