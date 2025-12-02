@@ -370,6 +370,25 @@ s2RangeBtn.addEventListener("click", async () => {
 
     s2ListBox.classList.remove("hidden");
 
+    // Log diagnostyczny w konsoli przeglądarki
+    console.info("CER list response", {
+      status: res.status,
+      contentType: res.headers.get("content-type"),
+      rawText,
+      parsed,
+      rowsCount: rows.length
+    });
+
+    if (!res.ok) {
+      s2ListBox.innerHTML = `
+        <div class="table-box">
+          <pre style="white-space:pre-wrap; padding:12px;">Błąd HTTP ${res.status}
+${escapeHtml(rawText)}</pre>
+        </div>`;
+      showToast(`Błąd pobierania (${res.status})`, "error");
+      return;
+    }
+
     if (!rows.length) {
       s2ListBox.innerHTML = `
         <div class="table-box">
