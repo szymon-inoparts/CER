@@ -75,6 +75,18 @@ function formatCurrency(value) {
   return `${num.toFixed(2)} zl`;
 }
 
+// Rozwiniecie odpowiedzi n8n niezaleznie od ksztaltu (tablica, data[], items[], elementy z json)
+function unwrapArray(payload) {
+  const base = Array.isArray(payload)
+    ? payload
+    : payload && Array.isArray(payload.data)
+    ? payload.data
+    : payload && Array.isArray(payload.items)
+    ? payload.items
+    : [];
+  return base.map((el) => (el && el.json && typeof el.json === "object" ? { ...el, ...el.json } : el));
+}
+
 function normalizeClaim(raw = {}) {
   // Obsługa odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementów
   const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
@@ -321,7 +333,7 @@ s2RangeBtn.addEventListener("click", async () => {
     const params = new URLSearchParams({ preset: range, range });
     const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
     const list = await res.json();
-    const rows = Array.isArray(list) ? list : [];
+    const rows = unwrapArray(list);
 
     s2ListBox.classList.remove("hidden");
 
