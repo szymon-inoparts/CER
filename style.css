@@ -367,6 +367,20 @@ th {
   background: var(--error);
 }
 
+.s2-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.s2-controls .field {
+  flex: 1;
+  min-width: 260px;
+  margin: 0;
+}
+
 /* ============================================================
    KARTY REKLAMACJI (ewidencja)
    ============================================================ */
