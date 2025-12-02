@@ -327,12 +327,14 @@ textarea {
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 th, td {
   padding: 10px;
   border-bottom: 1px solid var(--border);
   text-align: left;
+  vertical-align: middle;
 }
 
 th {
@@ -517,6 +519,15 @@ th {
 
 .expand-row td {
   background: #f7f8fb;
+  padding: 14px 12px;
+  border-bottom: none;
+}
+
+.expand-row .claim-card {
+  margin-top: 0;
+}
+.table-box td:last-child {
+  text-align: right;
 }
 
 .table-box th:first-child,
@@ -525,7 +536,7 @@ th {
   text-align: center;
 }
 
-.table-box th,
-.table-box td {
-  vertical-align: middle;
+.table-box th:last-child,
+.table-box td:last-child {
+  width: 170px;
 }

@@ -340,7 +340,7 @@ function toggleRowDetails(id, btn) {
   if (!row) return;
   const isOpen = row.style.display !== "none";
   row.style.display = isOpen ? "none" : "table-row";
-  if (btn) btn.textContent = isOpen ? "▼" : "▲";
+  if (btn) btn.textContent = isOpen ? "v" : "^";
 }
 window.toggleRowDetails = toggleRowDetails;
 
@@ -613,7 +613,7 @@ ${escapeHtml(rawText)}</pre>
           <td>${formatCurrency(claim.value)}</td>
           <td>
             <div class="action-cell">
-              <button class="expand-btn" onclick="toggleRowDetails('${expId}', this)">▼</button>
+              <button class="expand-btn" onclick="toggleRowDetails('${expId}', this)">v</button>
               <button class="btn" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button>
             </div>
           </td>
