@@ -317,7 +317,9 @@ s2RangeBtn.addEventListener("click", async () => {
   const range = s2RangeSelect.value;
 
   try {
-    const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?range=${encodeURIComponent(range)}`);
+    // wysyłamy preset (5 wariantów z selecta) jako query param GET
+    const params = new URLSearchParams({ preset: range, range });
+    const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
     const list = await res.json();
     const rows = Array.isArray(list) ? list : [];
 
