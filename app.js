@@ -672,6 +672,26 @@ s3FetchBtn.addEventListener("click", async () => {
     s3DetailsBox.innerHTML = "";
     s3DetailsBox.insertAdjacentHTML("beforeend", renderClaimCard(claim));
 
+    // Ukryj pola Decyzja, Rozwiazanie i Data rozwiazania tylko w generatorze
+    const grid = s3DetailsBox.querySelector(".claim-card__grid");
+    if (grid) {
+      grid.querySelectorAll("div").forEach((block) => {
+        const label = block.querySelector(".label");
+        if (!label) return;
+        const text = label.textContent.trim().toLowerCase();
+        if (text.includes("decyzja") || text.includes("rozwiazanie")) block.remove();
+      });
+    }
+    const timeline = s3DetailsBox.querySelector(".claim-card__timeline");
+    if (timeline) {
+      timeline.querySelectorAll("div").forEach((block) => {
+        const span = block.querySelector("span");
+        if (span && span.textContent.trim().toLowerCase().includes("data rozwiazania")) {
+          block.remove();
+        }
+      });
+    }
+
     showToast("ZaĹ‚adowano dane");
   } catch {
     showToast("Nie znaleziono", "error");
