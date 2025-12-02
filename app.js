@@ -620,10 +620,7 @@ ${escapeHtml(rawText)}</pre>
         </tr>
         <tr class="expand-row" data-exp-id="${expId}" style="display:none">
           <td colspan="11">
-            ${renderClaimCard(
-              claim,
-              `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedz</button>`
-            )}
+            ${renderClaimCard(claim)}
           </td>
         </tr>`;
     });
@@ -669,24 +666,7 @@ s3FetchBtn.addEventListener("click", async () => {
 
     s3DetailsBox.classList.remove("hidden");
 
-    s3DetailsBox.innerHTML = `
-      <h3>Dane reklamacji</h3>
-      <p><b>Nr reklamacji:</b> ${claim.claimId || "-"}</p>
-      <p><b>Zamowienie:</b> ${claim.orderId || "-"}</p>
-      <p><b>Klient:</b> ${claim.customer || "-"}</p>
-      <p><b>Marketplace:</b> ${claim.marketplace || "-"}</p>
-      <p><b>Status:</b> ${claim.status || "-"}</p>
-      <p><b>Wartosc:</b> ${formatCurrency(claim.value)}</p>
-      <p><b>Powod zgloszenia:</b> ${claim.reason || "-"}</p>
-      <p><b>Typ:</b> ${claim.type || "-"}</p>
-      <p><b>Decyzja:</b> ${claim.decision || "-"}</p>
-      <p><b>Rozwiazanie:</b> ${claim.resolution || "-"}</p>
-      <p><b>Data przyjecia:</b> ${formatDate(claim.receivedAt)}</p>
-      <p><b>Termin decyzji:</b> ${formatDate(claim.decisionDue)}</p>
-      <p><b>Data rozwiazania:</b> ${formatDate(claim.resolvedAt)}</p>
-      ${claim.agent ? `<p><b>Agent:</b> ${claim.agent}</p>` : ""}
-      ${claim.myNewField ? `<p><b>myNewField:</b> ${claim.myNewField}</p>` : ""}
-    `;
+    s3DetailsBox.innerHTML = renderClaimCard(claim);
 
     showToast("Załadowano dane");
   } catch {
