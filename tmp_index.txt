@@ -228,7 +228,7 @@
 
     <div class="field">
       <label>OdpowiedĹş (PL)</label>
-      <textarea id="s3-answer" placeholder="Tu wpisz odpowiedĹş..."></textarea>
+      <textarea id="s3-answer" placeholder="Tu wpisz odpowiedz..."></textarea>
     </div>
 
     <div class="field">
@@ -243,7 +243,7 @@
       </div>
     </div>
 
-    <button class="btn btn-primary" id="s3-generate">Generuj PDF</button>
+    <button class="btn btn-primary" id="s3-generate">Generuj odpowiedz</button>
   </section>
 
 </div>
@@ -258,4 +258,5 @@
 <script src="app.js"></script>
 </body>
 </html>
+
 

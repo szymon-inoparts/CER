@@ -1,9 +1,9 @@
-/* ============================================================
-   app.js – pełny JS do obsługi 3 podstron CER
+﻿/* ============================================================
+   app.js â€“ peĹ‚ny JS do obsĹ‚ugi 3 podstron CER
    ============================================================ */
 
 /* ------------------------------------------------------------
-   GLOBALNE USTAWIENIA – uzupełnisz swoim linkiem do webhooka
+   GLOBALNE USTAWIENIA â€“ uzupeĹ‚nisz swoim linkiem do webhooka
 ------------------------------------------------------------ */
 const N8N_BASE_URL = "https://kamil-inoparts.app.n8n.cloud/webhook"; // <<< PODMIENISZ
 const SELLASIST_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-z-sellasist";
@@ -14,7 +14,7 @@ const SHOW_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/wy%C
 const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-odpowiedz";
 
 /* ------------------------------------------------------------
-   BLOKADA HASŁEM – proste sprawdzenie na wejściu
+   BLOKADA HASĹEM â€“ proste sprawdzenie na wejĹ›ciu
 ------------------------------------------------------------ */
 const PASSWORD_VALUE = "inoparts";
 const passwordOverlay = document.getElementById("password-overlay");
@@ -42,7 +42,7 @@ passwordInput.addEventListener("keydown", (e) => {
 window.addEventListener("load", () => passwordInput.focus());
 
 /* ------------------------------------------------------------
-   TOAST – powiadomienia w rogu
+   TOAST â€“ powiadomienia w rogu
 ------------------------------------------------------------ */
 function showToast(msg, type = "success") {
   const toast = document.getElementById("toast");
@@ -88,7 +88,7 @@ function safeJsonParse(text) {
   try {
     return { value: JSON.parse(cleaned), error: null };
   } catch (err) {
-    // spróbuj ściąć do pierwszego { lub [
+    // sprĂłbuj Ĺ›ciÄ…Ä‡ do pierwszego { lub [
     const brace = cleaned.indexOf("{");
     const bracket = cleaned.indexOf("[");
     const idx = brace >= 0 && bracket >= 0 ? Math.min(brace, bracket) : brace >= 0 ? brace : bracket;
@@ -141,7 +141,7 @@ function toArray(payload) {
       payload.list
     ];
     for (const c of candidates) if (Array.isArray(c)) return c;
-    // jeżeli to pojedynczy rekord (ma claimId/orderId itp.), zwróć jako jednoelementowa tablica
+    // jeĹĽeli to pojedynczy rekord (ma claimId/orderId itp.), zwrĂłÄ‡ jako jednoelementowa tablica
     const keys = Object.keys(payload);
     if (keys.length && (keys.includes("claimId") || keys.includes("orderId") || keys.includes("Nr. Rek.") || keys.includes("row_number"))) {
       return [payload];
@@ -156,7 +156,7 @@ function unwrapArray(payload) {
 }
 
 function normalizeClaim(raw = {}) {
-  // Obsługa odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementów
+  // ObsĹ‚uga odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementĂłw
   const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
   const dates = flat.dates || {};
   const customerValue =
@@ -202,7 +202,7 @@ function renderClaimCard(raw, actionHtml = "") {
           <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
           <div class="claim-card__order">Zamowienie: ${claim.orderId || "-"}</div>
         </div>
-        <div class="claim-card__status">${claim.status || "—"}</div>
+        <div class="claim-card__status">${claim.status || "â€”"}</div>
       </div>
 
       <div class="claim-card__keyline">
@@ -240,7 +240,7 @@ function renderClaimCard(raw, actionHtml = "") {
 }
 
 /* ------------------------------------------------------------
-   PRZEŁĄCZANIE PODSTRON (1–3)
+   PRZEĹÄ„CZANIE PODSTRON (1â€“3)
 ------------------------------------------------------------ */
 function switchPage(pageNumber) {
   const pages = document.querySelectorAll(".page");
@@ -347,7 +347,7 @@ function toggleRowDetails(id, btn) {
 window.toggleRowDetails = toggleRowDetails;
 
 /* ============================================================
-   CZĘŚĆ 1 – DODAWANIE ZGŁOSZENIA
+   CZÄĹšÄ† 1 â€“ DODAWANIE ZGĹOSZENIA
    ============================================================ */
 
 const s1FetchBtn = document.getElementById("s1-fetch");
@@ -358,21 +358,21 @@ const s1Products = document.getElementById("s1-products");
 const s1SaveBtn = document.getElementById("s1-save");
 let s1FetchedOrder = null;
 
-/* Pobieranie danych zamówienia */
+/* Pobieranie danych zamĂłwienia */
 s1FetchBtn.addEventListener("click", async () => {
   const num = s1OrderInput.value.trim();
-  if (!num) return showToast("Wpisz numer zamówienia", "error");
+  if (!num) return showToast("Wpisz numer zamĂłwienia", "error");
 
   try {
-    // U�>ycie jawnego linku webhooka pomaga unika�> b��dnych sk�'adek i pokazuje pe�'ny adres dla GitHub Pages
+    // Uďż˝>ycie jawnego linku webhooka pomaga unikaďż˝> bďż˝ďż˝dnych skďż˝'adek i pokazuje peďż˝'ny adres dla GitHub Pages
     const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
     s1FetchedOrder = data;
 
-    // Wyświetlenie boxa
+    // WyĹ›wietlenie boxa
     s1OrderBox.classList.remove("hidden");
 
-    // Produkty – przykład danych w komentarzu:
+    // Produkty â€“ przykĹ‚ad danych w komentarzu:
     // data.products = [
     //   { sku: "SKU123", name: "Buty zimowe", quantity: 2 },
     //   { sku: "SKU999", name: "Czapka", quantity: 1 }
@@ -403,11 +403,11 @@ s1FetchBtn.addEventListener("click", async () => {
 
     showToast("Pobrano dane zamowienia");
   } catch (err) {
-    showToast("Błąd pobierania", "error");
+    showToast("BĹ‚Ä…d pobierania", "error");
   }
 });
 
-/* Zapisywanie zgłoszenia */
+/* Zapisywanie zgĹ‚oszenia */
 s1SaveBtn.addEventListener("click", async () => {
   const payload = {
     order: s1OrderInput.value,
@@ -440,14 +440,14 @@ s1SaveBtn.addEventListener("click", async () => {
       body: JSON.stringify(payload)
     });
 
-    showToast("Zapisano zgłoszenie");
+    showToast("Zapisano zgĹ‚oszenie");
   } catch (err) {
-    showToast("Błąd zapisu", "error");
+    showToast("BĹ‚Ä…d zapisu", "error");
   }
 });
 
 /* ============================================================
-   CZĘŚĆ 2 – EWIDENCJA
+   CZÄĹšÄ† 2 â€“ EWIDENCJA
    ============================================================ */
 
 const s2SearchBtn = document.getElementById("s2-search-btn");
@@ -457,7 +457,7 @@ const s2RangeBtn = document.getElementById("s2-range-btn");
 const s2RangeSelect = document.getElementById("s2-range");
 const s2ListBox = document.getElementById("s2-list");
 
-// ustawienie kontrolek w jednej linii + usuniecie zbędnych separatorów
+// ustawienie kontrolek w jednej linii + usuniecie zbÄ™dnych separatorĂłw
 (function arrangeS2Controls() {
   const section = document.getElementById("page-2");
   const searchField = s2SearchInput?.closest(".field");
@@ -470,10 +470,10 @@ const s2ListBox = document.getElementById("s2-list");
     const container = document.createElement("div");
     container.className = "s2-controls";
 
-    // przenieś blok wyszukiwania
+    // przenieĹ› blok wyszukiwania
     container.appendChild(searchField);
 
-    // utwórz pole dla zakresu
+    // utwĂłrz pole dla zakresu
     const field = document.createElement("div");
     field.className = "field";
     const label = document.createElement("label");
@@ -486,14 +486,14 @@ const s2ListBox = document.getElementById("s2-list");
     const target = section.querySelector("#s2-single-result") || rangeField || section.firstChild;
     section.insertBefore(container, target);
 
-    // usuń stary nagłówek i hr
+    // usuĹ„ stary nagĹ‚Ăłwek i hr
     if (rangeField && rangeField !== field && rangeField.parentElement) rangeField.parentElement.removeChild(rangeField);
     if (h3 && h3.parentElement) h3.parentElement.removeChild(h3);
     if (hr && hr.parentElement) hr.parentElement.removeChild(hr);
   }
 })();
 
-/* Pobieranie pojedynczego zgłoszenia */
+/* Pobieranie pojedynczego zgĹ‚oszenia */
 s2SearchBtn.addEventListener("click", async () => {
   const num = s2SearchInput.value.trim();
   if (!num) return showToast("Podaj numer", "error");
@@ -514,17 +514,17 @@ s2SearchBtn.addEventListener("click", async () => {
   }
 });
 
-/* Pobieranie listy zgłoszeń (tabela) */
+/* Pobieranie listy zgĹ‚oszeĹ„ (tabela) */
 s2RangeBtn.addEventListener("click", async () => {
   const range = s2RangeSelect.value;
 
   try {
-    // wysyłamy preset (5 wariantów z selecta) jako query param GET
+    // wysyĹ‚amy preset (5 wariantĂłw z selecta) jako query param GET
     const params = new URLSearchParams({ preset: range, range });
     const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
     const rawText = await res.text();
 
-    // proste parsowanie: json -> array | object -> array; jak nie, to wyciągnij obiekty z tekstu
+    // proste parsowanie: json -> array | object -> array; jak nie, to wyciÄ…gnij obiekty z tekstu
     let parsed;
     let parseError = null;
     try {
@@ -545,14 +545,14 @@ s2RangeBtn.addEventListener("click", async () => {
       rows = parseObjectsFromText(rawText);
     }
 
-    // ostateczny fallback – spróbuj unwrap n8n
+    // ostateczny fallback â€“ sprĂłbuj unwrap n8n
     if (!rows.length) {
       rows = unwrapArray(parsed);
     }
 
     s2ListBox.classList.remove("hidden");
 
-    // Log diagnostyczny w konsoli przeglądarki
+    // Log diagnostyczny w konsoli przeglÄ…darki
     console.info("CER list response", {
       status: res.status,
       contentType: res.headers.get("content-type"),
@@ -565,10 +565,10 @@ s2RangeBtn.addEventListener("click", async () => {
     if (!res.ok) {
       s2ListBox.innerHTML = `
         <div class="table-box">
-          <pre style="white-space:pre-wrap; padding:12px;">Błąd HTTP ${res.status}
+          <pre style="white-space:pre-wrap; padding:12px;">BĹ‚Ä…d HTTP ${res.status}
 ${escapeHtml(rawText)}</pre>
         </div>`;
-      showToast(`Błąd pobierania (${res.status})`, "error");
+      showToast(`BĹ‚Ä…d pobierania (${res.status})`, "error");
       return;
     }
 
@@ -632,12 +632,12 @@ ${escapeHtml(rawText)}</pre>
     s2ListBox.innerHTML = html;
     showToast("Pobrano liste zgloszen");
   } catch {
-    showToast("Błąd pobierania", "error");
+    showToast("BĹ‚Ä…d pobierania", "error");
   }
 });
 
 /* ============================================================
-   CZĘŚĆ 3 – GENERATOR ODPOWIEDZI
+   CZÄĹšÄ† 3 â€“ GENERATOR ODPOWIEDZI
    ============================================================ */
 
 const s3FetchBtn = document.getElementById("s3-fetch");
@@ -647,7 +647,7 @@ const s3GenBtn = document.getElementById("s3-generate");
 let selectedLang = "PL";
 let s3CurrentClaim = null;
 
-/* Zmiana języka tłumaczenia */
+/* Zmiana jÄ™zyka tĹ‚umaczenia */
 document.querySelectorAll(".lang-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     selectedLang = btn.dataset.lang;
@@ -657,7 +657,7 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
   });
 });
 
-/* Pobieranie danych zgłoszenia */
+/* Pobieranie danych zgĹ‚oszenia */
 s3FetchBtn.addEventListener("click", async () => {
   const num = s3NumberInput.value.trim();
   if (!num) return showToast("Podaj numer", "error");
@@ -672,7 +672,7 @@ s3FetchBtn.addEventListener("click", async () => {
     s3DetailsBox.innerHTML = "";
     s3DetailsBox.insertAdjacentHTML("beforeend", renderClaimCard(claim));
 
-    showToast("Załadowano dane");
+    showToast("ZaĹ‚adowano dane");
   } catch {
     showToast("Nie znaleziono", "error");
   }
@@ -684,7 +684,7 @@ s3GenBtn.addEventListener("click", async () => {
   const decision = document.getElementById("s3-decision").value;
   const noResp = document.getElementById("s3-noresp").checked;
   const answer = noResp
-    ? "Brak możliwości weryfikacji: Pomimo naszych prób kontaktu..."
+    ? "Brak mozliwosci weryfikacji: Pomimo naszych prob kontaktu..."
     : document.getElementById("s3-answer").value;
 
   const payload = {
@@ -731,7 +731,8 @@ s3GenBtn.addEventListener("click", async () => {
 
     showToast("Wygenerowano PDF");
   } catch {
-    showToast("Błąd generowania", "error");
+    showToast("BĹ‚Ä…d generowania", "error");
   }
 });
+
 
