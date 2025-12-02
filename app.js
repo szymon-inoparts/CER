@@ -335,6 +335,15 @@ injectResetButton("page-1", resetPage1);
 injectResetButton("page-2", resetPage2);
 injectResetButton("page-3", resetPage3);
 
+function toggleRowDetails(id, btn) {
+  const row = document.querySelector(`.expand-row[data-exp-id="${id}"]`);
+  if (!row) return;
+  const isOpen = row.style.display !== "none";
+  row.style.display = isOpen ? "none" : "table-row";
+  if (btn) btn.textContent = isOpen ? "▸" : "▾";
+}
+window.toggleRowDetails = toggleRowDetails;
+
 /* ============================================================
    CZĘŚĆ 1 – DODAWANIE ZGŁOSZENIA
    ============================================================ */
@@ -589,9 +598,13 @@ ${escapeHtml(rawText)}</pre>
 
     rows.forEach((row, idx) => {
       const claim = normalizeClaim(row);
+      const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
       html += `
         <tr>
-          <td>${claim.rowNumber ?? idx + 1}</td>
+          <td class="expand-cell">
+            <button class="expand-btn" onclick="toggleRowDetails('${expId}', this)">▸</button>
+            <span>${claim.rowNumber ?? idx + 1}</span>
+          </td>
           <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId}'">${claim.claimId || "-"}</td>
           <td>${claim.orderId || "-"}</td>
           <td>${claim.customer || "-"}</td>
@@ -602,6 +615,14 @@ ${escapeHtml(rawText)}</pre>
           <td>${formatDate(claim.resolvedAt)}</td>
           <td>${formatCurrency(claim.value)}</td>
           <td><button class="btn" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button></td>
+        </tr>
+        <tr class="expand-row" data-exp-id="${expId}" style="display:none">
+          <td colspan="11">
+            ${renderClaimCard(
+              claim,
+              `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedz</button>`
+            )}
+          </td>
         </tr>`;
     });
 

@@ -488,3 +488,22 @@ th {
 .claim-card__actions {
   margin-top: 16px;
 }
+
+.expand-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.expand-btn {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 8px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+}
+
+.expand-row td {
+  background: #f7f8fb;
+}
