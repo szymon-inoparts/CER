@@ -367,6 +367,19 @@ th {
   background: var(--error);
 }
 
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.reset-btn {
+  padding: 6px 12px;
+  border-radius: 10px;
+}
+
 .s2-controls {
   display: flex;
   flex-wrap: wrap;

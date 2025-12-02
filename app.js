@@ -259,6 +259,82 @@ function switchPage(pageNumber) {
 }
 window.switchPage = switchPage;
 
+/* ------------------------------------------------------------
+   RESETY STRON
+------------------------------------------------------------ */
+function injectResetButton(sectionId, onReset) {
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+  const h1 = section.querySelector("h1");
+  if (!h1) return;
+  const header = document.createElement("div");
+  header.className = "page-header";
+  const btn = document.createElement("button");
+  btn.className = "btn reset-btn";
+  btn.textContent = "Reset";
+  btn.addEventListener("click", onReset);
+  h1.parentNode.insertBefore(header, h1);
+  header.appendChild(h1);
+  header.appendChild(btn);
+}
+
+function resetPage1() {
+  s1OrderInput.value = "";
+  s1FetchedOrder = null;
+  s1OrderBox.classList.add("hidden");
+  s1Products.innerHTML = "";
+  [
+    "s1-client-name",
+    "s1-client-email",
+    "s1-client-phone",
+    "s1-client-nick",
+    "s1-country",
+    "s1-date",
+    "s1-platform",
+    "s1-shipping",
+    "s1-report-date",
+    "s1-type",
+    "s1-reason",
+    "s1-employee",
+    "s1-note"
+  ].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === "SELECT") el.selectedIndex = 0;
+    else el.value = "";
+  });
+}
+
+function resetPage2() {
+  s2SearchInput.value = "";
+  s2SingleBox.classList.add("hidden");
+  s2SingleBox.innerHTML = "";
+  s2ListBox.classList.add("hidden");
+  s2ListBox.innerHTML = "";
+}
+
+function resetPage3() {
+  s3NumberInput.value = "";
+  s3DetailsBox.classList.add("hidden");
+  s3DetailsBox.innerHTML = "";
+  document.getElementById("s3-decision").selectedIndex = 0;
+  document.getElementById("s3-noresp").checked = false;
+  document.getElementById("s3-answer").value = "";
+  selectedLang = "PL";
+  document.querySelectorAll(".lang-btn").forEach((btn) => {
+    btn.style.background = "";
+    btn.style.color = "";
+    if (btn.dataset.lang === "PL") {
+      btn.style.background = "var(--orange)";
+      btn.style.color = "#fff";
+    }
+  });
+}
+
+injectResetButton("page-1", resetPage1);
+injectResetButton("page-2", resetPage2);
+injectResetButton("page-3", resetPage3);
+
 /* ============================================================
    CZĘŚĆ 1 – DODAWANIE ZGŁOSZENIA
    ============================================================ */
@@ -369,6 +445,42 @@ const s2SingleBox = document.getElementById("s2-single-result");
 const s2RangeBtn = document.getElementById("s2-range-btn");
 const s2RangeSelect = document.getElementById("s2-range");
 const s2ListBox = document.getElementById("s2-list");
+
+// ustawienie kontrolek w jednej linii + usuniecie zbędnych separatorów
+(function arrangeS2Controls() {
+  const section = document.getElementById("page-2");
+  const searchField = s2SearchInput?.closest(".field");
+  const rangeRow = s2RangeSelect?.closest(".row-inline");
+  const rangeField = rangeRow ? rangeRow.parentElement : null;
+  const hr = section.querySelector("hr");
+  const h3 = section.querySelector("h3");
+
+  if (searchField && rangeRow) {
+    const container = document.createElement("div");
+    container.className = "s2-controls";
+
+    // przenieś blok wyszukiwania
+    container.appendChild(searchField);
+
+    // utwórz pole dla zakresu
+    const field = document.createElement("div");
+    field.className = "field";
+    const label = document.createElement("label");
+    label.textContent = "Pobierz wiele zgloszen";
+    field.appendChild(label);
+    field.appendChild(rangeRow);
+    container.appendChild(field);
+
+    // wstaw kontener przed wynikiem
+    const target = section.querySelector("#s2-single-result") || rangeField || section.firstChild;
+    section.insertBefore(container, target);
+
+    // usuń stary nagłówek i hr
+    if (rangeField && rangeField !== field && rangeField.parentElement) rangeField.parentElement.removeChild(rangeField);
+    if (h3 && h3.parentElement) h3.parentElement.removeChild(h3);
+    if (hr && hr.parentElement) hr.parentElement.removeChild(hr);
+  }
+})();
 
 /* Pobieranie pojedynczego zgłoszenia */
 s2SearchBtn.addEventListener("click", async () => {
