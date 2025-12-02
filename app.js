@@ -668,7 +668,7 @@ s3FetchBtn.addEventListener("click", async () => {
 
     s3DetailsBox.innerHTML = renderClaimCard(
       claim,
-      `<button class="btn btn-primary" onclick="document.getElementById('s3-generate').click()">Generuj odpowiedz</button>`
+      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'; document.getElementById('s3-generate').click();">Generuj odpowiedz</button>`
     );
 
     showToast("Załadowano dane");
