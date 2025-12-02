@@ -82,6 +82,27 @@ function escapeHtml(str = "") {
     .replace(/>/g, "&gt;");
 }
 
+function safeJsonParse(text) {
+  const cleaned = String(text ?? "").trim().replace(/^\uFEFF/, "");
+  try {
+    return { value: JSON.parse(cleaned), error: null };
+  } catch (err) {
+    // spróbuj ściąć do pierwszego { lub [
+    const brace = cleaned.indexOf("{");
+    const bracket = cleaned.indexOf("[");
+    const idx = brace >= 0 && bracket >= 0 ? Math.min(brace, bracket) : brace >= 0 ? brace : bracket;
+    if (idx > 0) {
+      const sliced = cleaned.slice(idx);
+      try {
+        return { value: JSON.parse(sliced), error: null };
+      } catch (err2) {
+        return { value: cleaned, error: err2 };
+      }
+    }
+    return { value: cleaned, error: err };
+  }
+}
+
 // Rozwiniecie odpowiedzi n8n niezaleznie od ksztaltu (tablica, data[], items[], elementy z json)
 function toArray(payload) {
   if (Array.isArray(payload)) return payload;
@@ -105,6 +126,11 @@ function toArray(payload) {
       payload.list
     ];
     for (const c of candidates) if (Array.isArray(c)) return c;
+    // jeżeli to pojedynczy rekord (ma claimId/orderId itp.), zwróć jako jednoelementowa tablica
+    const keys = Object.keys(payload);
+    if (keys.length && (keys.includes("claimId") || keys.includes("orderId") || keys.includes("Nr. Rek.") || keys.includes("row_number"))) {
+      return [payload];
+    }
   }
   return [];
 }
@@ -360,13 +386,11 @@ s2RangeBtn.addEventListener("click", async () => {
     const params = new URLSearchParams({ preset: range, range });
     const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
     const rawText = await res.text();
-    let parsed;
-    try {
-      parsed = JSON.parse(rawText);
-    } catch {
-      parsed = rawText;
+    const { value: parsed, error: parseError } = safeJsonParse(rawText);
+    let rows = unwrapArray(parsed);
+    if (!rows.length && parsed && typeof parsed === "object") {
+      rows = [parsed];
     }
-    const rows = unwrapArray(parsed);
 
     s2ListBox.classList.remove("hidden");
 
@@ -376,6 +400,7 @@ s2RangeBtn.addEventListener("click", async () => {
       contentType: res.headers.get("content-type"),
       rawText,
       parsed,
+      parseError,
       rowsCount: rows.length
     });
 
