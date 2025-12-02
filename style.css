@@ -196,7 +196,8 @@ body {
   display: none;
   opacity: 0;
   transition: opacity 0.2s ease;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1600px;
 }
 
 .page-active {
@@ -316,7 +317,7 @@ textarea {
    ============================================================ */
 .table-box {
   overflow: auto;
-  max-height: 500px;
+  max-height: 720px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--panel);
