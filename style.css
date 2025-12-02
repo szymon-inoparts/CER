@@ -242,6 +242,10 @@ h1 {
   margin-top: 0;
 }
 
+#s3-details .claim-card__actions {
+  display: none;
+}
+
 .field {
   margin-bottom: 16px;
   display: flex;
