@@ -322,6 +322,7 @@ function resetPage3() {
   document.getElementById("s3-noresp").checked = false;
   document.getElementById("s3-answer").value = "";
   selectedLang = "PL";
+  s3CurrentClaim = null;
   document.querySelectorAll(".lang-btn").forEach((btn) => {
     btn.style.background = "";
     btn.style.color = "";
@@ -644,6 +645,7 @@ const s3NumberInput = document.getElementById("s3-number");
 const s3DetailsBox = document.getElementById("s3-details");
 const s3GenBtn = document.getElementById("s3-generate");
 let selectedLang = "PL";
+let s3CurrentClaim = null;
 
 /* Zmiana języka tłumaczenia */
 document.querySelectorAll(".lang-btn").forEach((btn) => {
@@ -664,6 +666,7 @@ s3FetchBtn.addEventListener("click", async () => {
     const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}?number=${encodeURIComponent(num)}`);
     const data = await res.json();
     const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
+    s3CurrentClaim = claim;
 
     s3DetailsBox.classList.remove("hidden");
     s3DetailsBox.innerHTML = "";
@@ -688,7 +691,27 @@ s3GenBtn.addEventListener("click", async () => {
     number: num,
     decision,
     language: selectedLang,
-    answer
+    answer,
+    noResponse: noResp,
+    claim: s3CurrentClaim
+      ? {
+          claimId: s3CurrentClaim.claimId,
+          orderId: s3CurrentClaim.orderId,
+          customer: s3CurrentClaim.customer,
+          marketplace: s3CurrentClaim.marketplace,
+          status: s3CurrentClaim.status,
+          value: s3CurrentClaim.value,
+          reason: s3CurrentClaim.reason,
+          type: s3CurrentClaim.type,
+          decisionOriginal: s3CurrentClaim.decision,
+          resolution: s3CurrentClaim.resolution,
+          agent: s3CurrentClaim.agent,
+          myNewField: s3CurrentClaim.myNewField,
+          receivedAt: s3CurrentClaim.receivedAt,
+          decisionDue: s3CurrentClaim.decisionDue,
+          resolvedAt: s3CurrentClaim.resolvedAt
+        }
+      : null
   };
 
   try {
