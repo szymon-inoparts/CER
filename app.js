@@ -666,7 +666,10 @@ s3FetchBtn.addEventListener("click", async () => {
 
     s3DetailsBox.classList.remove("hidden");
 
-    s3DetailsBox.innerHTML = renderClaimCard(claim);
+    s3DetailsBox.innerHTML = renderClaimCard(
+      claim,
+      `<button class="btn btn-primary" onclick="document.getElementById('s3-generate').click()">Generuj odpowiedz</button>`
+    );
 
     showToast("Załadowano dane");
   } catch {
