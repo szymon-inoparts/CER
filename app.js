@@ -76,14 +76,34 @@ function formatCurrency(value) {
 }
 
 // Rozwiniecie odpowiedzi n8n niezaleznie od ksztaltu (tablica, data[], items[], elementy z json)
+function toArray(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (typeof payload === "string") {
+    try {
+      const parsed = JSON.parse(payload);
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed && typeof parsed === "object") return toArray(parsed);
+    } catch {
+      return [];
+    }
+  }
+  if (payload && typeof payload === "object") {
+    const candidates = [
+      payload.data,
+      payload.items,
+      payload.json,
+      payload.body,
+      payload.result,
+      payload.records,
+      payload.list
+    ];
+    for (const c of candidates) if (Array.isArray(c)) return c;
+  }
+  return [];
+}
+
 function unwrapArray(payload) {
-  const base = Array.isArray(payload)
-    ? payload
-    : payload && Array.isArray(payload.data)
-    ? payload.data
-    : payload && Array.isArray(payload.items)
-    ? payload.items
-    : [];
+  const base = toArray(payload);
   return base.map((el) => (el && el.json && typeof el.json === "object" ? { ...el, ...el.json } : el));
 }
 
@@ -332,8 +352,14 @@ s2RangeBtn.addEventListener("click", async () => {
     // wysyłamy preset (5 wariantów z selecta) jako query param GET
     const params = new URLSearchParams({ preset: range, range });
     const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
-    const list = await res.json();
-    const rows = unwrapArray(list);
+    const rawText = await res.text();
+    let parsed;
+    try {
+      parsed = JSON.parse(rawText);
+    } catch {
+      parsed = rawText;
+    }
+    const rows = unwrapArray(parsed);
 
     s2ListBox.classList.remove("hidden");
 
