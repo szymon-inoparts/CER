@@ -69,30 +69,47 @@ function formatDate(value) {
 
 function formatCurrency(value) {
   if (value === null || value === undefined || value === "") return "-";
-  const num = Number(value);
+  const cleaned = typeof value === "string" ? value.replace(",", ".") : value;
+  const num = Number(cleaned);
   if (Number.isNaN(num)) return value;
   return `${num.toFixed(2)} zl`;
 }
 
 function normalizeClaim(raw = {}) {
-  const dates = raw.dates || {};
+  // Obsługa odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementów
+  const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
+  const dates = flat.dates || {};
+  const customerValue =
+    flat.customer ||
+    flat.clientNick ||
+    flat.customerNick ||
+    flat.client ||
+    flat.clientName ||
+    flat.customerName;
+
   return {
-    claimId: raw.claimId || raw.caseNumber || raw.rowNumber || raw.orderId || raw.order || "",
-    orderId: raw.orderId || raw.order || "",
-    customer: raw.customer || raw.client || raw.clientName || "",
-    marketplace: raw.marketplace || raw.platform || "",
-    status: raw.status || (raw.isClosed ? "Zakonczone" : ""),
-    value: raw.value ?? raw.valueNumber ?? raw.valueRaw,
-    reason: raw.reason,
-    type: raw.type,
-    decision: raw.decision,
-    resolution: raw.resolution,
-    agent: raw.agent,
-    myNewField: raw.myNewField,
-    receivedAt: raw.receivedAt || dates.receivedAt,
-    decisionDue: raw.decisionDue || dates.decisionDue,
-    resolvedAt: raw.resolvedAt || dates.resolvedAt,
-    rowNumber: raw.rowNumber
+    claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
+    orderId: flat.orderId || flat.order || "",
+    customer: customerValue !== undefined && customerValue !== null ? String(customerValue) : "",
+    marketplace: flat.marketplace || flat.platform || "",
+    status: flat.status || (flat.isClosed ? "Zakonczone" : ""),
+    value:
+      flat.value ??
+      flat.valueNumber ??
+      flat.valueRaw ??
+      flat.amount ??
+      flat.total ??
+      (flat.pricing && flat.pricing.total),
+    reason: flat.reason,
+    type: flat.type,
+    decision: flat.decision,
+    resolution: flat.resolution,
+    agent: flat.agent,
+    myNewField: flat.myNewField,
+    receivedAt: flat.receivedAt || dates.receivedAt,
+    decisionDue: flat.decisionDue || dates.decisionDue,
+    resolvedAt: flat.resolvedAt || dates.resolvedAt,
+    rowNumber: flat.rowNumber
   };
 }
 
