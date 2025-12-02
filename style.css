@@ -492,12 +492,14 @@ th {
 .action-cell {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .expand-btn {
   border: 1px solid var(--border);
-  background: #fff;
+  background: #f6f7fb;
   border-radius: 8px;
   width: 28px;
   height: 28px;
@@ -506,8 +508,24 @@ th {
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  line-height: 1;
+}
+
+.expand-btn:hover {
+  background: #e8eaf1;
 }
 
 .expand-row td {
   background: #f7f8fb;
+}
+
+.table-box th:first-child,
+.table-box td:first-child {
+  width: 46px;
+  text-align: center;
+}
+
+.table-box th,
+.table-box td {
+  vertical-align: middle;
 }
