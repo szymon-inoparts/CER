@@ -58,6 +58,68 @@ function showToast(msg, type = "success") {
 }
 
 /* ------------------------------------------------------------
+   Formatowanie danych z webhooka (daty, kwoty, mapowanie pol)
+------------------------------------------------------------ */
+function formatDate(value) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toISOString().slice(0, 10);
+}
+
+function formatCurrency(value) {
+  if (value === null || value === undefined || value === "") return "-";
+  const num = Number(value);
+  if (Number.isNaN(num)) return value;
+  return `${num.toFixed(2)} zl`;
+}
+
+function normalizeClaim(raw = {}) {
+  const dates = raw.dates || {};
+  return {
+    claimId: raw.claimId || raw.caseNumber || raw.rowNumber || raw.orderId || raw.order || "",
+    orderId: raw.orderId || raw.order || "",
+    customer: raw.customer || raw.client || raw.clientName || "",
+    marketplace: raw.marketplace || raw.platform || "",
+    status: raw.status || (raw.isClosed ? "Zakonczone" : ""),
+    value: raw.valueNumber ?? raw.valueRaw,
+    reason: raw.reason,
+    type: raw.type,
+    decision: raw.decision,
+    resolution: raw.resolution,
+    agent: raw.agent,
+    myNewField: raw.myNewField,
+    receivedAt: raw.receivedAt || dates.receivedAt,
+    decisionDue: raw.decisionDue || dates.decisionDue,
+    resolvedAt: raw.resolvedAt || dates.resolvedAt,
+    rowNumber: raw.rowNumber
+  };
+}
+
+function renderClaimCard(raw, actionHtml = "") {
+  const claim = normalizeClaim(raw);
+  return `
+    <div class="claim-card">
+      <h3>Reklamacja: ${claim.claimId || "-"}</h3>
+      <p><b>Zamowienie:</b> ${claim.orderId || "-"}</p>
+      <p><b>Klient:</b> ${claim.customer || "-"}</p>
+      <p><b>Marketplace:</b> ${claim.marketplace || "-"}</p>
+      <p><b>Status:</b> ${claim.status || "-"}</p>
+      <p><b>Wartosc:</b> ${formatCurrency(claim.value)}</p>
+      <p><b>Powod zgloszenia:</b> ${claim.reason || "-"}</p>
+      <p><b>Typ:</b> ${claim.type || "-"}</p>
+      <p><b>Decyzja:</b> ${claim.decision || "-"}</p>
+      <p><b>Rozwiazanie:</b> ${claim.resolution || "-"}</p>
+      <p><b>Data przyjecia:</b> ${formatDate(claim.receivedAt)}</p>
+      <p><b>Termin decyzji:</b> ${formatDate(claim.decisionDue)}</p>
+      <p><b>Data rozwiazania:</b> ${formatDate(claim.resolvedAt)}</p>
+      ${claim.agent ? `<p><b>Agent:</b> ${claim.agent}</p>` : ""}
+      ${claim.myNewField ? `<p><b>myNewField:</b> ${claim.myNewField}</p>` : ""}
+      ${actionHtml}
+    </div>`;
+}
+
+/* ------------------------------------------------------------
    PRZEŁĄCZANIE PODSTRON (1–3)
 ------------------------------------------------------------ */
 function switchPage(pageNumber) {
@@ -197,16 +259,12 @@ s2SearchBtn.addEventListener("click", async () => {
   try {
     const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
-
+    const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
     s2SingleBox.classList.remove("hidden");
-    s2SingleBox.innerHTML = `
-      <div>
-        <h3>Zgłoszenie: ${data.caseNumber}</h3>
-        <p><b>Klient:</b> ${data.clientName}</p>
-        <p><b>Platforma:</b> ${data.platform}</p>
-        <p><b>Data:</b> ${data.date}</p>
-        <button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${data.caseNumber}'">Generuj odpowiedź</button>
-      </div>`;
+    s2SingleBox.innerHTML = renderClaimCard(
+      claim,
+      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedz</button>`
+    );
 
     showToast("Pobrano zgloszenie");
   } catch {
@@ -221,31 +279,41 @@ s2RangeBtn.addEventListener("click", async () => {
   try {
     const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?range=${encodeURIComponent(range)}`);
     const list = await res.json();
+    const rows = Array.isArray(list) ? list : [];
 
     s2ListBox.classList.remove("hidden");
 
     let html = `
       <table>
         <tr>
+          <th>#</th>
           <th>Reklamacja</th>
-          <th>Zamówienie</th>
+          <th>Zamowienie</th>
           <th>Klient</th>
-          <th>Platforma</th>
+          <th>Marketplace</th>
           <th>Status</th>
-          <th>Data</th>
+          <th>Przyjecie</th>
+          <th>Termin decyzji</th>
+          <th>Rozwiazanie</th>
+          <th>Wartosc</th>
           <th>Akcja</th>
         </tr>`;
 
-    list.forEach((row) => {
+    rows.forEach((row, idx) => {
+      const claim = normalizeClaim(row);
       html += `
         <tr>
-          <td class="link" onclick="document.getElementById('s2-search').value='${row.caseNumber}'">${row.caseNumber}</td>
-          <td>${row.order}</td>
-          <td>${row.client}</td>
-          <td>${row.platform}</td>
-          <td>${row.status}</td>
-          <td>${row.date}</td>
-          <td><button class="btn" onclick="switchPage(3); document.getElementById('s3-number').value='${row.caseNumber}'">Generuj</button></td>
+          <td>${claim.rowNumber ?? idx + 1}</td>
+          <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId}'">${claim.claimId || "-"}</td>
+          <td>${claim.orderId || "-"}</td>
+          <td>${claim.customer || "-"}</td>
+          <td>${claim.marketplace || "-"}</td>
+          <td>${claim.status || "-"}</td>
+          <td>${formatDate(claim.receivedAt)}</td>
+          <td>${formatDate(claim.decisionDue)}</td>
+          <td>${formatDate(claim.resolvedAt)}</td>
+          <td>${formatCurrency(claim.value)}</td>
+          <td><button class="btn" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button></td>
         </tr>`;
     });
 
@@ -286,16 +354,27 @@ s3FetchBtn.addEventListener("click", async () => {
   try {
     const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}?number=${encodeURIComponent(num)}`);
     const data = await res.json();
+    const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
 
     s3DetailsBox.classList.remove("hidden");
 
     s3DetailsBox.innerHTML = `
-      <h3>Dane zgłoszenia</h3>
-      <p><b>Nr reklamacji:</b> ${data.caseNumber}</p>
-      <p><b>Zamówienie:</b> ${data.order}</p>
-      <p><b>Klient:</b> ${data.clientName}</p>
-      <p><b>Platforma:</b> ${data.platform}</p>
-      <p><b>Data zgłoszenia:</b> ${data.date}</p>
+      <h3>Dane reklamacji</h3>
+      <p><b>Nr reklamacji:</b> ${claim.claimId || "-"}</p>
+      <p><b>Zamowienie:</b> ${claim.orderId || "-"}</p>
+      <p><b>Klient:</b> ${claim.customer || "-"}</p>
+      <p><b>Marketplace:</b> ${claim.marketplace || "-"}</p>
+      <p><b>Status:</b> ${claim.status || "-"}</p>
+      <p><b>Wartosc:</b> ${formatCurrency(claim.value)}</p>
+      <p><b>Powod zgloszenia:</b> ${claim.reason || "-"}</p>
+      <p><b>Typ:</b> ${claim.type || "-"}</p>
+      <p><b>Decyzja:</b> ${claim.decision || "-"}</p>
+      <p><b>Rozwiazanie:</b> ${claim.resolution || "-"}</p>
+      <p><b>Data przyjecia:</b> ${formatDate(claim.receivedAt)}</p>
+      <p><b>Termin decyzji:</b> ${formatDate(claim.decisionDue)}</p>
+      <p><b>Data rozwiazania:</b> ${formatDate(claim.resolvedAt)}</p>
+      ${claim.agent ? `<p><b>Agent:</b> ${claim.agent}</p>` : ""}
+      ${claim.myNewField ? `<p><b>myNewField:</b> ${claim.myNewField}</p>` : ""}
     `;
 
     showToast("Załadowano dane");
