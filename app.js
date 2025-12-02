@@ -75,6 +75,13 @@ function formatCurrency(value) {
   return `${num.toFixed(2)} zl`;
 }
 
+function escapeHtml(str = "") {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 // Rozwiniecie odpowiedzi n8n niezaleznie od ksztaltu (tablica, data[], items[], elementy z json)
 function toArray(payload) {
   if (Array.isArray(payload)) return payload;
@@ -362,6 +369,16 @@ s2RangeBtn.addEventListener("click", async () => {
     const rows = unwrapArray(parsed);
 
     s2ListBox.classList.remove("hidden");
+
+    if (!rows.length) {
+      s2ListBox.innerHTML = `
+        <div class="table-box">
+          <pre style="white-space:pre-wrap; padding:12px;">Brak rozpoznanych danych. Surowa odpowiedz webhooka:
+${escapeHtml(rawText)}</pre>
+        </div>`;
+      showToast("Brak danych z webhooka", "error");
+      return;
+    }
 
     let html = `
       <table>
