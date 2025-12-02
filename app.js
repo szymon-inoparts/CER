@@ -117,22 +117,45 @@ function renderClaimCard(raw, actionHtml = "") {
   const claim = normalizeClaim(raw);
   return `
     <div class="claim-card">
-      <h3>Reklamacja: ${claim.claimId || "-"}</h3>
-      <p><b>Zamowienie:</b> ${claim.orderId || "-"}</p>
-      <p><b>Klient:</b> ${claim.customer || "-"}</p>
-      <p><b>Marketplace:</b> ${claim.marketplace || "-"}</p>
-      <p><b>Status:</b> ${claim.status || "-"}</p>
-      <p><b>Wartosc:</b> ${formatCurrency(claim.value)}</p>
-      <p><b>Powod zgloszenia:</b> ${claim.reason || "-"}</p>
-      <p><b>Typ:</b> ${claim.type || "-"}</p>
-      <p><b>Decyzja:</b> ${claim.decision || "-"}</p>
-      <p><b>Rozwiazanie:</b> ${claim.resolution || "-"}</p>
-      <p><b>Data przyjecia:</b> ${formatDate(claim.receivedAt)}</p>
-      <p><b>Termin decyzji:</b> ${formatDate(claim.decisionDue)}</p>
-      <p><b>Data rozwiazania:</b> ${formatDate(claim.resolvedAt)}</p>
-      ${claim.agent ? `<p><b>Agent:</b> ${claim.agent}</p>` : ""}
-      ${claim.myNewField ? `<p><b>myNewField:</b> ${claim.myNewField}</p>` : ""}
-      ${actionHtml}
+      <div class="claim-card__header">
+        <div>
+          <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
+          <div class="claim-card__order">Zamowienie: ${claim.orderId || "-"}</div>
+        </div>
+        <div class="claim-card__status">${claim.status || "—"}</div>
+      </div>
+
+      <div class="claim-card__keyline">
+        <div>
+          <div class="label">Klient</div>
+          <div class="value">${claim.customer || "-"}</div>
+        </div>
+        <div>
+          <div class="label">Marketplace</div>
+          <div class="value">${claim.marketplace || "-"}</div>
+        </div>
+        <div>
+          <div class="label">Wartosc</div>
+          <div class="value strong">${formatCurrency(claim.value)}</div>
+        </div>
+      </div>
+
+      <div class="claim-card__timeline">
+        <div><span>Data przyjecia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+        <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
+        <div><span>Data rozwiazania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+      </div>
+
+      <div class="claim-card__grid">
+        <div><div class="label">Powod zgloszenia</div><div class="value">${claim.reason || "-"}</div></div>
+        <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
+        <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
+        <div><div class="label">Rozwiazanie</div><div class="value">${claim.resolution || "-"}</div></div>
+        ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
+        ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
+      </div>
+
+      <div class="claim-card__actions">${actionHtml || ""}</div>
     </div>`;
 }
 
