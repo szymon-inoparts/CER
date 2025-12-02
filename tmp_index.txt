@@ -1,27 +1,27 @@
-<!-- index.html - CER full interface with sidebar A1, 3 pages, comments -->
+﻿<!-- index.html - CER full interface with sidebar A1, 3 pages, comments -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CER – System Reklamacji</title>
-  <!-- Łączenie CSS -->
+  <title>CER â?" System Reklamacji</title>
+  <!-- Ĺ?Äczenie CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- BLOKADA HASŁEM -->
+<!-- BLOKADA HASĹ?EM -->
 <div id="password-overlay" class="auth-overlay">
   <div class="auth-card">
-    <h2>Wprowadź hasło</h2>
-    <p>Aby przejść do systemu CER, wpisz hasło dostępu.</p>
-    <input id="password-input" type="password" placeholder="Hasło" autocomplete="off" />
+    <h2>WprowadĹş hasĹ'o</h2>
+    <p>Aby przejĹ>Ä┼ do systemu CER, wpisz hasĹ'o dostÄtpu.</p>
+    <input id="password-input" type="password" placeholder="HasĹ'o" autocomplete="off" />
     <button class="btn btn-primary" id="password-submit">Odblokuj</button>
-    <p id="password-error" class="auth-error hidden">Nieprawidłowe hasło. Spróbuj ponownie.</p>
+    <p id="password-error" class="auth-error hidden">NieprawidĹ'owe hasĹ'o. SprĂłbuj ponownie.</p>
   </div>
 </div>
 
-<!-- SIDEBAR (A1 – ikony + tekst po hover) -->
+<!-- SIDEBAR (A1 â?" ikony + tekst po hover) -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="sidebar-logo-icon">C</div>
@@ -30,54 +30,54 @@
 
   <nav class="sidebar-nav">
     <button type="button" class="sidebar-item sidebar-item-active" onclick="switchPage(1)">
-      <span class="sidebar-item-icon">➕</span>
-      <span class="sidebar-item-label">Dodaj zgłoszenie</span>
+      <span class="sidebar-item-icon">âž</span>
+      <span class="sidebar-item-label">Dodaj zgĹ'oszenie</span>
     </button>
     <button type="button" class="sidebar-item" onclick="switchPage(2)">
-      <span class="sidebar-item-icon">📄</span>
+      <span class="sidebar-item-icon">đź""</span>
       <span class="sidebar-item-label">Ewidencja</span>
     </button>
     <button type="button" class="sidebar-item" onclick="switchPage(3)">
-      <span class="sidebar-item-icon">✍️</span>
+      <span class="sidebar-item-icon">âśŤď¸Ź</span>
       <span class="sidebar-item-label">Generator odpowiedzi</span>
     </button>
   </nav>
 </aside>
 
-<!-- GŁÓWNY OBSZAR STRONY -->
+<!-- GĹ?Ă"WNY OBSZAR STRONY -->
 <div class="layout-main">
 
-  <!-- STRONA 1: DODAJ ZGŁOSZENIE -->
+  <!-- STRONA 1: DODAJ ZGĹ?OSZENIE -->
   <section id="page-1" class="page page-active">
-    <h1>Dodaj nowe zgłoszenie</h1>
-    <p class="section-desc">Uzupełnij dane i zapisz nowe zgłoszenie reklamacyjne</p>
+    <h1>Dodaj nowe zgĹ'oszenie</h1>
+    <p class="section-desc">UzupeĹ'nij dane i zapisz nowe zgĹ'oszenie reklamacyjne</p>
 
-    <!-- Numer zamówienia + pobieranie danych -->
+    <!-- Numer zamĂłwienia + pobieranie danych -->
     <div class="field">
-      <label>Numer zamówienia</label>
+      <label>Numer zamĂłwienia</label>
       <div class="row-inline">
-        <input id="s1-order" type="text" placeholder="Wpisz numer zamówienia..." />
-        <button class="btn" id="s1-fetch">Pobierz dane zamówienia</button>
+        <input id="s1-order" type="text" placeholder="Wpisz numer zamĂłwienia..." />
+        <button class="btn" id="s1-fetch">Pobierz dane zamĂłwienia</button>
       </div>
     </div>
 
-    <!-- Sekcja która rozwija się po pobraniu danych -->
+    <!-- Sekcja ktĂłra rozwija siÄt po pobraniu danych -->
     <div id="s1-order-data" class="box hidden">
-      <h3>Dane zamówienia</h3>
+      <h3>Dane zamĂłwienia</h3>
 
-      <!-- Lista produktów -->
+      <!-- Lista produktĂłw -->
       <div class="field">
-        <label>Produkty w zamówieniu</label>
+        <label>Produkty w zamĂłwieniu</label>
         <div id="s1-products"></div>
       </div>
 
       <div class="grid-2">
         <div class="field">
-          <label>Koszt wysyłki</label>
+          <label>Koszt wysyĹ'ki</label>
           <input id="s1-shipping" type="text" disabled />
         </div>
         <div class="field">
-          <label>Data zamówienia</label>
+          <label>Data zamĂłwienia</label>
           <input id="s1-date" type="text" disabled />
         </div>
       </div>
@@ -88,7 +88,7 @@
           <input id="s1-country" type="text" disabled />
         </div>
         <div class="field">
-          <label>Platforma sprzedaży</label>
+          <label>Platforma sprzedaĹĽy</label>
           <input id="s1-platform" type="text" disabled />
         </div>
       </div>
@@ -96,7 +96,7 @@
       <h3>Dane klienta</h3>
       <div class="grid-2">
         <div class="field">
-          <label>Imię i nazwisko</label>
+          <label>ImiÄt i nazwisko</label>
           <input id="s1-client-name" type="text" disabled />
         </div>
         <div class="field">
@@ -116,13 +116,13 @@
       </div>
     </div>
 
-    <!-- Pola uzupełniane ręcznie -->
+    <!-- Pola uzupeĹ'niane rÄtcznie -->
     <div class="box">
-      <h3>Dane zgłoszenia</h3>
+      <h3>Dane zgĹ'oszenia</h3>
 
       <div class="grid-2">
         <div class="field">
-          <label>Data zgłoszenia</label>
+          <label>Data zgĹ'oszenia</label>
           <input id="s1-report-date" type="date" />
         </div>
         <div class="field">
@@ -143,8 +143,8 @@
       </div>
 
       <div class="field">
-        <label>Powód reklamacji</label>
-        <textarea id="s1-reason" placeholder="Opisz powód reklamacji..."></textarea>
+        <label>PowĂłd reklamacji</label>
+        <textarea id="s1-reason" placeholder="Opisz powĂłd reklamacji..."></textarea>
       </div>
 
       <div class="grid-2">
@@ -158,52 +158,52 @@
         </div>
       </div>
 
-      <button class="btn btn-primary" id="s1-save">Zapisz zgłoszenie</button>
+      <button class="btn btn-primary" id="s1-save">Zapisz zgĹ'oszenie</button>
     </div>
   </section>
 
-    <!-- STRONA 2: EWIDENCJA -->
+  <!-- STRONA 2: EWIDENCJA -->
   <section id="page-2" class="page">
-    <h1>Ewidencja zgloszen</h1>
+    <h1>Ewidencja zgĹ'oszeĹ"</h1>
 
-    <div class="s2-controls">
-      <div class="field">
-        <label>Szukaj pojedynczego zgloszenia</label>
-        <div class="row-inline">
-          <input id="s2-search" type="text" placeholder="Numer reklamacji lub zamowienia" />
-          <button class="btn" id="s2-search-btn">Pobierz</button>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Pobierz wiele zgloszen</label>
-        <div class="row-inline">
-          <select id="s2-range">
-            <option value="last-7">Ostatnie 7 dni</option>
-            <option value="last-14">Ostatnie 14 dni</option>
-            <option value="last-month">Ostatni miesiac</option>
-            <option value="last-20">Ostatnie 20 reklamacji</option>
-            <option value="last-50">Ostatnie 50 reklamacji</option>
-            <option value="needs-response">Wymagajace odpowiedzi</option>
-          </select>
-          <button class="btn" id="s2-range-btn">Pobierz liste</button>
-        </div>
+    <div class="field">
+      <label>Szukaj pojedynczego zgĹ'oszenia</label>
+      <div class="row-inline">
+        <input id="s2-search" type="text" placeholder="Numer reklamacji lub zamĂłwienia" />
+        <button class="btn" id="s2-search-btn">Pobierz</button>
       </div>
     </div>
 
     <div id="s2-single-result" class="box hidden"></div>
 
+    <hr />
+
+    <h3>Pobierz wiele zgĹ'oszeĹ"</h3>
+
+    <div class="row-inline">
+      <select id="s2-range">
+        <option value="last-7">Ostatnie 7 dni</option>
+        <option value="last-14">Ostatnie 14 dni</option>
+        <option value="last-month">Ostatni miesiÄc</option>
+        <option value="last-20">Ostatnie 20 reklamacji</option>
+        <option value="last-50">Ostatnie 50 reklamacji</option>
+        <option value="needs-response">Wymagajace odpowiedzi</option>
+      </select>
+      <button class="btn" id="s2-range-btn">Pobierz listÄt</button>
+    </div>
+
     <div id="s2-list" class="table-box hidden"></div>
   </section>
-<!-- STRONA 3: GENERATOR ODPOWIEDZI -->
+
+  <!-- STRONA 3: GENERATOR ODPOWIEDZI -->
   <section id="page-3" class="page">
     <h1>Generator odpowiedzi</h1>
 
     <div class="field">
-      <label>Numer reklamacji / zamówienia</label>
+      <label>Numer reklamacji / zamĂłwienia</label>
       <div class="row-inline">
         <input id="s3-number" type="text" placeholder="np. RMA-123" />
-        <button class="btn" id="s3-fetch">Pokaż dane</button>
+        <button class="btn" id="s3-fetch">PokaĹĽ dane</button>
       </div>
     </div>
 
@@ -223,16 +223,16 @@
 
     <div class="field-inline">
       <input id="s3-noresp" type="checkbox" />
-      <label for="s3-noresp">Brak odpowiedzi klienta – wstaw automat</label>
+      <label for="s3-noresp">Brak odpowiedzi klienta â?" wstaw automat</label>
     </div>
 
     <div class="field">
-      <label>Odpowiedź (PL)</label>
-      <textarea id="s3-answer" placeholder="Tu wpisz odpowiedź..."></textarea>
+      <label>OdpowiedĹş (PL)</label>
+      <textarea id="s3-answer" placeholder="Tu wpisz odpowiedĹş..."></textarea>
     </div>
 
     <div class="field">
-      <label>Język tłumaczenia</label>
+      <label>JÄtzyk tĹ'umaczenia</label>
       <div class="row-inline">
         <button class="lang-btn" data-lang="PL">PL</button>
         <button class="lang-btn" data-lang="CZ">CZ</button>
@@ -258,3 +258,4 @@
 <script src="app.js"></script>
 </body>
 </html>
+
