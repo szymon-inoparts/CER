@@ -665,10 +665,13 @@ s3FetchBtn.addEventListener("click", async () => {
     const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
 
     s3DetailsBox.classList.remove("hidden");
-
-    s3DetailsBox.innerHTML = renderClaimCard(
-      claim,
-      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'; document.getElementById('s3-generate').click();">Generuj odpowiedz</button>`
+    s3DetailsBox.innerHTML = "";
+    s3DetailsBox.insertAdjacentHTML(
+      "beforeend",
+      renderClaimCard(
+        claim,
+        `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'; document.getElementById('s3-generate').click();">Generuj odpowiedz</button>`
+      )
     );
 
     showToast("Załadowano dane");

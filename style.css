@@ -231,6 +231,17 @@ h1 {
   display: none;
 }
 
+#s3-details {
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+#s3-details .claim-card {
+  margin-top: 0;
+}
+
 .field {
   margin-bottom: 16px;
   display: flex;
