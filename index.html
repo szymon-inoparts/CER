@@ -10,14 +10,14 @@
 </head>
 <body>
 
-<!-- BLOKADA HASŁEM -->
+<!-- BLOKADA HAS&#321;EM -->
 <div id="password-overlay" class="auth-overlay">
   <div class="auth-card">
-    <h2>Wprowadź hasło</h2>
-    <p>Aby przejść do systemu CER, wpisz hasło dostępu.</p>
-    <input id="password-input" type="password" placeholder="Hasło" autocomplete="off" />
+    <h2>Wprowad&#378; has&#322;o</h2>
+    <p>Aby przej&#347;&#263; do systemu CER, wpisz has&#322;o dost&#281;pu.</p>
+    <input id="password-input" type="password" placeholder="Has&#322;o" autocomplete="off" />
     <button class="btn btn-primary" id="password-submit">Odblokuj</button>
-    <p id="password-error" class="auth-error hidden">Nieprawidłowe hasło. Spróbuj ponownie.</p>
+    <p id="password-error" class="auth-error hidden">Nieprawid&#322;owe has&#322;o. Spr&#243;buj ponownie.</p>
   </div>
 </div>
 
@@ -31,7 +31,7 @@
   <nav class="sidebar-nav">
     <button type="button" class="sidebar-item sidebar-item-active" onclick="switchPage(1)">
       <span class="sidebar-item-icon"></span>
-      <span class="sidebar-item-label">Dodaj zgłoszenie</span>
+      <span class="sidebar-item-label">Dodaj zg&#322;oszenie</span>
     </button>
     <button type="button" class="sidebar-item" onclick="switchPage(2)">
       <span class="sidebar-item-icon"></span>
@@ -44,40 +44,40 @@
   </nav>
 </aside>
 
-<!-- GŁÓWNY OBSZAR STRONY -->
+<!-- G&#321;&#211;WNY OBSZAR STRONY -->
 <div class="layout-main">
 
-  <!-- STRONA 1: DODAJ ZGŁOSZENIE -->
+  <!-- STRONA 1: DODAJ ZG&#321;OSZENIE -->
   <section id="page-1" class="page page-active">
-    <h1>Dodaj nowe zgłoszenie</h1>
-    <p class="section-desc">Uzupełnij dane i zapisz nowe zgłoszenie reklamacyjne</p>
+    <h1>Dodaj nowe zg&#322;oszenie</h1>
+    <p class="section-desc">Uzupe&#322;nij dane i zapisz nowe zg&#322;oszenie reklamacyjne</p>
 
-    <!-- Numer zamówienia + pobieranie danych -->
+    <!-- Numer zam&#243;wienia + pobieranie danych -->
     <div class="field">
-      <label>Numer zamówienia</label>
+      <label>Numer zam&#243;wienia</label>
       <div class="row-inline">
-        <input id="s1-order" type="text" placeholder="Wpisz numer zamówienia..." />
-        <button class="btn" id="s1-fetch">Pobierz dane zamówienia</button>
+        <input id="s1-order" type="text" placeholder="Wpisz numer zam&#243;wienia..." />
+        <button class="btn" id="s1-fetch">Pobierz dane zam&#243;wienia</button>
       </div>
     </div>
 
-    <!-- Sekcja która rozwija się po pobraniu danych -->
+    <!-- Sekcja kt&#243;ra rozwija si&#281; po pobraniu danych -->
     <div id="s1-order-data" class="box hidden">
-      <h3>Dane zamówienia</h3>
+      <h3>Dane zam&#243;wienia</h3>
 
-      <!-- Lista produktów -->
+      <!-- Lista produkt&#243;w -->
       <div class="field">
-        <label>Produkty w zamówieniu</label>
+        <label>Produkty w zam&#243;wieniu</label>
         <div id="s1-products"></div>
       </div>
 
       <div class="grid-2">
         <div class="field">
-          <label>Koszt wysyłki</label>
+          <label>Koszt wysy&#322;ki</label>
           <input id="s1-shipping" type="text" disabled />
         </div>
         <div class="field">
-          <label>Data zamówienia</label>
+          <label>Data zam&#243;wienia</label>
           <input id="s1-date" type="text" disabled />
         </div>
       </div>
@@ -88,7 +88,7 @@
           <input id="s1-country" type="text" disabled />
         </div>
         <div class="field">
-          <label>Platforma sprzedaży</label>
+          <label>Platforma sprzeda&#380;y</label>
           <input id="s1-platform" type="text" disabled />
         </div>
       </div>
@@ -96,7 +96,7 @@
       <h3>Dane klienta</h3>
       <div class="grid-2">
         <div class="field">
-          <label>Imię i nazwisko</label>
+          <label>Imi&#281; i nazwisko</label>
           <input id="s1-client-name" type="text" disabled />
         </div>
         <div class="field">
@@ -116,13 +116,13 @@
       </div>
     </div>
 
-    <!-- Pola uzupełniane ręcznie -->
+    <!-- Pola uzupe&#322;niane r&#281;cznie -->
     <div class="box">
-      <h3>Dane zgłoszenia</h3>
+      <h3>Dane zg&#322;oszenia</h3>
 
       <div class="grid-2">
         <div class="field">
-          <label>Data zgłoszenia</label>
+          <label>Data zg&#322;oszenia</label>
           <input id="s1-report-date" type="date" />
         </div>
         <div class="field">
@@ -143,8 +143,8 @@
       </div>
 
       <div class="field">
-        <label>Powód reklamacji</label>
-        <textarea id="s1-reason" placeholder="Opisz powód reklamacji..."></textarea>
+        <label>Pow&#243;d reklamacji</label>
+        <textarea id="s1-reason" placeholder="Opisz pow&#243;d reklamacji..."></textarea>
       </div>
 
       <div class="grid-2">
@@ -158,35 +158,35 @@
         </div>
       </div>
 
-      <button class="btn btn-primary" id="s1-save">Zapisz zgłoszenie</button>
+      <button class="btn btn-primary" id="s1-save">Zapisz zg&#322;oszenie</button>
     </div>
   </section>
 
     <!-- STRONA 2: EWIDENCJA -->
   <section id="page-2" class="page">
-    <h1>Ewidencja zgłoszeń</h1>
+    <h1>Ewidencja zg&#322;osze&#324;</h1>
 
     <div class="s2-controls">
       <div class="field">
-        <label>Szukaj pojedynczego zgłoszenia</label>
+        <label>Szukaj pojedynczego zg&#322;oszenia</label>
         <div class="row-inline">
-          <input id="s2-search" type="text" placeholder="Numer reklamacji lub zamówienia" />
+          <input id="s2-search" type="text" placeholder="Numer reklamacji lub zam&#243;wienia" />
           <button class="btn" id="s2-search-btn">Pobierz</button>
         </div>
       </div>
 
       <div class="field">
-        <label>Pobierz wiele zgłoszeń</label>
+        <label>Pobierz wiele zg&#322;osze&#324;</label>
         <div class="row-inline">
           <select id="s2-range">
             <option value="last-7">Ostatnie 7 dni</option>
             <option value="last-14">Ostatnie 14 dni</option>
-            <option value="last-month">Ostatni miesiąc</option>
+            <option value="last-month">Ostatni miesi&#261;c</option>
             <option value="last-20">Ostatnie 20 reklamacji</option>
             <option value="last-50">Ostatnie 50 reklamacji</option>
-            <option value="needs-response">Wymagające odpowiedzi</option>
+            <option value="needs-response">Wymagaj&#261;ce odpowiedzi</option>
           </select>
-          <button class="btn" id="s2-range-btn">Pobierz listę</button>
+          <button class="btn" id="s2-range-btn">Pobierz list&#281;</button>
         </div>
       </div>
     </div>
@@ -200,10 +200,10 @@
     <h1>Generator odpowiedzi</h1>
 
     <div class="field">
-      <label>Numer reklamacji / zamówienia</label>
+      <label>Numer reklamacji / zam&#243;wienia</label>
       <div class="row-inline">
         <input id="s3-number" type="text" placeholder="np. RMA-123" />
-        <button class="btn" id="s3-fetch">Pokaż dane</button>
+        <button class="btn" id="s3-fetch">Poka&#380; dane</button>
       </div>
     </div>
 
@@ -223,16 +223,16 @@
 
     <div class="field-inline">
       <input id="s3-noresp" type="checkbox" />
-      <label for="s3-noresp">Brak odpowiedzi klienta – wstaw automat</label>
+      <label for="s3-noresp">Brak odpowiedzi klienta &#8211; wstaw automat</label>
     </div>
 
     <div class="field">
-      <label>Odpowiedź (PL)</label>
-      <textarea id="s3-answer" placeholder="Tu wpisz odpowiedź..."></textarea>
+      <label>Odpowied&#378; (PL)</label>
+      <textarea id="s3-answer" placeholder="Tu wpisz odpowied&#378;..."></textarea>
     </div>
 
     <div class="field">
-      <label>Język tłumaczenia</label>
+      <label>J&#281;zyk t&#322;umaczenia</label>
       <div class="row-inline">
         <button class="lang-btn" data-lang="PL">PL</button>
         <button class="lang-btn" data-lang="CZ">CZ</button>
@@ -243,7 +243,7 @@
       </div>
     </div>
 
-    <button class="btn btn-primary" id="s3-generate">Generuj odpowiedź</button>
+    <button class="btn btn-primary" id="s3-generate">Generuj odpowied&#378;</button>
   </section>
 
 </div>

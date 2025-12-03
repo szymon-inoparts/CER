@@ -1,9 +1,9 @@
 /* ============================================================
-   app.js  pełny JS do obsługi 3 podstron CER
+   app.js  pe\u0142ny JS do obs\u0142ugi 3 podstron CER
    ============================================================ */
 
 /* ------------------------------------------------------------
-   GLOBALNE USTAWIENIA  uzupełnisz swoim linkiem do webhooka
+   GLOBALNE USTAWIENIA  uzupe\u0142nisz swoim linkiem do webhooka
 ------------------------------------------------------------ */
 const N8N_BASE_URL = "https://kamil-inoparts.app.n8n.cloud/webhook"; // <<< PODMIENISZ
 const SELLASIST_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-z-sellasist";
@@ -14,7 +14,7 @@ const SHOW_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/wy%C
 const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-odpowiedz";
 
 /* ------------------------------------------------------------
-   BLOKADA HASŁEM  proste sprawdzenie na wejściu
+   BLOKADA HAS\u0141EM  proste sprawdzenie na wej\u015bciu
 ------------------------------------------------------------ */
 const PASSWORD_VALUE = "inoparts";
 const passwordOverlay = document.getElementById("password-overlay");
@@ -73,7 +73,7 @@ function formatCurrency(value) {
   const cleaned = typeof value === "string" ? value.replace(",", ".") : value;
   const num = Number(cleaned);
   if (Number.isNaN(num)) return value;
-  return `${num.toFixed(2)} zł`;
+  return `${num.toFixed(2)} z\u0142`;
 }
 
 function escapeHtml(str = "") {
@@ -88,7 +88,7 @@ function safeJsonParse(text) {
   try {
     return { value: JSON.parse(cleaned), error: null };
   } catch (err) {
-    // spróbuj ściąć do pierwszego { lub [
+    // spr\u00f3buj \u015bci\u0105\u0107 do pierwszego { lub [
     const brace = cleaned.indexOf("{");
     const bracket = cleaned.indexOf("[");
     const idx = brace >= 0 && bracket >= 0 ? Math.min(brace, bracket) : brace >= 0 ? brace : bracket;
@@ -172,7 +172,7 @@ function normalizeClaim(raw = {}) {
     orderId: flat.orderId || flat.order || "",
     customer: customerValue !== undefined && customerValue !== null ? String(customerValue) : "",
     marketplace: flat.marketplace || flat.platform || "",
-    status: flat.status || (flat.isClosed ? "Zakończone" : ""),
+    status: flat.status || (flat.isClosed ? "Zako\u0144czone" : ""),
     value:
       flat.value ??
       flat.valueNumber ??
@@ -200,7 +200,7 @@ function renderClaimCard(raw, actionHtml = "") {
       <div class="claim-card__header">
         <div>
           <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
-          <div class="claim-card__order">Zamówienie: ${claim.orderId || "-"}</div>
+          <div class="claim-card__order">Zam\u00f3wienie: ${claim.orderId || "-"}</div>
         </div>
         <div class="claim-card__status">${claim.status || ""}</div>
       </div>
@@ -221,16 +221,16 @@ function renderClaimCard(raw, actionHtml = "") {
       </div>
 
       <div class="claim-card__timeline">
-        <div><span>Data przyjęcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+        <div><span>Data przyj\u0119cia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
         <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
-        <div><span>Data rozwiązania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+        <div><span>Data rozwi\u0105zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
       </div>
 
       <div class="claim-card__grid">
-        <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
+        <div><div class="label">Pow\u00f3d zg\u0142oszenia</div><div class="value">${claim.reason || "-"}</div></div>
         <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
         <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-        <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
+        <div><div class="label">Rozwi\u0105zanie</div><div class="value">${claim.resolution || "-"}</div></div>
         ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
         ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
       </div>
@@ -347,7 +347,7 @@ function toggleRowDetails(id, btn) {
 window.toggleRowDetails = toggleRowDetails;
 
 /* ============================================================
-   CZĘ 1  DODAWANIE ZGOSZENIA
+   CZ\u0118 1  DODAWANIE ZGOSZENIA
    ============================================================ */
 
 const s1FetchBtn = document.getElementById("s1-fetch");
@@ -358,10 +358,10 @@ const s1Products = document.getElementById("s1-products");
 const s1SaveBtn = document.getElementById("s1-save");
 let s1FetchedOrder = null;
 
-/* Pobieranie danych zamówienia */
+/* Pobieranie danych zam\u00f3wienia */
 s1FetchBtn.addEventListener("click", async () => {
   const num = s1OrderInput.value.trim();
-  if (!num) return showToast("Wpisz numer zamówienia", "error");
+  if (!num) return showToast("Wpisz numer zam\u00f3wienia", "error");
 
   try {
     // Uycie jawnego linku webhooka pomaga unika bdnych skadek i pokazuje peny adres dla GitHub Pages
@@ -384,7 +384,7 @@ s1FetchBtn.addEventListener("click", async () => {
         <div class="product-row">
           <label>
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-            ${p.name} (${p.sku}) - ${p.price ?? ""} zł zamówiono: ${p.quantity}
+            ${p.name} (${p.sku}) - ${p.price ?? ""} z\u0142 zam\u00f3wiono: ${p.quantity}
           </label>
           <input type="number" class="s1-prod-qty" data-index="${idx}" min="0" max="${p.quantity}" value="0" />
         </div>
@@ -401,9 +401,9 @@ s1FetchBtn.addEventListener("click", async () => {
     document.getElementById("s1-platform").value = data.platform;
     document.getElementById("s1-shipping").value = data.shippingCost;
 
-    showToast("Pobrano dane zamówienia");
+    showToast("Pobrano dane zam\u00f3wienia");
   } catch (err) {
-    showToast("Błąd pobierania", "error");
+    showToast("B\u0142\u0105d pobierania", "error");
   }
 });
 
@@ -440,14 +440,14 @@ s1SaveBtn.addEventListener("click", async () => {
       body: JSON.stringify(payload)
     });
 
-    showToast("Zapisano zgłoszenie");
+    showToast("Zapisano zg\u0142oszenie");
   } catch (err) {
-    showToast("Błąd zapisu", "error");
+    showToast("B\u0142\u0105d zapisu", "error");
   }
 });
 
 /* ============================================================
-   CZĘ 2  EWIDENCJA
+   CZ\u0118 2  EWIDENCJA
    ============================================================ */
 
 const s2SearchBtn = document.getElementById("s2-search-btn");
@@ -477,7 +477,7 @@ const s2ListBox = document.getElementById("s2-list");
     const field = document.createElement("div");
     field.className = "field";
     const label = document.createElement("label");
-    label.textContent = "Pobierz wiele zgłoszeń";
+    label.textContent = "Pobierz wiele zg\u0142osze\u0144";
     field.appendChild(label);
     field.appendChild(rangeRow);
     container.appendChild(field);
@@ -508,7 +508,7 @@ s2SearchBtn.addEventListener("click", async () => {
       `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowied</button>`
     );
 
-    showToast("Pobrano zgłoszenie");
+    showToast("Pobrano zg\u0142oszenie");
   } catch {
     showToast("Nie znaleziono", "error");
   }
@@ -565,10 +565,10 @@ s2RangeBtn.addEventListener("click", async () => {
     if (!res.ok) {
       s2ListBox.innerHTML = `
         <div class="table-box">
-          <pre style="white-space:pre-wrap; padding:12px;">Błąd HTTP ${res.status}
+          <pre style="white-space:pre-wrap; padding:12px;">B\u0142\u0105d HTTP ${res.status}
 ${escapeHtml(rawText)}</pre>
         </div>`;
-      showToast(`Błąd pobierania (${res.status})`, "error");
+      showToast(`B\u0142\u0105d pobierania (${res.status})`, "error");
       return;
     }
 
@@ -630,14 +630,14 @@ ${escapeHtml(rawText)}</pre>
     html += `</table>`;
 
     s2ListBox.innerHTML = html;
-    showToast("Pobrano listę zgłoszeń");
+    showToast("Pobrano list\u0119 zg\u0142osze\u0144");
   } catch {
-    showToast("Błąd pobierania", "error");
+    showToast("B\u0142\u0105d pobierania", "error");
   }
 });
 
 /* ============================================================
-   CZĘ 3  GENERATOR ODPOWIEDZI
+   CZ\u0118 3  GENERATOR ODPOWIEDZI
    ============================================================ */
 
 const s3FetchBtn = document.getElementById("s3-fetch");
@@ -692,7 +692,7 @@ s3FetchBtn.addEventListener("click", async () => {
       });
     }
 
-    showToast("Załadowano dane");
+    showToast("Za\u0142adowano dane");
   } catch {
     showToast("Nie znaleziono", "error");
   }
@@ -706,7 +706,7 @@ s3GenBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   const answer = noResp
-    ? "Brak możliwości weryfikacji: Pomimo naszych prób kontaktu nie otrzymaliśmy odpowiedzi, dlatego zamykamy zgłoszenie."
+    ? "Brak mo\u017cliwo\u015bci weryfikacji: Pomimo naszych pr\u00f3b kontaktu nie otrzymali\u015bmy odpowiedzi, dlatego zamykamy zg\u0142oszenie."
     : document.getElementById("s3-answer").value;
 
   const payload = {
@@ -753,7 +753,7 @@ s3GenBtn.addEventListener("click", async () => {
 
     showToast("Wygenerowano PDF");
   } catch {
-    showToast("Błąd generowania", "error");
+    showToast("B\u0142\u0105d generowania", "error");
   }
 });
 
