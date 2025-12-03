@@ -210,12 +210,15 @@ body {
   background: #111827;
   color: #fff;
   box-shadow: 0 6px 18px rgba(17, 24, 39, 0.25);
+  order: 2;
+  margin-left: 16px;
 }
 
 .topbar__actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  order: 1;
 }
 
 .topbar .btn-ghost {
