@@ -746,7 +746,10 @@ s3GenBtn.addEventListener("click", async () => {
   try {
     const res = await fetch(GENERATE_WEBHOOK, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/pdf"
+      },
       body: JSON.stringify(payload)
     });
 
@@ -754,6 +757,15 @@ s3GenBtn.addEventListener("click", async () => {
       const text = await res.text();
       console.error("Generator response error", res.status, text);
       showToast(`Błąd generowania (${res.status})`, "error");
+      return;
+    }
+
+    // jeśli backend zwróci JSON zamiast PDF, pokaż go w konsoli
+    const ct = res.headers.get("content-type") || "";
+    if (!ct.includes("application/pdf")) {
+      const text = await res.text();
+      console.error("Generator expected PDF, got:", ct, text);
+      showToast("Odpowiedź nie jest PDF", "error");
       return;
     }
 
