@@ -745,10 +745,17 @@ s3GenBtn.addEventListener("click", async () => {
 
   try {
     const res = await fetch(GENERATE_WEBHOOK, {
-      method: "GET",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Generator response error", res.status, text);
+      showToast(`Błąd generowania (${res.status})`, "error");
+      return;
+    }
 
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
