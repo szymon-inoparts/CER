@@ -687,6 +687,22 @@ if (s3NoRespCheckbox) {
   });
 }
 
+// automatyczna odpowiedz przy braku odpowiedzi klienta
+if (s3NoRespCheckbox) {
+  s3NoRespCheckbox.addEventListener("change", () => {
+    if (!s3AnswerInput) return;
+    if (s3NoRespCheckbox.checked) {
+      s3AnswerInput.value = AUTO_ANSWER_TEXT;
+      s3AnswerInput.readOnly = true;
+      if (s3AnswerField) s3AnswerField.classList.add("hidden");
+    } else {
+      s3AnswerInput.readOnly = false;
+      if (s3AnswerField) s3AnswerField.classList.remove("hidden");
+      s3AnswerInput.value = "";
+    }
+  });
+}
+
 /* Pobieranie danych zgoszenia */
 s3FetchBtn.addEventListener("click", async () => {
   const num = s3NumberInput.value.trim();
