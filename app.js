@@ -340,9 +340,9 @@ function resetPage3() {
   });
 }
 
-injectResetButton("page-1", resetPage1);
-injectResetButton("page-2", resetPage2);
-injectResetButton("page-3", resetPage3);
+injectResetButton("page-2", resetPage1);
+injectResetButton("page-3", resetPage2);
+injectResetButton("page-4", resetPage3);
 
 function toggleRowDetails(id, btn) {
   const row = document.querySelector(`.expand-row[data-exp-id="${id}"]`);
@@ -466,7 +466,7 @@ const s2ListBox = document.getElementById("s2-list");
 
 // ustawienie kontrolek w jednej linii + usuniecie zbdnych separatorw
 (function arrangeS2Controls() {
-  const section = document.getElementById("page-2");
+  const section = document.getElementById("page-3");
   const searchField = s2SearchInput?.closest(".field");
   const rangeRow = s2RangeSelect?.closest(".row-inline");
   const rangeField = rangeRow ? rangeRow.parentElement : null;

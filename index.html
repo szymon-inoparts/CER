@@ -21,34 +21,45 @@
   </div>
 </div>
 
-<!-- SIDEBAR (A1  ikony + tekst po hover) -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="sidebar-logo-icon">C</div>
-    <div class="sidebar-logo-text">CER</div>
-  </div>
-
-  <nav class="sidebar-nav">
-    <button type="button" class="sidebar-item sidebar-item-active" onclick="switchPage(1)">
-      <span class="sidebar-item-icon"></span>
-      <span class="sidebar-item-label">Dodaj zg&#322;oszenie</span>
-    </button>
-    <button type="button" class="sidebar-item" onclick="switchPage(2)">
-      <span class="sidebar-item-icon"></span>
-      <span class="sidebar-item-label">Ewidencja</span>
-    </button>
-    <button type="button" class="sidebar-item" onclick="switchPage(3)">
-      <span class="sidebar-item-icon"></span>
-      <span class="sidebar-item-label">Generator odpowiedzi</span>
-    </button>
-  </nav>
-</aside>
-
-<!-- G&#321;&#211;WNY OBSZAR STRONY -->
 <div class="layout-main">
+  <header class="topbar">
+    <div class="topbar__logo">CER</div>
+    <div class="topbar__actions">
+      <button class="btn btn-ghost" onclick="switchPage(1)">G&#322;&#243;wna</button>
+      <button class="btn btn-ghost" onclick="switchPage(2)">Dodaj zg&#322;oszenie</button>
+      <button class="btn btn-ghost" onclick="switchPage(3)">Ewidencja</button>
+      <button class="btn btn-ghost" onclick="switchPage(4)">Generator</button>
+    </div>
+  </header>
 
-  <!-- STRONA 1: DODAJ ZG&#321;OSZENIE -->
+  <!-- STRONA 1: G&#321;&#211;WNA -->
   <section id="page-1" class="page page-active">
+    <h1>Panel g&#322;&#243;wny</h1>
+    <p class="section-desc">Szybki start i skr&#243;ty do modu&#322;&#243;w.</p>
+    <div class="home-grid">
+      <div class="card home-primary">
+        <h3>Instrukcja u&#380;ytkowania</h3>
+        <p class="muted">Tu wstawisz opis krok po kroku jak pracowa&#263; z modu&#322;ami CER.</p>
+      </div>
+      <div class="home-right">
+        <div class="card home-secondary">
+          <h3>Panel pomocniczy</h3>
+          <p class="muted">Miejsce na dodatkowe dane lub widok live.</p>
+        </div>
+        <div class="card home-modules">
+          <h3>Modu&#322;y</h3>
+          <div class="home-modules-grid">
+            <button class="module-tile" onclick="switchPage(2)">Dodaj zg&#322;oszenie</button>
+            <button class="module-tile" onclick="switchPage(3)">Ewidencja</button>
+            <button class="module-tile" onclick="switchPage(4)">Generator odpowiedzi</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRONA 2: DODAJ ZG&#321;OSZENIE -->
+  <section id="page-2" class="page">
     <h1>Dodaj nowe zg&#322;oszenie</h1>
     <p class="section-desc">Uzupe&#322;nij dane i zapisz nowe zg&#322;oszenie reklamacyjne</p>
 
@@ -160,10 +171,19 @@
 
       <button class="btn btn-primary" id="s1-save">Zapisz zg&#322;oszenie</button>
     </div>
+
+    <div class="module-footer">
+      <span class="muted">Nawigacja modu&#322;&#243;w</span>
+      <div class="module-footer__actions">
+        <button class="btn" onclick="switchPage(3)">Ewidencja</button>
+        <button class="btn" onclick="switchPage(4)">Generator</button>
+        <button class="btn btn-ghost" onclick="switchPage(1)">Powr&#243;t do g&#322;&#243;wnej</button>
+      </div>
+    </div>
   </section>
 
     <!-- STRONA 2: EWIDENCJA -->
-  <section id="page-2" class="page">
+  <section id="page-3" class="page">
     <h1>Ewidencja zg&#322;osze&#324;</h1>
 
     <div class="s2-controls">
@@ -194,9 +214,18 @@
     <div id="s2-single-result" class="box hidden"></div>
 
     <div id="s2-list" class="table-box hidden"></div>
+
+    <div class="module-footer">
+      <span class="muted">Nawigacja modu&#322;&#243;w</span>
+      <div class="module-footer__actions">
+        <button class="btn" onclick="switchPage(2)">Dodaj zg&#322;oszenie</button>
+        <button class="btn" onclick="switchPage(4)">Generator</button>
+        <button class="btn btn-ghost" onclick="switchPage(1)">Powr&#243;t do g&#322;&#243;wnej</button>
+      </div>
+    </div>
   </section>
 <!-- STRONA 3: GENERATOR ODPOWIEDZI -->
-  <section id="page-3" class="page">
+  <section id="page-4" class="page">
     <h1>Generator odpowiedzi</h1>
 
     <div class="field">
@@ -244,6 +273,15 @@
     </div>
 
     <button class="btn btn-primary" id="s3-generate">Generuj odpowied&#378;</button>
+
+    <div class="module-footer">
+      <span class="muted">Nawigacja modu&#322;&#243;w</span>
+      <div class="module-footer__actions">
+        <button class="btn" onclick="switchPage(2)">Dodaj zg&#322;oszenie</button>
+        <button class="btn" onclick="switchPage(3)">Ewidencja</button>
+        <button class="btn btn-ghost" onclick="switchPage(1)">Powr&#243;t do g&#322;&#243;wnej</button>
+      </div>
+    </div>
   </section>
 
 </div>
