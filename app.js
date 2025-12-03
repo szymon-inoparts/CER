@@ -328,6 +328,8 @@ function resetPage3() {
   document.getElementById("s3-decision").selectedIndex = 0;
   document.getElementById("s3-noresp").checked = false;
   document.getElementById("s3-answer").value = "";
+  if (s3AnswerField) s3AnswerField.classList.remove("hidden");
+  if (s3AnswerInput) s3AnswerInput.readOnly = false;
   selectedLang = "PL";
   s3CurrentClaim = null;
   document.querySelectorAll(".lang-btn").forEach((btn) => {
@@ -651,8 +653,13 @@ const s3FetchBtn = document.getElementById("s3-fetch");
 const s3NumberInput = document.getElementById("s3-number");
 const s3DetailsBox = document.getElementById("s3-details");
 const s3GenBtn = document.getElementById("s3-generate");
+const s3NoRespCheckbox = document.getElementById("s3-noresp");
+const s3AnswerInput = document.getElementById("s3-answer");
+const s3AnswerField = s3AnswerInput ? s3AnswerInput.closest(".field") : null;
 let selectedLang = "PL";
 let s3CurrentClaim = null;
+const AUTO_ANSWER_TEXT =
+  "Brak mozliwosci weryfikacji: Pomimo naszych prob kontaktu nie otrzymalismy odpowiedzi, dlatego zamykamy zgloszenie.";
 
 /* Zmiana jzyka tumaczenia */
 document.querySelectorAll(".lang-btn").forEach((btn) => {
@@ -663,6 +670,22 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
     btn.style.color = "#fff";
   });
 });
+
+// automatyczna odpowiedz przy braku odpowiedzi klienta
+if (s3NoRespCheckbox) {
+  s3NoRespCheckbox.addEventListener("change", () => {
+    if (!s3AnswerInput) return;
+    if (s3NoRespCheckbox.checked) {
+      s3AnswerInput.value = AUTO_ANSWER_TEXT;
+      s3AnswerInput.readOnly = true;
+      if (s3AnswerField) s3AnswerField.classList.add("hidden");
+    } else {
+      s3AnswerInput.readOnly = false;
+      if (s3AnswerField) s3AnswerField.classList.remove("hidden");
+      s3AnswerInput.value = "";
+    }
+  });
+}
 
 /* Pobieranie danych zgoszenia */
 s3FetchBtn.addEventListener("click", async () => {
@@ -712,9 +735,7 @@ s3GenBtn.addEventListener("click", async () => {
   const noResp = document.getElementById("s3-noresp").checked;
   if (!num) return showToast("Podaj numer", "error");
 
-  const answer = noResp
-    ? "Brak mozliwosci weryfikacji: Pomimo naszych prob kontaktu nie otrzymalismy odpowiedzi, dlatego zamykamy zgloszenie."
-    : document.getElementById("s3-answer").value;
+  const answer = document.getElementById("s3-answer").value;
 
   const payload = {
     number: num,
