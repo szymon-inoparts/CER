@@ -70,7 +70,7 @@ function formatDate(value) {
 
 function formatCurrency(value) {
   if (value === null || value === undefined || value === "") return "-";
-  const cleaned = typeof value === "string" \u0179 value.replace(",", ".") : value;
+  const cleaned = typeof value === "string" ? value.replace(",", ".") : value;
   const num = Number(cleaned);
   if (Number.isNaN(num)) return value;
   return `${num.toFixed(2)} zł`;
@@ -84,14 +84,14 @@ function escapeHtml(str = "") {
 }
 
 function safeJsonParse(text) {
-  const cleaned = String(text \u0179 "").trim().replace(/^\uFEFF/, "");
+  const cleaned = String(text || "").trim().replace(/^\uFEFF/, "");
   try {
     return { value: JSON.parse(cleaned), error: null };
   } catch (err) {
-    // sprbuj ci do pierwszego { lub [
+    // spróbuj ściąć do pierwszego { lub [
     const brace = cleaned.indexOf("{");
     const bracket = cleaned.indexOf("[");
-    const idx = brace >= 0 && bracket >= 0 \u0179 Math.min(brace, bracket) : brace >= 0 \u0179 brace : bracket;
+    const idx = brace >= 0 && bracket >= 0 ? Math.min(brace, bracket) : brace >= 0 ? brace : bracket;
     if (idx > 0) {
       const sliced = cleaned.slice(idx);
       try {
@@ -105,7 +105,7 @@ function safeJsonParse(text) {
 }
 
 function parseObjectsFromText(rawText) {
-  const matches = String(rawText \u0179 "").match(/{[^]*\u0179}/g);
+  const matches = String(rawText || "").match(/{[^]*?}/g);
   if (!matches) return [];
   const out = [];
   matches.forEach((m) => {
@@ -152,12 +152,12 @@ function toArray(payload) {
 
 function unwrapArray(payload) {
   const base = toArray(payload);
-  return base.map((el) => (el && el.json && typeof el.json === "object" \u0179 { ...el, ...el.json } : el));
+  return base.map((el) => (el && el.json && typeof el.json === "object" ? { ...el, ...el.json } : el));
 }
 
 function normalizeClaim(raw = {}) {
   // Obsuga odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementw
-  const flat = raw.json && typeof raw.json === "object" \u0179 { ...raw, ...raw.json } : raw;
+  const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
   const dates = flat.dates || {};
   const customerValue =
     flat.customer ||
@@ -170,15 +170,15 @@ function normalizeClaim(raw = {}) {
   return {
     claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
     orderId: flat.orderId || flat.order || "",
-    customer: customerValue !== undefined && customerValue !== null \u0179 String(customerValue) : "",
+    customer: customerValue !== undefined && customerValue !== null ? String(customerValue) : "",
     marketplace: flat.marketplace || flat.platform || "",
-    status: flat.status || (flat.isClosed \u0179 "Zakończone" : ""),
+    status: flat.status || (flat.isClosed ? "Zakończone" : ""),
     value:
-      flat.value \u0179
-      flat.valueNumber \u0179
-      flat.valueRaw \u0179
-      flat.amount \u0179
-      flat.total \u0179
+      flat.value ??
+      flat.valueNumber ??
+      flat.valueRaw ??
+      flat.amount ??
+      flat.total ??
       (flat.pricing && flat.pricing.total),
     reason: flat.reason,
     type: flat.type,
@@ -200,7 +200,7 @@ function renderClaimCard(raw, actionHtml = "") {
       <div class="claim-card__header">
         <div>
           <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
-          <div class="claim-card__order">Zamwienie: ${claim.orderId || "-"}</div>
+          <div class="claim-card__order">Zamówienie: ${claim.orderId || "-"}</div>
         </div>
         <div class="claim-card__status">${claim.status || ""}</div>
       </div>
@@ -231,8 +231,8 @@ function renderClaimCard(raw, actionHtml = "") {
         <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
         <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
         <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
-        ${claim.agent \u0179 `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
-        ${claim.myNewField \u0179 `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
+        ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
+        ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
       </div>
 
       <div class="claim-card__actions">${actionHtml || ""}</div>
@@ -341,8 +341,8 @@ function toggleRowDetails(id, btn) {
   const row = document.querySelector(`.expand-row[data-exp-id="${id}"]`);
   if (!row) return;
   const isOpen = row.style.display !== "none";
-  row.style.display = isOpen \u0179 "none" : "table-row";
-  if (btn) btn.textContent = isOpen \u0179 "v" : "^";
+  row.style.display = isOpen ? "none" : "table-row";
+  if (btn) btn.textContent = isOpen ? "v" : "^";
 }
 window.toggleRowDetails = toggleRowDetails;
 
@@ -365,7 +365,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
   try {
     // Uycie jawnego linku webhooka pomaga unika bdnych skadek i pokazuje peny adres dla GitHub Pages
-    const res = await fetch(`${SELLASIST_WEBHOOK}\u0179order=${encodeURIComponent(num)}`);
+    const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
     s1FetchedOrder = data;
 
@@ -384,7 +384,7 @@ s1FetchBtn.addEventListener("click", async () => {
         <div class="product-row">
           <label>
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-            ${p.name} (${p.sku}) - ${p.price \u0179\u0179 ""} zł zamówiono: ${p.quantity}
+            ${p.name} (${p.sku}) - ${p.price ?? ""} zł zamówiono: ${p.quantity}
           </label>
           <input type="number" class="s1-prod-qty" data-index="${idx}" min="0" max="${p.quantity}" value="0" />
         </div>
@@ -421,14 +421,14 @@ s1SaveBtn.addEventListener("click", async () => {
     products: Array.from(document.querySelectorAll(".product-row")).map((row, idx) => {
       const check = row.querySelector(".s1-prod-check");
       const qty = row.querySelector(".s1-prod-qty");
-      const meta = s1FetchedOrder\u0179.products\u0179.[idx] || {};
+      const meta = s1FetchedOrder?.products?.[idx] || {};
       return {
         include: check.checked,
         qty: Number(qty.value),
         sku: meta.sku,
         name: meta.name,
         orderedQuantity: meta.quantity,
-        price: Number(meta.price \u0179\u0179 0)
+        price: Number(meta.price ?? 0)
       };
     })
   };
@@ -460,9 +460,9 @@ const s2ListBox = document.getElementById("s2-list");
 // ustawienie kontrolek w jednej linii + usuniecie zbdnych separatorw
 (function arrangeS2Controls() {
   const section = document.getElementById("page-2");
-  const searchField = s2SearchInput\u0179.closest(".field");
-  const rangeRow = s2RangeSelect\u0179.closest(".row-inline");
-  const rangeField = rangeRow \u0179 rangeRow.parentElement : null;
+  const searchField = s2SearchInput?.closest(".field");
+  const rangeRow = s2RangeSelect?.closest(".row-inline");
+  const rangeField = rangeRow ? rangeRow.parentElement : null;
   const hr = section.querySelector("hr");
   const h3 = section.querySelector("h3");
 
@@ -499,9 +499,9 @@ s2SearchBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   try {
-    const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}\u0179order=${encodeURIComponent(num)}`);
+    const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
-    const claim = normalizeClaim(Array.isArray(data) \u0179 data[0] : data);
+    const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
     s2SingleBox.classList.remove("hidden");
     s2SingleBox.innerHTML = renderClaimCard(
       claim,
@@ -521,7 +521,7 @@ s2RangeBtn.addEventListener("click", async () => {
   try {
     // wysyamy preset (5 wariantw z selecta) jako query param GET
     const params = new URLSearchParams({ preset: range, range });
-    const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}\u0179${params.toString()}`);
+    const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
     const rawText = await res.text();
 
     // proste parsowanie: json -> array | object -> array; jak nie, to wycignij obiekty z tekstu
@@ -603,7 +603,7 @@ ${escapeHtml(rawText)}</pre>
       const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
       html += `
         <tr>
-          <td>${claim.rowNumber \u0179 idx + 1}</td>
+          <td>${claim.rowNumber ? claim.rowNumber : idx + 1}</td>
           <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId}'">${claim.claimId || "-"}</td>
           <td>${claim.orderId || "-"}</td>
           <td>${claim.customer || "-"}</td>
@@ -663,9 +663,9 @@ s3FetchBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   try {
-    const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}\u0179number=${encodeURIComponent(num)}`);
+    const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}?number=${encodeURIComponent(num)}`);
     const data = await res.json();
-    const claim = normalizeClaim(Array.isArray(data) \u0179 data[0] : data);
+    const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
     s3CurrentClaim = claim;
 
     s3DetailsBox.classList.remove("hidden");
@@ -706,7 +706,7 @@ s3GenBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   const answer = noResp
-    \u0179 "Brak możliwości weryfikacji: Pomimo naszych prób kontaktu nie otrzymaliśmy odpowiedzi, dlatego zamykamy zgłoszenie."
+    ? "Brak możliwości weryfikacji: Pomimo naszych prób kontaktu nie otrzymaliśmy odpowiedzi, dlatego zamykamy zgłoszenie."
     : document.getElementById("s3-answer").value;
 
   const payload = {
@@ -716,7 +716,7 @@ s3GenBtn.addEventListener("click", async () => {
     answer,
     noResponse: noResp,
     claim: s3CurrentClaim
-      \u0179 {
+      ? {
           claimId: s3CurrentClaim.claimId,
           orderId: s3CurrentClaim.orderId,
           customer: s3CurrentClaim.customer,
@@ -756,3 +756,4 @@ s3GenBtn.addEventListener("click", async () => {
     showToast("Błąd generowania", "error");
   }
 });
+
