@@ -713,7 +713,7 @@ s3GenBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   const answer = noResp
-    ? "Brak mo\u017cliwo\u015bci weryfikacji: Pomimo naszych pr\u00f3b kontaktu nie otrzymali\u015bmy odpowiedzi, dlatego zamykamy zg\u0142oszenie."
+    ? "Brak mozliwosci weryfikacji: Pomimo naszych prob kontaktu nie otrzymalismy odpowiedzi, dlatego zamykamy zgloszenie."
     : document.getElementById("s3-answer").value;
 
   const payload = {
@@ -743,6 +743,9 @@ s3GenBtn.addEventListener("click", async () => {
       : null
   };
 
+  console.info("CER generate -> sending payload", payload);
+  showToast("Wysylam zadanie...", "success");
+
   try {
     const res = await fetch(GENERATE_WEBHOOK, {
       method: "POST",
@@ -756,16 +759,16 @@ s3GenBtn.addEventListener("click", async () => {
     if (!res.ok) {
       const text = await res.text();
       console.error("Generator response error", res.status, text);
-      showToast(`Błąd generowania (${res.status})`, "error");
+      showToast(`Blad generowania (${res.status})`, "error");
       return;
     }
 
-    // jeśli backend zwróci JSON zamiast PDF, pokaż go w konsoli
     const ct = res.headers.get("content-type") || "";
+    console.info("CER generate -> response headers", { status: res.status, ct });
     if (!ct.includes("application/pdf")) {
       const text = await res.text();
       console.error("Generator expected PDF, got:", ct, text);
-      showToast("Odpowiedź nie jest PDF", "error");
+      showToast("Odpowiedz nie jest PDF", "error");
       return;
     }
 
@@ -778,8 +781,8 @@ s3GenBtn.addEventListener("click", async () => {
     a.click();
 
     showToast("Wygenerowano PDF");
-  } catch {
-    showToast("B\u0142\u0105d generowania", "error");
+  } catch (err) {
+    console.error("CER generate -> network error", err);
+    showToast("Blad generowania", "error");
   }
 });
-
