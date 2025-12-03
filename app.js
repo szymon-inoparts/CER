@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    app.js  pe\u0142ny JS do obs\u0142ugi 3 podstron CER
    ============================================================ */
 
@@ -745,7 +745,7 @@ s3GenBtn.addEventListener("click", async () => {
 
   try {
     const res = await fetch(GENERATE_WEBHOOK, {
-      method: "POST",
+      method: "GET",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
