@@ -672,6 +672,13 @@ th {
   width: 170px;
 }
 
- . f i e l d - i n l i n e { d i s p l a y : f l e x ; a l i g n - i t e m s : c e n t e r ; g a p : 8 p x ; m a r g i n - t o p : 8 p x ; } 
- . f i e l d . h i d d e n { d i s p l a y : n o n e ; }  
- 
+.field-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.field.hidden {
+  display: none;
+}

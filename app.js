@@ -330,6 +330,7 @@ function resetPage3() {
   document.getElementById("s3-answer").value = "";
   if (s3AnswerField) s3AnswerField.classList.remove("hidden");
   if (s3AnswerInput) s3AnswerInput.readOnly = false;
+  if (typeof updateNoResponseState === "function") updateNoResponseState();
   selectedLang = "PL";
   s3CurrentClaim = null;
   document.querySelectorAll(".lang-btn").forEach((btn) => {
@@ -672,19 +673,21 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
 });
 
 // automatyczna odpowiedz przy braku odpowiedzi klienta
+function updateNoResponseState() {
+  if (!s3NoRespCheckbox || !s3AnswerInput) return;
+  if (s3NoRespCheckbox.checked) {
+    s3AnswerInput.value = AUTO_ANSWER_TEXT;
+    s3AnswerInput.readOnly = true;
+    if (s3AnswerField) s3AnswerField.classList.add("hidden");
+  } else {
+    s3AnswerInput.readOnly = false;
+    if (s3AnswerField) s3AnswerField.classList.remove("hidden");
+    s3AnswerInput.value = "";
+  }
+}
 if (s3NoRespCheckbox) {
-  s3NoRespCheckbox.addEventListener("change", () => {
-    if (!s3AnswerInput) return;
-    if (s3NoRespCheckbox.checked) {
-      s3AnswerInput.value = AUTO_ANSWER_TEXT;
-      s3AnswerInput.readOnly = true;
-      if (s3AnswerField) s3AnswerField.classList.add("hidden");
-    } else {
-      s3AnswerInput.readOnly = false;
-      if (s3AnswerField) s3AnswerField.classList.remove("hidden");
-      s3AnswerInput.value = "";
-    }
-  });
+  s3NoRespCheckbox.addEventListener("change", updateNoResponseState);
+  updateNoResponseState();
 }
 
 // automatyczna odpowiedz przy braku odpowiedzi klienta
