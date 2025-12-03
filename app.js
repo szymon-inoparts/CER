@@ -330,6 +330,7 @@ function resetPage3() {
   document.getElementById("s3-answer").value = "";
   if (s3AnswerField) s3AnswerField.classList.remove("hidden");
   if (s3AnswerInput) s3AnswerInput.readOnly = false;
+  if (s3AutoNote) s3AutoNote.classList.add("hidden");
   if (typeof updateNoResponseState === "function") updateNoResponseState();
   selectedLang = "PL";
   s3CurrentClaim = null;
@@ -657,6 +658,7 @@ const s3GenBtn = document.getElementById("s3-generate");
 const s3NoRespCheckbox = document.getElementById("s3-noresp");
 const s3AnswerInput = document.getElementById("s3-answer");
 const s3AnswerField = s3AnswerInput ? s3AnswerInput.closest(".field") : null;
+const s3AutoNote = document.getElementById("s3-auto-note");
 let selectedLang = "PL";
 let s3CurrentClaim = null;
 const AUTO_ANSWER_TEXT =
@@ -679,10 +681,12 @@ function updateNoResponseState() {
     s3AnswerInput.value = AUTO_ANSWER_TEXT;
     s3AnswerInput.readOnly = true;
     if (s3AnswerField) s3AnswerField.classList.add("hidden");
+    if (s3AutoNote) s3AutoNote.classList.remove("hidden");
   } else {
     s3AnswerInput.readOnly = false;
     if (s3AnswerField) s3AnswerField.classList.remove("hidden");
     s3AnswerInput.value = "";
+    if (s3AutoNote) s3AutoNote.classList.add("hidden");
   }
 }
 if (s3NoRespCheckbox) {
