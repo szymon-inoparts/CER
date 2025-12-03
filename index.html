@@ -10,14 +10,14 @@
 </head>
 <body>
 
-<!-- BLOKADA HASEM -->
+<!-- BLOKADA HASŁEM -->
 <div id="password-overlay" class="auth-overlay">
   <div class="auth-card">
-    <h2>Wprowad haso</h2>
-    <p>Aby przej do systemu CER, wpisz haso dostpu.</p>
-    <input id="password-input" type="password" placeholder="Haso" autocomplete="off" />
+    <h2>Wprowadź hasło</h2>
+    <p>Aby przejść do systemu CER, wpisz hasło dostępu.</p>
+    <input id="password-input" type="password" placeholder="Hasło" autocomplete="off" />
     <button class="btn btn-primary" id="password-submit">Odblokuj</button>
-    <p id="password-error" class="auth-error hidden">Nieprawidowe haso. Sprbuj ponownie.</p>
+    <p id="password-error" class="auth-error hidden">Nieprawidłowe hasło. Spróbuj ponownie.</p>
   </div>
 </div>
 
@@ -31,7 +31,7 @@
   <nav class="sidebar-nav">
     <button type="button" class="sidebar-item sidebar-item-active" onclick="switchPage(1)">
       <span class="sidebar-item-icon"></span>
-      <span class="sidebar-item-label">Dodaj zgoszenie</span>
+      <span class="sidebar-item-label">Dodaj zgłoszenie</span>
     </button>
     <button type="button" class="sidebar-item" onclick="switchPage(2)">
       <span class="sidebar-item-icon"></span>
@@ -44,40 +44,40 @@
   </nav>
 </aside>
 
-<!-- GWNY OBSZAR STRONY -->
+<!-- GŁÓWNY OBSZAR STRONY -->
 <div class="layout-main">
 
-  <!-- STRONA 1: DODAJ ZGOSZENIE -->
+  <!-- STRONA 1: DODAJ ZGŁOSZENIE -->
   <section id="page-1" class="page page-active">
-    <h1>Dodaj nowe zgoszenie</h1>
-    <p class="section-desc">Uzupenij dane i zapisz nowe zgoszenie reklamacyjne</p>
+    <h1>Dodaj nowe zgłoszenie</h1>
+    <p class="section-desc">Uzupełnij dane i zapisz nowe zgłoszenie reklamacyjne</p>
 
-    <!-- Numer zamwienia + pobieranie danych -->
+    <!-- Numer zamówienia + pobieranie danych -->
     <div class="field">
-      <label>Numer zamwienia</label>
+      <label>Numer zamówienia</label>
       <div class="row-inline">
-        <input id="s1-order" type="text" placeholder="Wpisz numer zamwienia..." />
-        <button class="btn" id="s1-fetch">Pobierz dane zamwienia</button>
+        <input id="s1-order" type="text" placeholder="Wpisz numer zamówienia..." />
+        <button class="btn" id="s1-fetch">Pobierz dane zamówienia</button>
       </div>
     </div>
 
-    <!-- Sekcja ktra rozwija si po pobraniu danych -->
+    <!-- Sekcja która rozwija się po pobraniu danych -->
     <div id="s1-order-data" class="box hidden">
-      <h3>Dane zamwienia</h3>
+      <h3>Dane zamówienia</h3>
 
-      <!-- Lista produktw -->
+      <!-- Lista produktów -->
       <div class="field">
-        <label>Produkty w zamwieniu</label>
+        <label>Produkty w zamówieniu</label>
         <div id="s1-products"></div>
       </div>
 
       <div class="grid-2">
         <div class="field">
-          <label>Koszt wysyki</label>
+          <label>Koszt wysyłki</label>
           <input id="s1-shipping" type="text" disabled />
         </div>
         <div class="field">
-          <label>Data zamwienia</label>
+          <label>Data zamówienia</label>
           <input id="s1-date" type="text" disabled />
         </div>
       </div>
@@ -88,7 +88,7 @@
           <input id="s1-country" type="text" disabled />
         </div>
         <div class="field">
-          <label>Platforma sprzeday</label>
+          <label>Platforma sprzedaży</label>
           <input id="s1-platform" type="text" disabled />
         </div>
       </div>
@@ -96,7 +96,7 @@
       <h3>Dane klienta</h3>
       <div class="grid-2">
         <div class="field">
-          <label>Imi i nazwisko</label>
+          <label>Imię i nazwisko</label>
           <input id="s1-client-name" type="text" disabled />
         </div>
         <div class="field">
@@ -116,13 +116,13 @@
       </div>
     </div>
 
-    <!-- Pola uzupeniane rcznie -->
+    <!-- Pola uzupełniane ręcznie -->
     <div class="box">
-      <h3>Dane zgoszenia</h3>
+      <h3>Dane zgłoszenia</h3>
 
       <div class="grid-2">
         <div class="field">
-          <label>Data zgoszenia</label>
+          <label>Data zgłoszenia</label>
           <input id="s1-report-date" type="date" />
         </div>
         <div class="field">
@@ -143,8 +143,8 @@
       </div>
 
       <div class="field">
-        <label>Pow?d reklamacji</label>
-        <textarea id="s1-reason" placeholder="Opisz pow?d reklamacji..."></textarea>
+        <label>Powód reklamacji</label>
+        <textarea id="s1-reason" placeholder="Opisz powód reklamacji..."></textarea>
       </div>
 
       <div class="grid-2">
@@ -158,35 +158,35 @@
         </div>
       </div>
 
-      <button class="btn btn-primary" id="s1-save">Zapisz zgoszenie</button>
+      <button class="btn btn-primary" id="s1-save">Zapisz zgłoszenie</button>
     </div>
   </section>
 
     <!-- STRONA 2: EWIDENCJA -->
   <section id="page-2" class="page">
-    <h1>Ewidencja zgosze</h1>
+    <h1>Ewidencja zgłoszeń</h1>
 
     <div class="s2-controls">
       <div class="field">
-        <label>Szukaj pojedynczego zgoszenia</label>
+        <label>Szukaj pojedynczego zgłoszenia</label>
         <div class="row-inline">
-          <input id="s2-search" type="text" placeholder="Numer reklamacji lub zamwienia" />
+          <input id="s2-search" type="text" placeholder="Numer reklamacji lub zamówienia" />
           <button class="btn" id="s2-search-btn">Pobierz</button>
         </div>
       </div>
 
       <div class="field">
-        <label>Pobierz wiele zgosze</label>
+        <label>Pobierz wiele zgłoszeń</label>
         <div class="row-inline">
           <select id="s2-range">
             <option value="last-7">Ostatnie 7 dni</option>
             <option value="last-14">Ostatnie 14 dni</option>
-            <option value="last-month">Ostatni miesiac</option>
+            <option value="last-month">Ostatni miesiąc</option>
             <option value="last-20">Ostatnie 20 reklamacji</option>
             <option value="last-50">Ostatnie 50 reklamacji</option>
-            <option value="needs-response">Wymagaj?ce odpowiedzi</option>
+            <option value="needs-response">Wymagające odpowiedzi</option>
           </select>
-          <button class="btn" id="s2-range-btn">Pobierz liste</button>
+          <button class="btn" id="s2-range-btn">Pobierz listę</button>
         </div>
       </div>
     </div>
@@ -200,10 +200,10 @@
     <h1>Generator odpowiedzi</h1>
 
     <div class="field">
-      <label>Numer reklamacji / zamwienia</label>
+      <label>Numer reklamacji / zamówienia</label>
       <div class="row-inline">
         <input id="s3-number" type="text" placeholder="np. RMA-123" />
-        <button class="btn" id="s3-fetch">Poka dane</button>
+        <button class="btn" id="s3-fetch">Pokaż dane</button>
       </div>
     </div>
 
@@ -223,16 +223,16 @@
 
     <div class="field-inline">
       <input id="s3-noresp" type="checkbox" />
-      <label for="s3-noresp">Brak odpowiedzi klienta ? wstaw automat</label>
+      <label for="s3-noresp">Brak odpowiedzi klienta – wstaw automat</label>
     </div>
 
     <div class="field">
-      <label>Odpowied? (PL)</label>
-      <textarea id="s3-answer" placeholder="Tu wpisz odpowied?..."></textarea>
+      <label>Odpowiedź (PL)</label>
+      <textarea id="s3-answer" placeholder="Tu wpisz odpowiedź..."></textarea>
     </div>
 
     <div class="field">
-      <label>Jzyk tumaczenia</label>
+      <label>Język tłumaczenia</label>
       <div class="row-inline">
         <button class="lang-btn" data-lang="PL">PL</button>
         <button class="lang-btn" data-lang="CZ">CZ</button>
@@ -243,7 +243,7 @@
       </div>
     </div>
 
-    <button class="btn btn-primary" id="s3-generate">Generuj odpowied?</button>
+    <button class="btn btn-primary" id="s3-generate">Generuj odpowiedź</button>
   </section>
 
 </div>
