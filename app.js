@@ -14,32 +14,39 @@ const SHOW_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/wy%C
 const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-odpowiedz";
 
 /* ------------------------------------------------------------
-   BLOKADA HAS\u0141EM  proste sprawdzenie na wej\u015bciu
------------------------------------------------------------- */
+   BLOKADA HAS\u0141EM  prosty resetowany mechanizm
+------------------------------------------------------------- */
 const PASSWORD_VALUE = "inoparts";
-const passwordOverlay = document.getElementById("password-overlay");
-const passwordInput = document.getElementById("password-input");
-const passwordSubmit = document.getElementById("password-submit");
-const passwordError = document.getElementById("password-error");
 
-function unlockApp() {
-  if (passwordInput.value.trim() === PASSWORD_VALUE) {
-    passwordOverlay.classList.add("hidden");
-    passwordError.classList.add("hidden");
-    passwordInput.value = "";
-  } else {
-    passwordError.classList.remove("hidden");
-    passwordInput.value = "";
-    passwordInput.focus();
-  }
+function initPasswordGate() {
+  const overlay = document.getElementById("password-overlay");
+  const input = document.getElementById("password-input");
+  const submit = document.getElementById("password-submit");
+  const errorBox = document.getElementById("password-error");
+
+  if (!overlay || !input || !submit || !errorBox) return;
+
+  const unlock = () => {
+    if (input.value.trim() === PASSWORD_VALUE) {
+      overlay.classList.add("hidden");
+      errorBox.classList.add("hidden");
+      input.value = "";
+    } else {
+      errorBox.classList.remove("hidden");
+      input.value = "";
+      input.focus();
+    }
+  };
+
+  submit.addEventListener("click", unlock);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") unlock();
+  });
+
+  setTimeout(() => input.focus(), 0);
 }
 
-passwordSubmit.addEventListener("click", unlockApp);
-passwordInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") unlockApp();
-});
-
-window.addEventListener("load", () => passwordInput.focus());
+document.addEventListener("DOMContentLoaded", initPasswordGate);
 
 /* ------------------------------------------------------------
    TOAST  powiadomienia w rogu
