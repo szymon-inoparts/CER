@@ -1,9 +1,9 @@
-﻿/* ============================================================
-   app.js â€“ peĹ‚ny JS do obsĹ‚ugi 3 podstron CER
+/* ============================================================
+   app.js  peny JS do obsugi 3 podstron CER
    ============================================================ */
 
 /* ------------------------------------------------------------
-   GLOBALNE USTAWIENIA â€“ uzupeĹ‚nisz swoim linkiem do webhooka
+   GLOBALNE USTAWIENIA  uzupenisz swoim linkiem do webhooka
 ------------------------------------------------------------ */
 const N8N_BASE_URL = "https://kamil-inoparts.app.n8n.cloud/webhook"; // <<< PODMIENISZ
 const SELLASIST_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-z-sellasist";
@@ -14,7 +14,7 @@ const SHOW_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/wy%C
 const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-odpowiedz";
 
 /* ------------------------------------------------------------
-   BLOKADA HASĹEM â€“ proste sprawdzenie na wejĹ›ciu
+   BLOKADA HASEM  proste sprawdzenie na wejciu
 ------------------------------------------------------------ */
 const PASSWORD_VALUE = "inoparts";
 const passwordOverlay = document.getElementById("password-overlay");
@@ -42,7 +42,7 @@ passwordInput.addEventListener("keydown", (e) => {
 window.addEventListener("load", () => passwordInput.focus());
 
 /* ------------------------------------------------------------
-   TOAST â€“ powiadomienia w rogu
+   TOAST  powiadomienia w rogu
 ------------------------------------------------------------ */
 function showToast(msg, type = "success") {
   const toast = document.getElementById("toast");
@@ -73,7 +73,7 @@ function formatCurrency(value) {
   const cleaned = typeof value === "string" ? value.replace(",", ".") : value;
   const num = Number(cleaned);
   if (Number.isNaN(num)) return value;
-  return `${num.toFixed(2)} zl`;
+  return `${num.toFixed(2)} z`;
 }
 
 function escapeHtml(str = "") {
@@ -84,11 +84,11 @@ function escapeHtml(str = "") {
 }
 
 function safeJsonParse(text) {
-  const cleaned = String(text ?? "").trim().replace(/^\uFEFF/, "");
+  const cleaned = String(text ? "").trim().replace(/^\uFEFF/, "");
   try {
     return { value: JSON.parse(cleaned), error: null };
   } catch (err) {
-    // sprĂłbuj Ĺ›ciÄ…Ä‡ do pierwszego { lub [
+    // sprbuj ci do pierwszego { lub [
     const brace = cleaned.indexOf("{");
     const bracket = cleaned.indexOf("[");
     const idx = brace >= 0 && bracket >= 0 ? Math.min(brace, bracket) : brace >= 0 ? brace : bracket;
@@ -105,7 +105,7 @@ function safeJsonParse(text) {
 }
 
 function parseObjectsFromText(rawText) {
-  const matches = String(rawText ?? "").match(/{[^]*?}/g);
+  const matches = String(rawText ? "").match(/{[^]*?}/g);
   if (!matches) return [];
   const out = [];
   matches.forEach((m) => {
@@ -141,7 +141,7 @@ function toArray(payload) {
       payload.list
     ];
     for (const c of candidates) if (Array.isArray(c)) return c;
-    // jeĹĽeli to pojedynczy rekord (ma claimId/orderId itp.), zwrĂłÄ‡ jako jednoelementowa tablica
+    // jeeli to pojedynczy rekord (ma claimId/orderId itp.), zwr jako jednoelementowa tablica
     const keys = Object.keys(payload);
     if (keys.length && (keys.includes("claimId") || keys.includes("orderId") || keys.includes("Nr. Rek.") || keys.includes("row_number"))) {
       return [payload];
@@ -156,7 +156,7 @@ function unwrapArray(payload) {
 }
 
 function normalizeClaim(raw = {}) {
-  // ObsĹ‚uga odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementĂłw
+  // Obsuga odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementw
   const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
   const dates = flat.dates || {};
   const customerValue =
@@ -174,11 +174,11 @@ function normalizeClaim(raw = {}) {
     marketplace: flat.marketplace || flat.platform || "",
     status: flat.status || (flat.isClosed ? "Zakonczone" : ""),
     value:
-      flat.value ??
-      flat.valueNumber ??
-      flat.valueRaw ??
-      flat.amount ??
-      flat.total ??
+      flat.value ?
+      flat.valueNumber ?
+      flat.valueRaw ?
+      flat.amount ?
+      flat.total ?
       (flat.pricing && flat.pricing.total),
     reason: flat.reason,
     type: flat.type,
@@ -200,9 +200,9 @@ function renderClaimCard(raw, actionHtml = "") {
       <div class="claim-card__header">
         <div>
           <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
-          <div class="claim-card__order">Zamowienie: ${claim.orderId || "-"}</div>
+          <div class="claim-card__order">Zamwienie: ${claim.orderId || "-"}</div>
         </div>
-        <div class="claim-card__status">${claim.status || "â€”"}</div>
+        <div class="claim-card__status">${claim.status || ""}</div>
       </div>
 
       <div class="claim-card__keyline">
@@ -215,22 +215,22 @@ function renderClaimCard(raw, actionHtml = "") {
           <div class="value">${claim.marketplace || "-"}</div>
         </div>
         <div>
-          <div class="label">Wartosc</div>
+          <div class="label">Warto</div>
           <div class="value strong">${formatCurrency(claim.value)}</div>
         </div>
       </div>
 
       <div class="claim-card__timeline">
-        <div><span>Data przyjecia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+        <div><span>Data przyjcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
         <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
-        <div><span>Data rozwiazania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+        <div><span>Data rozwizania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
       </div>
 
       <div class="claim-card__grid">
-        <div><div class="label">Powod zgloszenia</div><div class="value">${claim.reason || "-"}</div></div>
+        <div><div class="label">Powd zgoszenia</div><div class="value">${claim.reason || "-"}</div></div>
         <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
         <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-        <div><div class="label">Rozwiazanie</div><div class="value">${claim.resolution || "-"}</div></div>
+        <div><div class="label">Rozwizanie</div><div class="value">${claim.resolution || "-"}</div></div>
         ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
         ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
       </div>
@@ -240,7 +240,7 @@ function renderClaimCard(raw, actionHtml = "") {
 }
 
 /* ------------------------------------------------------------
-   PRZEĹÄ„CZANIE PODSTRON (1â€“3)
+   PRZECZANIE PODSTRON (13)
 ------------------------------------------------------------ */
 function switchPage(pageNumber) {
   const pages = document.querySelectorAll(".page");
@@ -347,7 +347,7 @@ function toggleRowDetails(id, btn) {
 window.toggleRowDetails = toggleRowDetails;
 
 /* ============================================================
-   CZÄĹšÄ† 1 â€“ DODAWANIE ZGĹOSZENIA
+   CZĘ 1  DODAWANIE ZGOSZENIA
    ============================================================ */
 
 const s1FetchBtn = document.getElementById("s1-fetch");
@@ -358,21 +358,21 @@ const s1Products = document.getElementById("s1-products");
 const s1SaveBtn = document.getElementById("s1-save");
 let s1FetchedOrder = null;
 
-/* Pobieranie danych zamĂłwienia */
+/* Pobieranie danych zamwienia */
 s1FetchBtn.addEventListener("click", async () => {
   const num = s1OrderInput.value.trim();
-  if (!num) return showToast("Wpisz numer zamĂłwienia", "error");
+  if (!num) return showToast("Wpisz numer zamwienia", "error");
 
   try {
-    // Uďż˝>ycie jawnego linku webhooka pomaga unikaďż˝> bďż˝ďż˝dnych skďż˝'adek i pokazuje peďż˝'ny adres dla GitHub Pages
+    // Uycie jawnego linku webhooka pomaga unika bdnych skadek i pokazuje peny adres dla GitHub Pages
     const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
     s1FetchedOrder = data;
 
-    // WyĹ›wietlenie boxa
+    // Wywietlenie boxa
     s1OrderBox.classList.remove("hidden");
 
-    // Produkty â€“ przykĹ‚ad danych w komentarzu:
+    // Produkty  przykad danych w komentarzu:
     // data.products = [
     //   { sku: "SKU123", name: "Buty zimowe", quantity: 2 },
     //   { sku: "SKU999", name: "Czapka", quantity: 1 }
@@ -384,7 +384,7 @@ s1FetchBtn.addEventListener("click", async () => {
         <div class="product-row">
           <label>
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-            ${p.name} (${p.sku}) - ${p.price ?? ""} zl zamowiono: ${p.quantity}
+            ${p.name} (${p.sku}) - ${p.price ?? ""} z zamwiono: ${p.quantity}
           </label>
           <input type="number" class="s1-prod-qty" data-index="${idx}" min="0" max="${p.quantity}" value="0" />
         </div>
@@ -401,13 +401,13 @@ s1FetchBtn.addEventListener("click", async () => {
     document.getElementById("s1-platform").value = data.platform;
     document.getElementById("s1-shipping").value = data.shippingCost;
 
-    showToast("Pobrano dane zamowienia");
+    showToast("Pobrano dane zamwienia");
   } catch (err) {
-    showToast("BĹ‚Ä…d pobierania", "error");
+    showToast("Bd pobierania", "error");
   }
 });
 
-/* Zapisywanie zgĹ‚oszenia */
+/* Zapisywanie zgoszenia */
 s1SaveBtn.addEventListener("click", async () => {
   const payload = {
     order: s1OrderInput.value,
@@ -428,7 +428,7 @@ s1SaveBtn.addEventListener("click", async () => {
         sku: meta.sku,
         name: meta.name,
         orderedQuantity: meta.quantity,
-        price: Number(meta.price ?? 0)
+        price: Number(meta.price ? 0)
       };
     })
   };
@@ -440,14 +440,14 @@ s1SaveBtn.addEventListener("click", async () => {
       body: JSON.stringify(payload)
     });
 
-    showToast("Zapisano zgĹ‚oszenie");
+    showToast("Zapisano zgoszenie");
   } catch (err) {
-    showToast("BĹ‚Ä…d zapisu", "error");
+    showToast("Bd zapisu", "error");
   }
 });
 
 /* ============================================================
-   CZÄĹšÄ† 2 â€“ EWIDENCJA
+   CZĘ 2  EWIDENCJA
    ============================================================ */
 
 const s2SearchBtn = document.getElementById("s2-search-btn");
@@ -457,7 +457,7 @@ const s2RangeBtn = document.getElementById("s2-range-btn");
 const s2RangeSelect = document.getElementById("s2-range");
 const s2ListBox = document.getElementById("s2-list");
 
-// ustawienie kontrolek w jednej linii + usuniecie zbÄ™dnych separatorĂłw
+// ustawienie kontrolek w jednej linii + usuniecie zbdnych separatorw
 (function arrangeS2Controls() {
   const section = document.getElementById("page-2");
   const searchField = s2SearchInput?.closest(".field");
@@ -470,14 +470,14 @@ const s2ListBox = document.getElementById("s2-list");
     const container = document.createElement("div");
     container.className = "s2-controls";
 
-    // przenieĹ› blok wyszukiwania
+    // przenie blok wyszukiwania
     container.appendChild(searchField);
 
-    // utwĂłrz pole dla zakresu
+    // utwrz pole dla zakresu
     const field = document.createElement("div");
     field.className = "field";
     const label = document.createElement("label");
-    label.textContent = "Pobierz wiele zgloszen";
+    label.textContent = "Pobierz wiele zgosze";
     field.appendChild(label);
     field.appendChild(rangeRow);
     container.appendChild(field);
@@ -486,14 +486,14 @@ const s2ListBox = document.getElementById("s2-list");
     const target = section.querySelector("#s2-single-result") || rangeField || section.firstChild;
     section.insertBefore(container, target);
 
-    // usuĹ„ stary nagĹ‚Ăłwek i hr
+    // usu stary nagwek i hr
     if (rangeField && rangeField !== field && rangeField.parentElement) rangeField.parentElement.removeChild(rangeField);
     if (h3 && h3.parentElement) h3.parentElement.removeChild(h3);
     if (hr && hr.parentElement) hr.parentElement.removeChild(hr);
   }
 })();
 
-/* Pobieranie pojedynczego zgĹ‚oszenia */
+/* Pobieranie pojedynczego zgoszenia */
 s2SearchBtn.addEventListener("click", async () => {
   const num = s2SearchInput.value.trim();
   if (!num) return showToast("Podaj numer", "error");
@@ -505,26 +505,26 @@ s2SearchBtn.addEventListener("click", async () => {
     s2SingleBox.classList.remove("hidden");
     s2SingleBox.innerHTML = renderClaimCard(
       claim,
-      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedz</button>`
+      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowied</button>`
     );
 
-    showToast("Pobrano zgloszenie");
+    showToast("Pobrano zgoszenie");
   } catch {
     showToast("Nie znaleziono", "error");
   }
 });
 
-/* Pobieranie listy zgĹ‚oszeĹ„ (tabela) */
+/* Pobieranie listy zgosze (tabela) */
 s2RangeBtn.addEventListener("click", async () => {
   const range = s2RangeSelect.value;
 
   try {
-    // wysyĹ‚amy preset (5 wariantĂłw z selecta) jako query param GET
+    // wysyamy preset (5 wariantw z selecta) jako query param GET
     const params = new URLSearchParams({ preset: range, range });
     const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
     const rawText = await res.text();
 
-    // proste parsowanie: json -> array | object -> array; jak nie, to wyciÄ…gnij obiekty z tekstu
+    // proste parsowanie: json -> array | object -> array; jak nie, to wycignij obiekty z tekstu
     let parsed;
     let parseError = null;
     try {
@@ -545,14 +545,14 @@ s2RangeBtn.addEventListener("click", async () => {
       rows = parseObjectsFromText(rawText);
     }
 
-    // ostateczny fallback â€“ sprĂłbuj unwrap n8n
+    // ostateczny fallback  sprbuj unwrap n8n
     if (!rows.length) {
       rows = unwrapArray(parsed);
     }
 
     s2ListBox.classList.remove("hidden");
 
-    // Log diagnostyczny w konsoli przeglÄ…darki
+    // Log diagnostyczny w konsoli przegldarki
     console.info("CER list response", {
       status: res.status,
       contentType: res.headers.get("content-type"),
@@ -565,17 +565,17 @@ s2RangeBtn.addEventListener("click", async () => {
     if (!res.ok) {
       s2ListBox.innerHTML = `
         <div class="table-box">
-          <pre style="white-space:pre-wrap; padding:12px;">BĹ‚Ä…d HTTP ${res.status}
+          <pre style="white-space:pre-wrap; padding:12px;">Bd HTTP ${res.status}
 ${escapeHtml(rawText)}</pre>
         </div>`;
-      showToast(`BĹ‚Ä…d pobierania (${res.status})`, "error");
+      showToast(`Bd pobierania (${res.status})`, "error");
       return;
     }
 
     if (!rows.length) {
       s2ListBox.innerHTML = `
         <div class="table-box">
-          <pre style="white-space:pre-wrap; padding:12px;">Brak rozpoznanych danych. Surowa odpowiedz webhooka:
+          <pre style="white-space:pre-wrap; padding:12px;">Brak rozpoznanych danych. Surowa odpowied webhooka:
 ${escapeHtml(rawText)}</pre>
         </div>`;
       showToast("Brak danych z webhooka", "error");
@@ -587,14 +587,14 @@ ${escapeHtml(rawText)}</pre>
         <tr>
           <th>#</th>
           <th>Reklamacja</th>
-          <th>Zamowienie</th>
+          <th>Zamwienie</th>
           <th>Klient</th>
           <th>Marketplace</th>
           <th>Status</th>
-          <th>Przyjecie</th>
+          <th>Przyjcie</th>
           <th>Termin decyzji</th>
-          <th>Rozwiazanie</th>
-          <th>Wartosc</th>
+          <th>Rozwizanie</th>
+          <th>Warto</th>
           <th>Akcja</th>
         </tr>`;
 
@@ -603,7 +603,7 @@ ${escapeHtml(rawText)}</pre>
       const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
       html += `
         <tr>
-          <td>${claim.rowNumber ?? idx + 1}</td>
+          <td>${claim.rowNumber ? idx + 1}</td>
           <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId}'">${claim.claimId || "-"}</td>
           <td>${claim.orderId || "-"}</td>
           <td>${claim.customer || "-"}</td>
@@ -630,14 +630,14 @@ ${escapeHtml(rawText)}</pre>
     html += `</table>`;
 
     s2ListBox.innerHTML = html;
-    showToast("Pobrano liste zgloszen");
+    showToast("Pobrano list zgosze");
   } catch {
-    showToast("BĹ‚Ä…d pobierania", "error");
+    showToast("Bd pobierania", "error");
   }
 });
 
 /* ============================================================
-   CZÄĹšÄ† 3 â€“ GENERATOR ODPOWIEDZI
+   CZĘ 3  GENERATOR ODPOWIEDZI
    ============================================================ */
 
 const s3FetchBtn = document.getElementById("s3-fetch");
@@ -647,7 +647,7 @@ const s3GenBtn = document.getElementById("s3-generate");
 let selectedLang = "PL";
 let s3CurrentClaim = null;
 
-/* Zmiana jÄ™zyka tĹ‚umaczenia */
+/* Zmiana jzyka tumaczenia */
 document.querySelectorAll(".lang-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     selectedLang = btn.dataset.lang;
@@ -657,7 +657,7 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
   });
 });
 
-/* Pobieranie danych zgĹ‚oszenia */
+/* Pobieranie danych zgoszenia */
 s3FetchBtn.addEventListener("click", async () => {
   const num = s3NumberInput.value.trim();
   if (!num) return showToast("Podaj numer", "error");
@@ -679,20 +679,20 @@ s3FetchBtn.addEventListener("click", async () => {
         const label = block.querySelector(".label");
         if (!label) return;
         const text = label.textContent.trim().toLowerCase();
-        if (text.includes("decyzja") || text.includes("rozwiazanie")) block.remove();
+        if (text.includes("decyzja") || text.includes("rozwizanie")) block.remove();
       });
     }
     const timeline = s3DetailsBox.querySelector(".claim-card__timeline");
     if (timeline) {
       timeline.querySelectorAll("div").forEach((block) => {
         const span = block.querySelector("span");
-        if (span && span.textContent.trim().toLowerCase().includes("data rozwiazania")) {
+        if (span && span.textContent.trim().toLowerCase().includes("data rozwizania")) {
           block.remove();
         }
       });
     }
 
-    showToast("ZaĹ‚adowano dane");
+    showToast("Zaadowano dane");
   } catch {
     showToast("Nie znaleziono", "error");
   }
@@ -703,11 +703,9 @@ s3GenBtn.addEventListener("click", async () => {
   const num = s3NumberInput.value.trim();
   const decision = document.getElementById("s3-decision").value;
   const noResp = document.getElementById("s3-noresp").checked;
-  const answer = noResp
-    ? "Brak mozliwosci weryfikacji: Pomimo naszych prob kontaktu..."
+  const noResp = document.getElementById("s3-noresp").checked;
+    ? "Brak mo?liwo?ci weryfikacji: Pomimo naszych pr?b kontaktu..."
     : document.getElementById("s3-answer").value;
-
-  const payload = {
     number: num,
     decision,
     language: selectedLang,
@@ -751,8 +749,6 @@ s3GenBtn.addEventListener("click", async () => {
 
     showToast("Wygenerowano PDF");
   } catch {
-    showToast("BĹ‚Ä…d generowania", "error");
+    showToast("Bd generowania", "error");
   }
 });
-
-

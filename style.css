@@ -1,5 +1,5 @@
 /* ============================================================
-   style.css – pełny styl CER z sidebar A1 i trzema podstronami
+   style.css  peny styl CER z sidebar A1 i trzema podstronami
    ============================================================ */
 
 /* -----------------------------
@@ -40,7 +40,7 @@ body {
 }
 
 /* ============================================================
-   BLOKADA HASŁEM
+   BLOKADA HASEM
    ============================================================ */
 .auth-overlay {
   position: fixed;
@@ -80,7 +80,7 @@ body {
 }
 
 /* ============================================================
-   SIDEBAR – A1 (ikony + tekst po hover)
+   SIDEBAR  A1 (ikony + tekst po hover)
    ============================================================ */
 .sidebar {
   position: fixed;
@@ -181,7 +181,7 @@ body {
 }
 
 /* ============================================================
-   GŁÓWNY LAYOUT – przesunięcie na prawo od sidebaru
+   GWNY LAYOUT  przesunicie na prawo od sidebaru
    ============================================================ */
 .layout-main {
   margin-left: 70px;
@@ -190,7 +190,7 @@ body {
 }
 
 /* ============================================================
-   PODSTRONY (page) – tylko jedna widoczna naraz
+   PODSTRONY (page)  tylko jedna widoczna naraz
    ============================================================ */
 .page {
   display: none;
@@ -329,7 +329,7 @@ textarea {
 }
 
 /* ============================================================
-   TABLE LISTA WIELOKROTNYCH ZGŁOSZEŃ
+   TABLE LISTA WIELOKROTNYCH ZGOSZE
    ============================================================ */
 .table-box {
   overflow: auto;
@@ -359,7 +359,7 @@ th {
 }
 
 /* ============================================================
-   TOAST – komunikaty w prawym dolnym rogu
+   TOAST  komunikaty w prawym dolnym rogu
    ============================================================ */
 .toast {
   position: fixed;
