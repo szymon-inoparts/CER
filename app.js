@@ -394,6 +394,7 @@ function switchPage(pageIndex) {
   });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+window.switchPage = switchPage;
 
 
 
@@ -1834,7 +1835,7 @@ function renderClaimCard(raw, actionHtml = "") {
         <div class="claim-card__header">
           <div>
             <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
-            <div class="claim-card__order">Zamówienie: ${claim.orderId || "-"}</div>
+            <div class="claim-card__order">Zam?wienie: ${claim.orderId || "-"}</div>
           </div>
           ${claim.status ? `<div class="claim-card__status">${claim.status}</div>` : ""}
         </div>
@@ -1845,9 +1846,9 @@ function renderClaimCard(raw, actionHtml = "") {
         </div>
 
         <div class="claim-card__timeline">
-          <div><span>Data przyjęcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+          <div><span>Data przyj?cia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
           <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
-          <div><span>Data rozwiązania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+          <div><span>Data rozwi?zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
         </div>
 
         <div class="claim-card__grid">
@@ -1858,10 +1859,10 @@ function renderClaimCard(raw, actionHtml = "") {
         </div>
 
         <div class="claim-card__grid">
-          <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
+          <div><div class="label">Pow?d zg?oszenia</div><div class="value">${claim.reason || "-"}</div></div>
           <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
           <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-          <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
+          <div><div class="label">Rozwi?zanie</div><div class="value">${claim.resolution || "-"}</div></div>
           ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
           ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
         </div>
@@ -1877,6 +1878,7 @@ function renderClaimCard(raw, actionHtml = "") {
       </div>
     </div>`;
 }
+
 function toggleRowDetails(id, btn) {
 
 
@@ -2549,103 +2551,21 @@ s1SaveBtn.addEventListener("click", async () => {
 
 
 
-    products: Array.from(document.querySelectorAll(".product-row")).map((row, idx) => {
-
-
-
-
-
-
-
-      const check = row.querySelector(".s1-prod-check");
-
-
-
-
-
-
-
-      const qty = row.querySelector(".s1-prod-qty");
-
-
-
-
-
-
-
-      const meta = s1FetchedOrder?.products?.[idx] || {};
-
-
-
-
-
-
-
-      return {
-
-
-
-
-
-
-
-        include: check.checked,
-
-
-
-
-
-
-
-        qty: Number(qty.value),
-
-
-
-
-
-
-
-        sku: meta.sku,
-
-
-
-
-
-
-
-        name: meta.name,
-
-
-
-
-
-
-
-        orderedQuantity: meta.quantity,
-
-
-
-
-
-
-
-        price: Number(meta.price ?? 0)
-
-
-
-
-
-
-
-      };
-
-
-
-
-
-
-
-    })
+    products: Array.from(document.querySelectorAll(".product-row"))
+      .map((row, idx) => {
+        const check = row.querySelector(".s1-prod-check");
+        const qty = row.querySelector(".s1-prod-qty");
+        const meta = s1FetchedOrder?.products?.[idx] || {};
+        return {
+          include: check.checked,
+          qty: Number(qty.value),
+          sku: meta.sku,
+          name: meta.name,
+          orderedQuantity: meta.quantity,
+          price: Number(meta.price ?? 0)
+        };
+      })
+      .filter((p) => p.include && p.qty > 0)
 
 
 
@@ -3937,7 +3857,7 @@ ${escapeHtml(rawText)}</pre>
 
 
 
-          <th>Rozwiązanie</th>
+          <th>Rozwi?zanie</th>
 
 
 
@@ -4457,7 +4377,7 @@ s3FetchBtn.addEventListener("click", async () => {
 
 
 
-    // Ukryj pola Decyzja, Rozwiazanie i Data rozwiazania tylko w generatorze
+    // Ukryj pola Decyzja, Rozwi?zanie i Data rozwi?zania tylko w generatorze
 
 
 
