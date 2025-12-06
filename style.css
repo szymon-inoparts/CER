@@ -676,20 +676,25 @@ th {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 .claim-card__info {
-  flex: 2;
-  min-width: 260px;
+  flex: 3;
+  min-width: 280px;
 }
 
 .claim-card__products {
   flex: 1;
-  min-width: 220px;
+  min-width: 240px;
 }
 
 .claim-card__products .products-block {
   margin-top: 0;
+  background: #f6f7fb;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
 }
 
 .products-list {
