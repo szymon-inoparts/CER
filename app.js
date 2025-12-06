@@ -305,12 +305,7 @@ function resetPage1() {
     "s1-reason",
     "s1-employee",
     "s1-note",
-    "s1-bill-street",
-    "s1-bill-flat",
-    "s1-bill-city",
-    "s1-bill-postcode",
-    "s1-bill-country",
-    "s1-bill-phone"
+    "s1-bill-full"
   ].forEach((id) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -420,13 +415,12 @@ s1FetchBtn.addEventListener("click", async () => {
     document.getElementById("s1-shipping").value = `${formatCurrency(data.shippingCost)} ${currency}`;
 
     const bill = data.bill_address || {};
-    const streetLine = [bill.street, bill.home_number].filter(Boolean).join(" ");
-    document.getElementById("s1-bill-street").value = streetLine || "";
-    document.getElementById("s1-bill-flat").value = bill.flat_number || "";
-    document.getElementById("s1-bill-city").value = bill.city || "";
-    document.getElementById("s1-bill-postcode").value = bill.postcode || "";
-    document.getElementById("s1-bill-country").value = bill.country?.name || bill.country?.code || "";
-    document.getElementById("s1-bill-phone").value = bill.phone || "";
+    const streetLine = [bill.street, bill.home_number, bill.flat_number].filter(Boolean).join(" ");
+    const cityLine = [bill.postcode, bill.city].filter(Boolean).join(" ");
+    const country = bill.country?.name || bill.country?.code || "";
+    const fullAddress = [streetLine, cityLine, country].filter(Boolean).join(", ");
+    const billFull = document.getElementById("s1-bill-full");
+    if (billFull) billFull.value = fullAddress || "";
 
     showToast("Pobrano dane zam\u00f3wienia");
   } catch (err) {
