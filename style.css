@@ -692,8 +692,8 @@ th {
   margin-top: 0;
 }
 
-.claim-card__products .products-list {
-  padding-left: 16px;
+.products-inline {
+  white-space: pre-wrap;
 }
 .field-inline {
   display: flex;

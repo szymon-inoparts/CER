@@ -270,25 +270,25 @@ function renderClaimCard(raw, actionHtml = "") {
 
         ${
           claim.products && Array.isArray(claim.products) && claim.products.length
-            ? `<div class="claim-card__products">
-                <div class="products-block">
-                  <div class="label" style="margin-bottom:4px;">Produkty</div>
-                  <ul class="products-list">
-                    ${claim.products
-                      .map(
-                        (p) =>
-                          `<li>
-                            ${escapeHtml(p.name || "")}
-                            ${p.sku ? ` (SKU: ${escapeHtml(p.sku)})` : ""}
-                            ${p.ean ? ` EAN: ${escapeHtml(p.ean)}` : ""}
-                            ${p.quantity ? ` x ${p.quantity}` : ""}
-                            ${p.price ? ` - ${formatCurrency(p.price)} ${claim.currency || ""}` : ""}
-                          </li>`
-                      )
-                      .join("")}
-                  </ul>
-                </div>
-              </div>`
+            ? (() => {
+                const items = claim.products.map((p) => {
+                  const parts = [];
+                  if (p.name) parts.push(`Nazwa: ${escapeHtml(p.name)}`);
+                  if (p.sku) parts.push(`SKU: ${escapeHtml(p.sku)}`);
+                  if (p.ean) parts.push(`EAN: ${escapeHtml(p.ean)}`);
+                  if (p.price !== undefined && p.price !== null && p.price !== "") {
+                    parts.push(`Wartość: ${formatCurrency(p.price)} ${claim.currency || ""}`);
+                  }
+                  if (p.quantity) parts.push(`Ilość: ${p.quantity}`);
+                  return parts.join(" ");
+                });
+                return `<div class="claim-card__products">
+                  <div class="products-block">
+                    <div class="label" style="margin-bottom:4px;">Reklamowane produkty</div>
+                    <div class="value products-inline">${items.join(" ; ")}</div>
+                  </div>
+                </div>`;
+              })()
             : ""
         }
       </div>
