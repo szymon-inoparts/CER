@@ -318,29 +318,28 @@ function renderClaimCard(raw, actionHtml = "") {
           </div>
         </div>
 
-        ${
-          claim.products && Array.isArray(claim.products) && claim.products.length
-            ? (() => {
-                const items = claim.products.map((p) => {
-                  const parts = [];
-                  if (p.name) parts.push(`Nazwa: ${escapeHtml(p.name)}`);
-                  if (p.sku) parts.push(`SKU: ${escapeHtml(p.sku)}`);
-                  if (p.ean) parts.push(`EAN: ${escapeHtml(p.ean)}`);
-                  if (p.price !== undefined && p.price !== null && p.price !== "") {
-                    parts.push(`Wartość: ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}`);
-                  }
-                  if (p.quantity) parts.push(`Ilość: ${p.quantity}`);
-                  return `<li>${parts.join(" ")}</li>`;
-                });
-                return `<div class="claim-card__products">
-                  <div class="products-block">
-                    <div class="label" style="margin-bottom:4px;">Reklamowane produkty</div>
-                    <ul class="products-list">${items.join("")}</ul>
-                  </div>
-                </div>`;
-              })()
-            : ""
-        }
+        <div class="claim-card__products">
+          <div class="products-block">
+            <div class="label" style="margin-bottom:4px;">Reklamowane produkty</div>
+            ${
+              claim.products && Array.isArray(claim.products) && claim.products.length
+                ? `<ul class="products-list">${claim.products
+                    .map((p) => {
+                      const parts = [];
+                      if (p.name) parts.push(`Nazwa: ${escapeHtml(p.name)}`);
+                      if (p.sku) parts.push(`SKU: ${escapeHtml(p.sku)}`);
+                      if (p.ean) parts.push(`EAN: ${escapeHtml(p.ean)}`);
+                      if (p.price !== undefined && p.price !== null && p.price !== "") {
+                        parts.push(`Wartość: ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}`);
+                      }
+                      if (p.quantity) parts.push(`Ilość: ${p.quantity}`);
+                      return `<li>${parts.join(" ")}</li>`;
+                    })
+                    .join("")}</ul>`
+                : `<div class="value">-</div>`
+            }
+          </div>
+        </div>
       </div>
 
       <div class="claim-card__actions">${actionHtml || ""}</div>
