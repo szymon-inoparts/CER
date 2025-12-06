@@ -162,6 +162,15 @@ function unwrapArray(payload) {
   return base.map((el) => (el && el.json && typeof el.json === "object" ? { ...el, ...el.json } : el));
 }
 
+function splitSemicolons(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  return String(val)
+    .split(";")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 function normalizeClaim(raw = {}) {
   // Obsuga odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementw
   const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
@@ -185,6 +194,47 @@ function normalizeClaim(raw = {}) {
     flat.products ||
     (flat.orderDetails && flat.orderDetails.products) ||
     (flat.body && flat.body.products);
+
+  // fallback: produkty jako stringi z CER (rozdzielone srednikiem w kolumnach)
+  let products =
+    typeof productsArr === "string"
+      ? splitSemicolons(productsArr).map((name) => ({ name }))
+      : Array.isArray(productsArr)
+      ? productsArr
+      : [];
+
+  if (!products.length) {
+    const semName = splitSemicolons(
+      flat.productName || flat["Produkt Nazwa"] || flat.product_name || flat.product
+    );
+    const semSku = splitSemicolons(flat.productSku || flat["Produkt SKU"] || flat.product_sku);
+    const semEan = splitSemicolons(flat.productEan || flat["Produkt EAN"] || flat.product_ean);
+    const semQty = splitSemicolons(
+      flat.productQuantity || flat["Produkt Ilość"] || flat.product_qty || flat.productQuantityNumber
+    );
+    const semVal = splitSemicolons(
+      flat.productValue || flat["Produkt Wartość"] || flat.product_price || flat.productValueNumber
+    );
+    const semCurr = splitSemicolons(flat.productCurrency || flat["Produkt Waluta"] || flat.currency);
+    const maxLen = Math.max(
+      semName.length,
+      semSku.length,
+      semEan.length,
+      semQty.length,
+      semVal.length,
+      semCurr.length
+    );
+    if (maxLen > 0) {
+      products = Array.from({ length: maxLen }).map((_, i) => ({
+        name: semName[i],
+        sku: semSku[i],
+        ean: semEan[i],
+        quantity: semQty[i],
+        price: semVal[i],
+        currency: semCurr[i]
+      }));
+    }
+  }
 
   return {
     claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
@@ -212,7 +262,7 @@ function normalizeClaim(raw = {}) {
     resolvedAt: flat.resolvedAt || dates.resolvedAt,
     rowNumber: flat.rowNumber,
     address: addrFull,
-    products: productsArr
+    products
   };
 }
 
@@ -277,15 +327,15 @@ function renderClaimCard(raw, actionHtml = "") {
                   if (p.sku) parts.push(`SKU: ${escapeHtml(p.sku)}`);
                   if (p.ean) parts.push(`EAN: ${escapeHtml(p.ean)}`);
                   if (p.price !== undefined && p.price !== null && p.price !== "") {
-                    parts.push(`Wartość: ${formatCurrency(p.price)} ${claim.currency || ""}`);
+                    parts.push(`Wartość: ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}`);
                   }
                   if (p.quantity) parts.push(`Ilość: ${p.quantity}`);
-                  return parts.join(" ");
+                  return `<li>${parts.join(" ")}</li>`;
                 });
                 return `<div class="claim-card__products">
                   <div class="products-block">
                     <div class="label" style="margin-bottom:4px;">Reklamowane produkty</div>
-                    <div class="value products-inline">${items.join(" ; ")}</div>
+                    <ul class="products-list">${items.join("")}</ul>
                   </div>
                 </div>`;
               })()

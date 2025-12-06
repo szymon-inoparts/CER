@@ -692,8 +692,8 @@ th {
   margin-top: 0;
 }
 
-.products-inline {
-  white-space: pre-wrap;
+.products-list {
+  padding-left: 16px;
 }
 .field-inline {
   display: flex;
