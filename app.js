@@ -162,6 +162,15 @@ function unwrapArray(payload) {
   return base.map((el) => (el && el.json && typeof el.json === "object" ? { ...el, ...el.json } : el));
 }
 
+function splitSemicolons(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  return String(val)
+    .split(";")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 function normalizeClaim(raw = {}) {
   // Obsuga odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementw
   const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
@@ -179,6 +188,33 @@ function normalizeClaim(raw = {}) {
     (flat.orderDetails && flat.orderDetails.products) ||
     (flat.body && flat.body.products);
   const currencyValue = flat.currency || flat.orderCurrency || (flat.orderDetails && flat.orderDetails.currency);
+
+  let products =
+    typeof productsArr === "string"
+      ? splitSemicolons(productsArr).map((name) => ({ name }))
+      : Array.isArray(productsArr)
+      ? productsArr
+      : [];
+
+  if (!products.length) {
+    const names = splitSemicolons(flat["Produkt Nazwa"] || flat.productName);
+    const skus = splitSemicolons(flat["Produkt SKU"] || flat.productSku);
+    const eans = splitSemicolons(flat["Produkt EAN"] || flat.productEan);
+    const qtys = splitSemicolons(flat["Produkt Ilość"] || flat.productQty);
+    const vals = splitSemicolons(flat["Wartość"] || flat.valueRaw);
+    const currs = splitSemicolons(flat["Waluta"] || currencyValue);
+    const maxLen = Math.max(names.length, skus.length, eans.length, qtys.length, vals.length, currs.length);
+    if (maxLen > 0) {
+      products = Array.from({ length: maxLen }).map((_, i) => ({
+        name: names[i],
+        sku: skus[i],
+        ean: eans[i],
+        quantity: qtys[i],
+        price: vals[i],
+        currency: currs[i]
+      }));
+    }
+  }
 
   return {
     claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
@@ -206,7 +242,7 @@ function normalizeClaim(raw = {}) {
     resolvedAt: flat.resolvedAt || dates.resolvedAt,
     rowNumber: flat.rowNumber,
     address: addressValue,
-    products: productsArr
+    products
   };
 }
 
@@ -245,7 +281,6 @@ function renderClaimCard(raw, actionHtml = "") {
         <div class="claim-card__keyline">
           <div><div class="label">Klient</div><div class="value">${claim.customer || "-"}</div></div>
           <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || "-"}</div></div>
-          <div><div class="label">Warto</div><div class="value strong">${formatCurrency(claim.value)} ${claim.currency || ""}</div></div>
         </div>
 
         <div class="claim-card__timeline">
