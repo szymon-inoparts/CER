@@ -243,49 +243,55 @@ function renderClaimCard(raw, actionHtml = "") {
         </div>
       </div>
 
-      <div class="claim-card__timeline">
-        <div><span>Data przyj\u0119cia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
-        <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
-        <div><span>Data rozwi\u0105zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
-      </div>
+      <div class="claim-card__body">
+        <div class="claim-card__info">
+          <div class="claim-card__timeline">
+            <div><span>Data przyj\u0119cia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+            <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
+            <div><span>Data rozwi\u0105zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+          </div>
 
-      <div class="claim-card__grid">
-        <div><div class="label">Dane klienta</div><div class="value">${claim.customer || "-"}</div></div>
-        <div><div class="label">Login</div><div class="value">${claim.customerLogin || "-"}</div></div>
-        <div><div class="label">Adres</div><div class="value">${claim.address || "-"}</div></div>
-        <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || "-"}</div></div>
-      </div>
+          <div class="claim-card__grid">
+            <div><div class="label">Dane klienta</div><div class="value">${claim.customer || "-"}</div></div>
+            <div><div class="label">Login</div><div class="value">${claim.customerLogin || "-"}</div></div>
+            <div><div class="label">Adres</div><div class="value">${claim.address || "-"}</div></div>
+            <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || "-"}</div></div>
+          </div>
 
-      <div class="claim-card__grid">
-        <div><div class="label">Pow\u00f3d zg\u0142oszenia</div><div class="value">${claim.reason || "-"}</div></div>
-        <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
-        <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-        <div><div class="label">Rozwi\u0105zanie</div><div class="value">${claim.resolution || "-"}</div></div>
-        ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
-        ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
-      </div>
+          <div class="claim-card__grid">
+            <div><div class="label">Pow\u00f3d zg\u0142oszenia</div><div class="value">${claim.reason || "-"}</div></div>
+            <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
+            <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
+            <div><div class="label">Rozwi\u0105zanie</div><div class="value">${claim.resolution || "-"}</div></div>
+            ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
+            ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
+          </div>
+        </div>
 
-      ${
-        claim.products && Array.isArray(claim.products) && claim.products.length
-          ? `<div class="products-block">
-              <div class="label" style="margin-bottom:4px;">Produkty</div>
-              <ul class="products-list">
-                ${claim.products
-                  .map(
-                    (p) =>
-                      `<li>
-                        ${escapeHtml(p.name || "")}
-                        ${p.sku ? ` (SKU: ${escapeHtml(p.sku)})` : ""}
-                        ${p.ean ? ` EAN: ${escapeHtml(p.ean)}` : ""}
-                        ${p.quantity ? ` x ${p.quantity}` : ""}
-                        ${p.price ? ` - ${formatCurrency(p.price)} ${claim.currency || ""}` : ""}
-                      </li>`
-                  )
-                  .join("")}
-              </ul>
-            </div>`
-          : ""
-      }
+        ${
+          claim.products && Array.isArray(claim.products) && claim.products.length
+            ? `<div class="claim-card__products">
+                <div class="products-block">
+                  <div class="label" style="margin-bottom:4px;">Produkty</div>
+                  <ul class="products-list">
+                    ${claim.products
+                      .map(
+                        (p) =>
+                          `<li>
+                            ${escapeHtml(p.name || "")}
+                            ${p.sku ? ` (SKU: ${escapeHtml(p.sku)})` : ""}
+                            ${p.ean ? ` EAN: ${escapeHtml(p.ean)}` : ""}
+                            ${p.quantity ? ` x ${p.quantity}` : ""}
+                            ${p.price ? ` - ${formatCurrency(p.price)} ${claim.currency || ""}` : ""}
+                          </li>`
+                      )
+                      .join("")}
+                  </ul>
+                </div>
+              </div>`
+            : ""
+        }
+      </div>
 
       <div class="claim-card__actions">${actionHtml || ""}</div>
     </div>`;
