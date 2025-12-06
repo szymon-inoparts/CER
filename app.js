@@ -174,10 +174,23 @@ function normalizeClaim(raw = {}) {
     flat.clientName ||
     flat.customerName;
 
+  const addrFull =
+    flat.billAddressFull ||
+    flat.address ||
+    flat.bill_address ||
+    (flat.addresses && flat.addresses.billing) ||
+    (flat.orderDetails && flat.orderDetails.bill_address);
+
+  const productsArr =
+    flat.products ||
+    (flat.orderDetails && flat.orderDetails.products) ||
+    (flat.body && flat.body.products);
+
   return {
     claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
     orderId: flat.orderId || flat.order || "",
     customer: customerValue !== undefined && customerValue !== null ? String(customerValue) : "",
+    customerLogin: flat.clientNick || flat.customerNick || flat.login,
     marketplace: flat.marketplace || flat.platform || "",
     status: flat.status || (flat.isClosed ? "Zako\u0144czone" : ""),
     value:
@@ -187,6 +200,7 @@ function normalizeClaim(raw = {}) {
       flat.amount ??
       flat.total ??
       (flat.pricing && flat.pricing.total),
+    currency: flat.currency || flat.orderCurrency || (flat.orderDetails && flat.orderDetails.currency),
     reason: flat.reason,
     type: flat.type,
     decision: flat.decision,
@@ -196,7 +210,9 @@ function normalizeClaim(raw = {}) {
     receivedAt: flat.receivedAt || dates.receivedAt,
     decisionDue: flat.decisionDue || dates.decisionDue,
     resolvedAt: flat.resolvedAt || dates.resolvedAt,
-    rowNumber: flat.rowNumber
+    rowNumber: flat.rowNumber,
+    address: addrFull,
+    products: productsArr
   };
 }
 
@@ -238,9 +254,33 @@ function renderClaimCard(raw, actionHtml = "") {
         <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
         <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
         <div><div class="label">Rozwi\u0105zanie</div><div class="value">${claim.resolution || "-"}</div></div>
+        <div><div class="label">Adres</div><div class="value">${claim.address || "-"}</div></div>
+        <div><div class="label">Waluta</div><div class="value">${claim.currency || "-"}</div></div>
         ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
         ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
       </div>
+
+      ${
+        claim.products && Array.isArray(claim.products) && claim.products.length
+          ? `<div class="products-block">
+              <div class="label" style="margin-bottom:4px;">Produkty</div>
+              <ul class="products-list">
+                ${claim.products
+                  .map(
+                    (p) =>
+                      `<li>
+                        ${escapeHtml(p.name || "")}
+                        ${p.sku ? ` (SKU: ${escapeHtml(p.sku)})` : ""}
+                        ${p.ean ? ` EAN: ${escapeHtml(p.ean)}` : ""}
+                        ${p.quantity ? ` x ${p.quantity}` : ""}
+                        ${p.price ? ` - ${formatCurrency(p.price)} ${claim.currency || ""}` : ""}
+                      </li>`
+                  )
+                  .join("")}
+              </ul>
+            </div>`
+          : ""
+      }
 
       <div class="claim-card__actions">${actionHtml || ""}</div>
     </div>`;
