@@ -455,14 +455,28 @@ injectResetButton("page-2", resetPage1);
 injectResetButton("page-3", resetPage2);
 injectResetButton("page-4", resetPage3);
 
-function toggleRowDetails(id, btn) {
-  const row = document.querySelector(`.expand-row[data-exp-id="${id}"]`);
-  if (!row) return;
-  const isOpen = row.style.display !== "none";
-  row.style.display = isOpen ? "none" : "table-row";
-  if (btn) btn.textContent = isOpen ? "v" : "^";
-}
-window.toggleRowDetails = toggleRowDetails;
+function toggleRowDetails(id, btn) {
+  const row = document.querySelector(`.expand-row[data-exp-id="${id}"]`);
+  if (!row) return;
+  const isOpen = row.style.display !== "none";
+  row.style.display = isOpen ? "none" : "table-row";
+  if (btn) btn.textContent = isOpen ? "Rozwin v" : "Zwin ^";
+}
+window.toggleRowDetails = toggleRowDetails;
+
+function handleExpand(id, btn) {
+  toggleRowDetails(id, btn);
+}
+window.handleExpand = handleExpand;
+
+function handleGenerateClick(id) {
+  switchPage(3);
+  const input = document.getElementById("s3-number");
+  if (input) input.value = id || "";
+  const fetchBtn = document.getElementById("s3-fetch");
+  if (fetchBtn) fetchBtn.click();
+}
+window.handleGenerateClick = handleGenerateClick;
 
 /* ============================================================
    CZ\u0118 1  DODAWANIE ZGOSZENIA
@@ -708,16 +722,15 @@ ${escapeHtml(rawText)}</pre>
           <th>Zamwienie</th>
           <th>Klient</th>
           <th>Marketplace</th>
-          <th>Status</th>
-          <th>Przyjcie</th>
-          <th>Termin decyzji</th>
-          <th>Rozwizanie</th>
-          <th>Warto</th>
-          <th>Akcja</th>
-        </tr>`;
-
-    rows.forEach((row, idx) => {
-      const claim = normalizeClaim(row);
+          <th>Status</th>
+          <th>Przyjcie</th>
+          <th>Termin decyzji</th>
+          <th>Rozwizanie</th>
+          <th>Akcja</th>
+        </tr>`;
+
+    rows.forEach((row, idx) => {
+      const claim = normalizeClaim(row);
       const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
       html += `
         <tr>
@@ -725,25 +738,24 @@ ${escapeHtml(rawText)}</pre>
           <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId}'">${claim.claimId || "-"}</td>
           <td>${claim.orderId || "-"}</td>
           <td>${claim.customer || "-"}</td>
-          <td>${claim.marketplace || "-"}</td>
-          <td>${claim.status || "-"}</td>
-          <td>${formatDate(claim.receivedAt)}</td>
-          <td>${formatDate(claim.decisionDue)}</td>
-          <td>${formatDate(claim.resolvedAt)}</td>
-          <td>${claim.value ? `${formatCurrency(claim.value)}${claim.currency ? " " + claim.currency : ""}` : "-"}</td>
-          <td>
-            <div class="action-cell">
-              <button class="expand-btn" onclick="toggleRowDetails('${expId}', this)">v</button>
-              <button class="btn" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button>
-            </div>
-          </td>
-        </tr>
-        <tr class="expand-row" data-exp-id="${expId}" style="display:none">
-          <td colspan="11">
-            ${renderClaimCard(claim)}
-          </td>
-        </tr>`;
-    });
+          <td>${claim.marketplace || "-"}</td>
+          <td>${claim.status || "-"}</td>
+          <td>${formatDate(claim.receivedAt)}</td>
+          <td>${formatDate(claim.decisionDue)}</td>
+          <td>${formatDate(claim.resolvedAt)}</td>
+          <td>
+            <div class="action-cell">
+              <button class="expand-btn" onclick="handleExpand('${expId}', this)">Rozwin v</button>
+              <button class="btn" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="expand-row" data-exp-id="${expId}" style="display:none">
+          <td colspan="10">
+            ${renderClaimCard(claim)}
+          </td>
+        </tr>`;
+    });
 
     html += `</table>`;
 

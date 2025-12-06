@@ -586,6 +586,7 @@ th {
   text-transform: uppercase;
   letter-spacing: 0.4px;
   color: #666;
+  font-weight: 700;
 }
 
 .claim-card .value {
@@ -606,7 +607,7 @@ th {
 .action-cell {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 8px;
   white-space: nowrap;
 }
@@ -658,7 +659,7 @@ th {
   margin-top: 0;
 }
 .table-box td:last-child {
-  text-align: right;
+  text-align: center;
 }
 
 .table-box th:first-child,
@@ -669,7 +670,7 @@ th {
 
 .table-box th:last-child,
 .table-box td:last-child {
-  width: 170px;
+  width: 190px;
 }
 
 .claim-card__body {
@@ -695,10 +696,13 @@ th {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 12px;
+  text-align: left;
 }
 
 .products-list {
   padding-left: 16px;
+  text-align: left;
+  list-style-position: inside;
 }
 .field-inline {
   display: flex;
@@ -713,3 +717,4 @@ th {
 .claim-card--split { display: flex; gap: 16px; align-items: stretch; }
 .claim-card__panel { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; flex: 1; min-width: 280px; }
 .claim-card__panel--products { max-width: 360px; min-width: 260px; }
+.claim-card__panel h3 { font-weight: 700; }
