@@ -210,8 +210,18 @@ body {
   background: #111827;
   color: #fff;
   box-shadow: 0 6px 18px rgba(17, 24, 39, 0.25);
+}
+
+.topbar__logo--secondary {
+  background: var(--orange);
+  color: #fff;
+}
+
+.topbar__badges {
+  display: flex;
+  gap: 10px;
+  align-items: center;
   order: 2;
-  margin-left: 16px;
 }
 
 .topbar__actions {
@@ -572,6 +582,7 @@ th {
   background: var(--orange);
   color: #fff;
   border-radius: 12px;
+  text-align: left;
 }
 
 .claim-card__timeline span {

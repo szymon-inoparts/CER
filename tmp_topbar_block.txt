@@ -1,0 +1,45 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  background: linear-gradient(120deg, #ffffff, #f8fafc);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.12);
+}
+
+.topbar__logo {
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #111827;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.25);
+  order: 2;
+  margin-left: 16px;
+}
+
+.topbar__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  order: 1;
+}
+
+.topbar .btn-ghost {
+  border-radius: 12px;
+  border-width: 1px;
+  font-weight: 700;
+  background: var(--orange);
+  color: #fff;
+  border-color: var(--orange);
+  min-width: 120px;
+  justify-content: center;
+}
+
+/* ============================================================
+   PODSTRONY (page)  tylko jedna widoczna naraz
+   ============================================================ */
