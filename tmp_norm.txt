@@ -1,0 +1,145 @@
+function normalizeClaim(raw = {}) {
+
+
+
+  const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
+
+
+
+  const dates = flat.dates || {};
+
+
+
+
+
+
+
+  const customerValue = pickField(flat, [
+
+
+
+    "customer",
+
+
+
+    "clientNick",
+
+
+
+    "customerNick",
+
+
+
+    "client",
+
+
+
+    "clientName",
+
+
+
+    "customerName"
+
+
+
+  ]);
+
+
+
+
+
+
+
+  const productsArr =
+
+
+
+    flat.products ||
+
+
+
+    (flat.orderDetails && flat.orderDetails.products) ||
+
+
+
+    (flat.body && flat.body.products);
+
+
+
+
+
+
+
+  const currencyValue =
+
+
+
+    pickField(flat, ["currency", "orderCurrency"]) ||
+
+
+
+    (flat.orderDetails && flat.orderDetails.currency);
+
+
+
+
+
+
+
+  const rawAddress =
+
+
+
+    pickField(flat, ["address", "billAddressFull"]) ||
+
+
+
+    (flat.orderDetails && flat.orderDetails.billAddressFull);
+
+
+
+  const bill =
+
+
+
+    flat.bill_address ||
+
+
+
+    flat.billAddress ||
+
+
+
+    flat.billAddressRaw ||
+
+
+
+    (flat.orderDetails && flat.orderDetails.bill_address);
+
+
+
+
+
+
+
+  let addressValue = rawAddress;
+
+
+
+  if (!addressValue && bill) {
+
+
+
+    const streetLine = [bill.street, bill.home_number, bill.flat_number ? `/${bill.flat_number}` : ""]
+
+
+
+      .filter(Boolean)
+
+
+
+      .join(" ")
+
+
+
+      .t

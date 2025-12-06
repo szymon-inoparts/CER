@@ -1,0 +1,65 @@
+-------------
+
+
+
+
+
+
+
+   BLOKADA HAS\u0141EM  prosty resetowany mechanizm
+
+
+
+
+
+
+
+------------------------------------------------------------- */
+
+
+
+
+
+
+
+const PASSWORD_VALUE = "inoparts";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function initPasswordGate() {
+
+
+
+
+
+
+
+  const overlay = document.getElementById("password-overlay");
+
+
+
+
+
+
+
+  const input = document.getElementById("password-input");
+
+
+
+
+
+
+
+  const submit = document
