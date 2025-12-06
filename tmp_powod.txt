@@ -1,0 +1,5 @@
+iv class="claim-card__grid">
+
+          <div><div class="label">PowÃ³d zgÂ³oszenia</div><div class="value">${claim.reason || "-"}</div></div>
+
+          <div><div cla

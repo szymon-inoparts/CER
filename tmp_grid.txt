@@ -1,0 +1,65 @@
+<div class="claim-card__grid">
+
+
+
+          <div><div class="label">Dane klienta</div><div class="value">${claim.customer || "-"}</div></div>
+
+
+
+          <div><div class="label">Login</div><div class="value">${claim.customerLogin || "-"}</div></div>
+
+
+
+          <div><div class="label">Adres</div><div class="value">${claim.address || "-"}</div></div>
+
+
+
+          <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || "-"}</div></div>
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="claim-card__grid">
+
+
+
+          <div><div class="label">PowÃ³d zgÂ³oszenia</div><div class="value">${claim.reason || "-"}</div></div>
+
+
+
+          <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
+
+
+
+          <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
+
+
+
+          <div><div class="label">RozwiÂ¹zanie</div><div class="value">${claim.resolution || "-"}</div></div>
+
+
+
+          ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
+
+
+
+          ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
+
+
+
+        </div>
+
+
+
+
+
+
+
+        

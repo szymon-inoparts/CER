@@ -553,6 +553,9 @@ th {
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
+.claim-card__status:empty {
+  display: none;
+}
 
 .claim-card__keyline {
   display: grid;
@@ -566,18 +569,27 @@ th {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
   padding: 12px;
-  background: #f7f8fb;
+  background: var(--orange);
+  color: #fff;
   border-radius: 12px;
 }
 
 .claim-card__timeline span {
-  color: #666;
+  color: #fff;
   font-size: 12px;
 }
 
 .claim-card__timeline strong {
   display: block;
   margin-top: 4px;
+  color: #fff;
+}
+
+.claim-card .value {
+  font-size: 14px;
+  color: #111;
+  margin-top: 2px;
+  font-weight: 700;
 }
 
 .claim-card__grid {
@@ -714,6 +726,7 @@ th {
   padding-left: 16px;
   text-align: left;
   list-style-position: inside;
+  font-weight: 700;
 }
 .field-inline {
   display: flex;

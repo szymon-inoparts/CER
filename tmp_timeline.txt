@@ -1,0 +1,15 @@
+claim-card__timeline">
+
+          <div><span>Data przyjêcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+
+          <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
+
+          <div><span>Data rozwi¹zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+
+        </div>
+
+
+
+        <div class="claim-card__grid">
+
+          <div><div c
