@@ -173,11 +173,18 @@ function normalizeClaim(raw = {}) {
     flat.client ||
     flat.clientName ||
     flat.customerName;
+  const addressValue = flat.address || flat.billAddressFull || (flat.orderDetails && flat.orderDetails.billAddressFull);
+  const productsArr =
+    flat.products ||
+    (flat.orderDetails && flat.orderDetails.products) ||
+    (flat.body && flat.body.products);
+  const currencyValue = flat.currency || flat.orderCurrency || (flat.orderDetails && flat.orderDetails.currency);
 
   return {
     claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
     orderId: flat.orderId || flat.order || "",
     customer: customerValue !== undefined && customerValue !== null ? String(customerValue) : "",
+    customerLogin: flat.customerLogin || flat.clientNick || flat.customerNick,
     marketplace: flat.marketplace || flat.platform || "",
     status: flat.status || (flat.isClosed ? "Zako\u0144czone" : ""),
     value:
@@ -187,6 +194,7 @@ function normalizeClaim(raw = {}) {
       flat.amount ??
       flat.total ??
       (flat.pricing && flat.pricing.total),
+    currency: currencyValue,
     reason: flat.reason,
     type: flat.type,
     decision: flat.decision,
@@ -196,7 +204,9 @@ function normalizeClaim(raw = {}) {
     receivedAt: flat.receivedAt || dates.receivedAt,
     decisionDue: flat.decisionDue || dates.decisionDue,
     resolvedAt: flat.resolvedAt || dates.resolvedAt,
-    rowNumber: flat.rowNumber
+    rowNumber: flat.rowNumber,
+    address: addressValue,
+    products: productsArr
   };
 }
 
