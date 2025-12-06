@@ -384,6 +384,18 @@ function initPasswordGate() {
 
 document.addEventListener("DOMContentLoaded", initPasswordGate);
 
+/* ------------------------------------------------------------
+   NAWIGACJA MI?DZY PODSTRONAMI
+------------------------------------------------------------- */
+function switchPage(pageIndex) {
+  const pages = document.querySelectorAll(".page");
+  pages.forEach((page, idx) => {
+    page.classList.toggle("page-active", idx === pageIndex - 1);
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+
 
 
 
@@ -1607,18 +1619,10 @@ function normalizeClaim(raw = {}) {
 
 
     const qtys = splitSemicolons(
-
-
-
-      pickField(flat, ["Produkt IloÃÂÃÂ", "Produkt Ilosc", "productQty", "product_qty"])
-
-
-
+      pickField(flat, ["Produkt Ilość", "Produkt Ilosc", "productQty", "product_qty"])
     );
 
-
-
-    const vals = splitSemicolons(pickField(flat, ["WartoÃÂÃÂ", "Wartosc", "valueRaw", "value"]));
+    const vals = splitSemicolons(pickField(flat, ["Wartość", "Wartosc", "valueRaw", "value"]));
 
 
 
@@ -1815,10 +1819,10 @@ function renderClaimCard(raw, actionHtml = "") {
               ${p.ean ? `EAN: ${escapeHtml(p.ean)}<br>` : ""}
               ${
                 p.price !== undefined && p.price !== null && p.price !== ""
-                  ? `Warto??: ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}<br>`
+                  ? `Wartość: ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}<br>`
                   : ""
               }
-              ${p.quantity ? `Ilo??: ${p.quantity}<br>` : ""}
+              ${p.quantity ? `Ilość: ${p.quantity}<br>` : ""}
             </li>`;
           })
           .join("")}</ul>`
@@ -1830,7 +1834,7 @@ function renderClaimCard(raw, actionHtml = "") {
         <div class="claim-card__header">
           <div>
             <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
-            <div class="claim-card__order">Zam?wienie: ${claim.orderId || "-"}</div>
+            <div class="claim-card__order">Zamówienie: ${claim.orderId || "-"}</div>
           </div>
           ${claim.status ? `<div class="claim-card__status">${claim.status}</div>` : ""}
         </div>
@@ -1841,9 +1845,9 @@ function renderClaimCard(raw, actionHtml = "") {
         </div>
 
         <div class="claim-card__timeline">
-          <div><span>Data przyj?cia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+          <div><span>Data przyjęcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
           <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
-          <div><span>Data rozwi?zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+          <div><span>Data rozwiązania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
         </div>
 
         <div class="claim-card__grid">
@@ -1854,10 +1858,10 @@ function renderClaimCard(raw, actionHtml = "") {
         </div>
 
         <div class="claim-card__grid">
-          <div><div class="label">Pow?d zg?oszenia</div><div class="value">${claim.reason || "-"}</div></div>
+          <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
           <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
           <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-          <div><div class="label">Rozwi?zanie</div><div class="value">${claim.resolution || "-"}</div></div>
+          <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
           ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
           ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
         </div>
@@ -1893,7 +1897,7 @@ function toggleRowDetails(id, btn) {
 
 
 
-  if (btn) btn.textContent = isOpen ? "RozwiÃÂ Ã¢ÂÂ¼" : "ZwiÃÂ Ã¢ÂÂ²";
+    if (btn) btn.textContent = isOpen ? "Rozwiń ▼" : "Zwiń ▲";
 
 
 
@@ -3933,7 +3937,7 @@ ${escapeHtml(rawText)}</pre>
 
 
 
-          <th>Rozwizanie</th>
+          <th>Rozwiązanie</th>
 
 
 
@@ -4041,7 +4045,7 @@ ${escapeHtml(rawText)}</pre>
 
 
 
-              <button class="expand-btn expand-btn--wide" onclick="handleExpand('${expId}', this)">RozwiÃÂ Ã¢ÂÂ¼</button>
+              <button class="expand-btn expand-btn--wide" onclick="handleExpand('${expId}', this)">Rozwiń ▼</button>
 
 
 

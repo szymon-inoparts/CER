@@ -1,0 +1,68 @@
+Produkt IloÃÂÃÂÃÂÃÂ", "Produkt Ilosc", "productQty", "product_qty"])
+
+
+
+    );
+
+
+
+    const vals = splitSemicolons(pickField(flat, ["WartoÃÂÃÂÃÂÃÂ", "Wartosc", "valueRaw", "val
+---
+WartoÃÂÃÂÃÂÃÂ", "Wartosc", "valueRaw", "value"]));
+
+
+
+    const currsSource = pickField(flat, ["Waluta", "currency", "orderCurrency"]) || currencyValue;
+
+
+
+    const currs = splitSemic
+---
+Rozwiniecie odpowiedzi n8n niezaleznie od ksztaltu (tablica, data[], items[], elementy z json)
+
+
+
+
+
+
+
+function toArray(payload) {
+
+
+
+
+
+
+
+  if (Array.isArray(payload)) return payload;
+
+---
+ZwiÃÂÃÂ ÃÂ¢ÃÂÃÂ²";
+
+
+
+}
+
+
+
+window.toggleRowDetails = toggleRowDetails;
+
+
+
+
+
+
+
+function handleExpand(id, btn) {
+
+
+
+  toggleRowDetails(id, btn);
+
+
+
+}
+
+
+
+window.handle
