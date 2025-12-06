@@ -759,11 +759,12 @@ s3GenBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   const answer = document.getElementById("s3-answer").value;
+  const sendLang = selectedLang === "CZ" ? "CS" : selectedLang;
 
   const payload = {
     number: num,
     decision,
-    language: selectedLang,
+    language: sendLang,
     answer,
     noResponse: noResp,
     claim: s3CurrentClaim
