@@ -218,6 +218,8 @@ body {
   background: linear-gradient(90deg, rgba(241,138,0,0.18), rgba(241,138,0,0.32));
   transition: width 0.25s ease;
 }
+/* ensure content sits above the fill */
+.topbar__actions, .topbar__badges { position: relative; z-index: 1; }
 
 .topbar__logo {
   font-weight: 800;
