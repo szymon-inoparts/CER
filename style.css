@@ -200,6 +200,23 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 10px 35px rgba(15, 23, 42, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.topbar-progress {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+.topbar-progress__fill {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  background: linear-gradient(90deg, rgba(241,138,0,0.18), rgba(241,138,0,0.32));
+  transition: width 0.25s ease;
 }
 
 .topbar__logo {
