@@ -710,3 +710,6 @@ th {
 .field.hidden {
   display: none;
 }
+.claim-card--split { display: flex; gap: 16px; align-items: stretch; }
+.claim-card__panel { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; flex: 1; min-width: 280px; }
+.claim-card__panel--products { max-width: 360px; min-width: 260px; }
