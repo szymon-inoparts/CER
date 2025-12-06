@@ -11,8 +11,8 @@
   --panel: #ffffff;
   --text: #0b0c10;
   --muted: #4b4f5c;
-  --orange: #ff7a1a;
-  --orange-dark: #e6670f;
+  --orange: #f18a00;
+  --orange-dark: #d77700;
   --border: #dadce0;
   --radius-lg: 22px;
   --radius-md: 12px;
@@ -224,7 +224,12 @@ body {
 .topbar .btn-ghost {
   border-radius: 12px;
   border-width: 1px;
-  font-weight: 600;
+  font-weight: 700;
+  background: var(--orange);
+  color: #fff;
+  border-color: var(--orange);
+  min-width: 120px;
+  justify-content: center;
 }
 
 /* ============================================================
@@ -272,19 +277,20 @@ body {
 }
 
 .module-tile {
-  border: 1px solid var(--border);
+  border: 1px solid var(--orange);
   border-radius: 14px;
   padding: 14px;
-  background: var(--bg-soft);
+  background: var(--orange);
+  color: #fff;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
+  font-weight: 700;
   transition: 0.15s;
 }
 
 .module-tile:hover {
-  background: var(--orange);
-  color: #fff;
-  border-color: var(--orange);
+  background: var(--orange-dark);
+  border-color: var(--orange-dark);
 }
 
 .muted {
