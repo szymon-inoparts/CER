@@ -216,15 +216,17 @@ function renderClaimCard(raw, actionHtml = "") {
     claim.products && Array.isArray(claim.products) && claim.products.length
       ? `<ul class="products-list">${claim.products
           .map((p) => {
-            const parts = [];
-            if (p.name) parts.push(`Nazwa: ${escapeHtml(p.name)}`);
-            if (p.sku) parts.push(`SKU: ${escapeHtml(p.sku)}`);
-            if (p.ean) parts.push(`EAN: ${escapeHtml(p.ean)}`);
-            if (p.price !== undefined && p.price !== null && p.price !== "") {
-              parts.push(`Wartość: ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}`);
-            }
-            if (p.quantity) parts.push(`Ilość: ${p.quantity}`);
-            return `<li>${parts.join(" ")}</li>`;
+            return `<li>
+              ${p.name ? `Nazwa: ${escapeHtml(p.name)}<br>` : ""}
+              ${p.sku ? `SKU: ${escapeHtml(p.sku)}<br>` : ""}
+              ${p.ean ? `EAN: ${escapeHtml(p.ean)}<br>` : ""}
+              ${
+                p.price !== undefined && p.price !== null && p.price !== ""
+                  ? `Wartość: ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}<br>`
+                  : ""
+              }
+              ${p.quantity ? `Ilość: ${p.quantity}<br>` : ""}
+            </li>`;
           })
           .join("")}</ul>`
       : `<div class="value">-</div>`;
