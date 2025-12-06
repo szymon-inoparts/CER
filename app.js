@@ -228,7 +228,7 @@ function renderClaimCard(raw, actionHtml = "") {
         <div class="claim-card__status">${claim.status || ""}</div>
       </div>
 
-    <div class="claim-card__keyline">
+      <div class="claim-card__keyline">
         <div>
           <div class="label">Klient</div>
           <div class="value">${claim.customer || "-"}</div>
@@ -239,7 +239,7 @@ function renderClaimCard(raw, actionHtml = "") {
         </div>
         <div>
           <div class="label">Warto</div>
-          <div class="value strong">${formatCurrency(claim.value)}</div>
+          <div class="value strong">${formatCurrency(claim.value)} ${claim.currency || ""}</div>
         </div>
       </div>
 
@@ -250,12 +250,17 @@ function renderClaimCard(raw, actionHtml = "") {
       </div>
 
       <div class="claim-card__grid">
+        <div><div class="label">Dane klienta</div><div class="value">${claim.customer || "-"}</div></div>
+        <div><div class="label">Login</div><div class="value">${claim.customerLogin || "-"}</div></div>
+        <div><div class="label">Adres</div><div class="value">${claim.address || "-"}</div></div>
+        <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || "-"}</div></div>
+      </div>
+
+      <div class="claim-card__grid">
         <div><div class="label">Pow\u00f3d zg\u0142oszenia</div><div class="value">${claim.reason || "-"}</div></div>
         <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
         <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
         <div><div class="label">Rozwi\u0105zanie</div><div class="value">${claim.resolution || "-"}</div></div>
-        <div><div class="label">Adres</div><div class="value">${claim.address || "-"}</div></div>
-        <div><div class="label">Waluta</div><div class="value">${claim.currency || "-"}</div></div>
         ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
         ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
       </div>
