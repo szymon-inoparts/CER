@@ -524,7 +524,9 @@ s2SearchBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   try {
-    const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?order=${encodeURIComponent(num)}`);
+    // wysyłamy zarówno order jak i claimId, żeby backend mógł dopasować
+    const params = new URLSearchParams({ order: num, claim: num, number: num });
+    const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?${params.toString()}`);
     const data = await res.json();
     const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
     s2SingleBox.classList.remove("hidden");
