@@ -460,7 +460,7 @@ function toggleRowDetails(id, btn) {
   if (!row) return;
   const isOpen = row.style.display !== "none";
   row.style.display = isOpen ? "none" : "table-row";
-  if (btn) btn.textContent = isOpen ? "Rozwin v" : "Zwin ^";
+  if (btn) btn.textContent = isOpen ? "Rozwiń ▼" : "Zwiń ▲";
 }
 window.toggleRowDetails = toggleRowDetails;
 
@@ -745,8 +745,8 @@ ${escapeHtml(rawText)}</pre>
           <td>${formatDate(claim.resolvedAt)}</td>
           <td>
             <div class="action-cell">
-              <button class="expand-btn" onclick="handleExpand('${expId}', this)">Rozwin v</button>
-              <button class="btn" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj</button>
+              <button class="expand-btn expand-btn--wide" onclick="handleExpand('${expId}', this)">Rozwiń ▼</button>
+              <button class="btn btn-dark" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj</button>
             </div>
           </td>
         </tr>

@@ -614,10 +614,11 @@ th {
 
 .expand-btn {
   border: 1px solid var(--border);
-  background: #f6f7fb;
-  border-radius: 8px;
-  width: 28px;
-  height: 28px;
+  background: #e8f0ff;
+  color: #0a3d91;
+  border-radius: 10px;
+  min-width: 86px;
+  padding: 8px 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -627,7 +628,11 @@ th {
 }
 
 .expand-btn:hover {
-  background: #e8eaf1;
+  background: #d7e6ff;
+}
+
+.expand-btn--wide {
+  min-width: 110px;
 }
 
 .expand-row td {
@@ -670,7 +675,7 @@ th {
 
 .table-box th:last-child,
 .table-box td:last-child {
-  width: 190px;
+  width: 210px;
 }
 
 .claim-card__body {
