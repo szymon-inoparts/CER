@@ -80,7 +80,7 @@ function formatCurrency(value) {
   const cleaned = typeof value === "string" ? value.replace(",", ".") : value;
   const num = Number(cleaned);
   if (Number.isNaN(num)) return value;
-  return `${num.toFixed(2)}`;
+  return `${num.toFixed(2)} z\u0142`;
 }
 
 function escapeHtml(str = "") {
@@ -162,15 +162,6 @@ function unwrapArray(payload) {
   return base.map((el) => (el && el.json && typeof el.json === "object" ? { ...el, ...el.json } : el));
 }
 
-function splitSemicolons(val) {
-  if (!val) return [];
-  if (Array.isArray(val)) return val;
-  return String(val)
-    .split(";")
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
 function normalizeClaim(raw = {}) {
   // Obsuga odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementw
   const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
@@ -183,64 +174,10 @@ function normalizeClaim(raw = {}) {
     flat.clientName ||
     flat.customerName;
 
-  const addrFull =
-    flat.billAddressFull ||
-    flat.address ||
-    flat.bill_address ||
-    (flat.addresses && flat.addresses.billing) ||
-    (flat.orderDetails && flat.orderDetails.bill_address);
-
-  const productsArr =
-    flat.products ||
-    (flat.orderDetails && flat.orderDetails.products) ||
-    (flat.body && flat.body.products);
-
-  // fallback: produkty jako stringi z CER (rozdzielone srednikiem w kolumnach)
-  let products =
-    typeof productsArr === "string"
-      ? splitSemicolons(productsArr).map((name) => ({ name }))
-      : Array.isArray(productsArr)
-      ? productsArr
-      : [];
-
-  if (!products.length) {
-    const semName = splitSemicolons(
-      flat.productName || flat["Produkt Nazwa"] || flat.product_name || flat.product
-    );
-    const semSku = splitSemicolons(flat.productSku || flat["Produkt SKU"] || flat.product_sku);
-    const semEan = splitSemicolons(flat.productEan || flat["Produkt EAN"] || flat.product_ean);
-    const semQty = splitSemicolons(
-      flat.productQuantity || flat["Produkt Ilość"] || flat.product_qty || flat.productQuantityNumber
-    );
-    const semVal = splitSemicolons(
-      flat.productValue || flat["Produkt Wartość"] || flat.product_price || flat.productValueNumber
-    );
-    const semCurr = splitSemicolons(flat.productCurrency || flat["Produkt Waluta"] || flat.currency);
-    const maxLen = Math.max(
-      semName.length,
-      semSku.length,
-      semEan.length,
-      semQty.length,
-      semVal.length,
-      semCurr.length
-    );
-    if (maxLen > 0) {
-      products = Array.from({ length: maxLen }).map((_, i) => ({
-        name: semName[i],
-        sku: semSku[i],
-        ean: semEan[i],
-        quantity: semQty[i],
-        price: semVal[i],
-        currency: semCurr[i]
-      }));
-    }
-  }
-
   return {
     claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
     orderId: flat.orderId || flat.order || "",
     customer: customerValue !== undefined && customerValue !== null ? String(customerValue) : "",
-    customerLogin: flat.clientNick || flat.customerNick || flat.login,
     marketplace: flat.marketplace || flat.platform || "",
     status: flat.status || (flat.isClosed ? "Zako\u0144czone" : ""),
     value:
@@ -250,7 +187,6 @@ function normalizeClaim(raw = {}) {
       flat.amount ??
       flat.total ??
       (flat.pricing && flat.pricing.total),
-    currency: flat.currency || flat.orderCurrency || (flat.orderDetails && flat.orderDetails.currency),
     reason: flat.reason,
     type: flat.type,
     decision: flat.decision,
@@ -260,91 +196,80 @@ function normalizeClaim(raw = {}) {
     receivedAt: flat.receivedAt || dates.receivedAt,
     decisionDue: flat.decisionDue || dates.decisionDue,
     resolvedAt: flat.resolvedAt || dates.resolvedAt,
-    rowNumber: flat.rowNumber,
-    address: addrFull,
-    products
+    rowNumber: flat.rowNumber
   };
 }
 
 function renderClaimCard(raw, actionHtml = "") {
   const claim = normalizeClaim(raw);
-  return `
-    <div class="claim-card">
-      <div class="claim-card__header">
-        <div>
-          <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
-          <div class="claim-card__order">Zam\u00f3wienie: ${claim.orderId || "-"}</div>
-        </div>
-        <div class="claim-card__status">${claim.status || ""}</div>
-      </div>
-
-      <div class="claim-card__keyline">
-        <div>
-          <div class="label">Klient</div>
-          <div class="value">${claim.customer || "-"}</div>
-        </div>
-        <div>
-          <div class="label">Marketplace</div>
-          <div class="value">${claim.marketplace || "-"}</div>
-        </div>
-        <div>
-          <div class="label">Warto</div>
-          <div class="value strong">${formatCurrency(claim.value)} ${claim.currency || ""}</div>
-        </div>
-      </div>
-
-      <div class="claim-card__body">
-        <div class="claim-card__info">
-          <div class="claim-card__timeline">
-            <div><span>Data przyj\u0119cia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
-            <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
-            <div><span>Data rozwi\u0105zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
-          </div>
-
-          <div class="claim-card__grid">
-            <div><div class="label">Dane klienta</div><div class="value">${claim.customer || "-"}</div></div>
-            <div><div class="label">Login</div><div class="value">${claim.customerLogin || "-"}</div></div>
-            <div><div class="label">Adres</div><div class="value">${claim.address || "-"}</div></div>
-            <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || "-"}</div></div>
-          </div>
-
-          <div class="claim-card__grid">
-            <div><div class="label">Pow\u00f3d zg\u0142oszenia</div><div class="value">${claim.reason || "-"}</div></div>
-            <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
-            <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-            <div><div class="label">Rozwi\u0105zanie</div><div class="value">${claim.resolution || "-"}</div></div>
-            ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
-            ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
-          </div>
-        </div>
-
-        <div class="claim-card__products">
-          <div class="products-block">
-            <div class="label" style="margin-bottom:4px;">Reklamowane produkty</div>
-            ${
-              claim.products && Array.isArray(claim.products) && claim.products.length
-                ? `<ul class="products-list">${claim.products
-                    .map((p) => {
-                      const parts = [];
-                      if (p.name) parts.push(`Nazwa: ${escapeHtml(p.name)}`);
-                      if (p.sku) parts.push(`SKU: ${escapeHtml(p.sku)}`);
-                      if (p.ean) parts.push(`EAN: ${escapeHtml(p.ean)}`);
-                      if (p.price !== undefined && p.price !== null && p.price !== "") {
-                        parts.push(`Wartość: ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}`);
-                      }
-                      if (p.quantity) parts.push(`Ilość: ${p.quantity}`);
-                      return `<li>${parts.join(" ")}</li>`;
-                    })
-                    .join("")}</ul>`
-                : `<div class="value">-</div>`
+  const productsBlock =
+    claim.products && Array.isArray(claim.products) && claim.products.length
+      ? `<ul class="products-list">${claim.products
+          .map((p) => {
+            const parts = [];
+            if (p.name) parts.push(`Nazwa: ${escapeHtml(p.name)}`);
+            if (p.sku) parts.push(`SKU: ${escapeHtml(p.sku)}`);
+            if (p.ean) parts.push(`EAN: ${escapeHtml(p.ean)}`);
+            if (p.price !== undefined && p.price !== null && p.price !== "") {
+              parts.push(`Wartość: ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}`);
             }
+            if (p.quantity) parts.push(`Ilość: ${p.quantity}`);
+            return `<li>${parts.join(" ")}</li>`;
+          })
+          .join("")}</ul>`
+      : `<div class="value">-</div>`;
+
+  return `
+    <div class="claim-card claim-card--split">
+      <div class="claim-card__panel claim-card__panel--main">
+        <div class="claim-card__header">
+          <div>
+            <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
+            <div class="claim-card__order">Zamówienie: ${claim.orderId || "-"}</div>
           </div>
+          <div class="claim-card__status">${claim.status || ""}</div>
         </div>
+
+        <div class="claim-card__keyline">
+          <div><div class="label">Klient</div><div class="value">${claim.customer || "-"}</div></div>
+          <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || "-"}</div></div>
+          <div><div class="label">Warto</div><div class="value strong">${formatCurrency(claim.value)} ${claim.currency || ""}</div></div>
+        </div>
+
+        <div class="claim-card__timeline">
+          <div><span>Data przyjęcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+          <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
+          <div><span>Data rozwiązania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+        </div>
+
+        <div class="claim-card__grid">
+          <div><div class="label">Dane klienta</div><div class="value">${claim.customer || "-"}</div></div>
+          <div><div class="label">Login</div><div class="value">${claim.customerLogin || "-"}</div></div>
+          <div><div class="label">Adres</div><div class="value">${claim.address || "-"}</div></div>
+          <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || "-"}</div></div>
+        </div>
+
+        <div class="claim-card__grid">
+          <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
+          <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
+          <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
+          <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
+          ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
+          ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
+        </div>
+
+        <div class="claim-card__actions">${actionHtml || ""}</div>
       </div>
 
-      <div class="claim-card__actions">${actionHtml || ""}</div>
+      <div class="claim-card__panel claim-card__panel--products">
+        <div class="products-block">
+          <div class="label" style="margin-bottom:6px;">Reklamowane produkty</div>
+          ${productsBlock}
+        </div>
+      </div>
     </div>`;
 }
+
 
 /* ------------------------------------------------------------
    PRZECZANIE PODSTRON (13)
@@ -404,8 +329,7 @@ function resetPage1() {
     "s1-type",
     "s1-reason",
     "s1-employee",
-    "s1-note",
-    "s1-bill-full"
+    "s1-note"
   ].forEach((id) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -429,10 +353,6 @@ function resetPage3() {
   document.getElementById("s3-decision").selectedIndex = 0;
   document.getElementById("s3-noresp").checked = false;
   document.getElementById("s3-answer").value = "";
-  if (s3AnswerField) s3AnswerField.classList.remove("hidden");
-  if (s3AnswerInput) s3AnswerInput.readOnly = false;
-  if (s3AutoNote) s3AutoNote.classList.add("hidden");
-  if (typeof updateNoResponseState === "function") updateNoResponseState();
   selectedLang = "PL";
   s3CurrentClaim = null;
   document.querySelectorAll(".lang-btn").forEach((btn) => {
@@ -480,7 +400,6 @@ s1FetchBtn.addEventListener("click", async () => {
     const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
     s1FetchedOrder = data;
-    const currency = data.currency || "PLN";
 
     // Wywietlenie boxa
     s1OrderBox.classList.remove("hidden");
@@ -497,7 +416,7 @@ s1FetchBtn.addEventListener("click", async () => {
         <div class="product-row">
           <label>
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-            ${p.name} (${p.sku})${p.ean ? ` EAN: ${p.ean}` : ""} - ${p.price ?? ""} ${currency} zam\u00f3wiono: ${p.quantity}
+            ${p.name} (${p.sku}) - ${p.price ?? ""} z\u0142 zam\u00f3wiono: ${p.quantity}
           </label>
           <input type="number" class="s1-prod-qty" data-index="${idx}" min="0" max="${p.quantity}" value="0" />
         </div>
@@ -512,15 +431,7 @@ s1FetchBtn.addEventListener("click", async () => {
     document.getElementById("s1-country").value = data.country;
     document.getElementById("s1-date").value = data.orderDate;
     document.getElementById("s1-platform").value = data.platform;
-    document.getElementById("s1-shipping").value = `${formatCurrency(data.shippingCost)} ${currency}`;
-
-    const bill = data.bill_address || {};
-    const streetLine = [bill.street, bill.home_number, bill.flat_number].filter(Boolean).join(" ");
-    const cityLine = [bill.postcode, bill.city].filter(Boolean).join(" ");
-    const country = bill.country?.name || bill.country?.code || "";
-    const fullAddress = [streetLine, cityLine, country].filter(Boolean).join(", ");
-    const billFull = document.getElementById("s1-bill-full");
-    if (billFull) billFull.value = fullAddress || "";
+    document.getElementById("s1-shipping").value = data.shippingCost;
 
     showToast("Pobrano dane zam\u00f3wienia");
   } catch (err) {
@@ -533,8 +444,6 @@ s1SaveBtn.addEventListener("click", async () => {
   const payload = {
     order: s1OrderInput.value,
     orderDetails: s1FetchedOrder,
-    currency: s1FetchedOrder?.currency || "PLN",
-    billAddressFull: document.getElementById("s1-bill-full")?.value || "",
     reportDate: document.getElementById("s1-report-date").value,
     type: document.getElementById("s1-type").value,
     reason: document.getElementById("s1-reason").value,
@@ -551,9 +460,7 @@ s1SaveBtn.addEventListener("click", async () => {
         sku: meta.sku,
         name: meta.name,
         orderedQuantity: meta.quantity,
-        price: Number(meta.price ?? 0),
-        ean: meta.ean,
-        currency: s1FetchedOrder?.currency || "PLN"
+        price: Number(meta.price ?? 0)
       };
     })
   };
@@ -624,15 +531,13 @@ s2SearchBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   try {
-    // wysyłamy zarówno order jak i claimId, żeby backend mógł dopasować
-    const params = new URLSearchParams({ order: num, claim: num, number: num, t: Date.now().toString() });
-    const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?${params.toString()}`);
+    const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
     const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
     s2SingleBox.classList.remove("hidden");
     s2SingleBox.innerHTML = renderClaimCard(
       claim,
-      `<button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId || claim.orderId || num}'">Generuj odpowied</button>`
+      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowied</button>`
     );
 
     showToast("Pobrano zg\u0142oszenie");
@@ -743,7 +648,7 @@ ${escapeHtml(rawText)}</pre>
           <td>
             <div class="action-cell">
               <button class="expand-btn" onclick="toggleRowDetails('${expId}', this)">v</button>
-              <button class="btn" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId || claim.orderId || ''}'">Generuj</button>
+              <button class="btn" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button>
             </div>
           </td>
         </tr>
@@ -771,14 +676,8 @@ const s3FetchBtn = document.getElementById("s3-fetch");
 const s3NumberInput = document.getElementById("s3-number");
 const s3DetailsBox = document.getElementById("s3-details");
 const s3GenBtn = document.getElementById("s3-generate");
-const s3NoRespCheckbox = document.getElementById("s3-noresp");
-const s3AnswerInput = document.getElementById("s3-answer");
-const s3AnswerField = s3AnswerInput ? s3AnswerInput.closest(".field") : null;
-const s3AutoNote = document.getElementById("s3-auto-note");
 let selectedLang = "PL";
 let s3CurrentClaim = null;
-const AUTO_ANSWER_TEXT =
-  "Brak mozliwosci weryfikacji: Pomimo naszych prob kontaktu nie otrzymalismy odpowiedzi, dlatego zamykamy zgloszenie.";
 
 /* Zmiana jzyka tumaczenia */
 document.querySelectorAll(".lang-btn").forEach((btn) => {
@@ -790,53 +689,13 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
   });
 });
 
-// automatyczna odpowiedz przy braku odpowiedzi klienta
-function updateNoResponseState() {
-  if (!s3NoRespCheckbox || !s3AnswerInput) return;
-  if (s3NoRespCheckbox.checked) {
-    s3AnswerInput.value = AUTO_ANSWER_TEXT;
-    s3AnswerInput.readOnly = true;
-    if (s3AnswerField) s3AnswerField.classList.add("hidden");
-    if (s3AutoNote) s3AutoNote.classList.remove("hidden");
-  } else {
-    s3AnswerInput.readOnly = false;
-    if (s3AnswerField) s3AnswerField.classList.remove("hidden");
-    s3AnswerInput.value = "";
-    if (s3AutoNote) s3AutoNote.classList.add("hidden");
-  }
-}
-if (s3NoRespCheckbox) {
-  s3NoRespCheckbox.addEventListener("change", updateNoResponseState);
-  updateNoResponseState();
-}
-
-// automatyczna odpowiedz przy braku odpowiedzi klienta
-if (s3NoRespCheckbox) {
-  s3NoRespCheckbox.addEventListener("change", () => {
-    if (!s3AnswerInput) return;
-    if (s3NoRespCheckbox.checked) {
-      s3AnswerInput.value = AUTO_ANSWER_TEXT;
-      s3AnswerInput.readOnly = true;
-      if (s3AnswerField) s3AnswerField.classList.add("hidden");
-    } else {
-      s3AnswerInput.readOnly = false;
-      if (s3AnswerField) s3AnswerField.classList.remove("hidden");
-      s3AnswerInput.value = "";
-    }
-  });
-}
-
 /* Pobieranie danych zgoszenia */
 s3FetchBtn.addEventListener("click", async () => {
   const num = s3NumberInput.value.trim();
   if (!num) return showToast("Podaj numer", "error");
 
   try {
-    const params = new URLSearchParams({
-      number: num,
-      t: Date.now().toString()
-    });
-    const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}?${params.toString()}`);
+    const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}?number=${encodeURIComponent(num)}`);
     const data = await res.json();
     const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
     s3CurrentClaim = claim;
@@ -878,13 +737,14 @@ s3GenBtn.addEventListener("click", async () => {
   const noResp = document.getElementById("s3-noresp").checked;
   if (!num) return showToast("Podaj numer", "error");
 
-  const answer = document.getElementById("s3-answer").value;
-  const sendLang = selectedLang === "CZ" ? "CS" : selectedLang;
+  const answer = noResp
+    ? "Brak mo\u017cliwo\u015bci weryfikacji: Pomimo naszych pr\u00f3b kontaktu nie otrzymali\u015bmy odpowiedzi, dlatego zamykamy zg\u0142oszenie."
+    : document.getElementById("s3-answer").value;
 
   const payload = {
     number: num,
     decision,
-    language: sendLang,
+    language: selectedLang,
     answer,
     noResponse: noResp,
     claim: s3CurrentClaim
@@ -908,34 +768,12 @@ s3GenBtn.addEventListener("click", async () => {
       : null
   };
 
-  console.info("CER generate -> sending payload", payload);
-  showToast("Wysylam zadanie...", "success");
-
   try {
     const res = await fetch(GENERATE_WEBHOOK, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/pdf"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Generator response error", res.status, text);
-      showToast(`Blad generowania (${res.status})`, "error");
-      return;
-    }
-
-    const ct = res.headers.get("content-type") || "";
-    console.info("CER generate -> response headers", { status: res.status, ct });
-    if (!ct.includes("application/pdf")) {
-      const text = await res.text();
-      console.error("Generator expected PDF, got:", ct, text);
-      showToast("Odpowiedz nie jest PDF", "error");
-      return;
-    }
 
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
@@ -946,8 +784,8 @@ s3GenBtn.addEventListener("click", async () => {
     a.click();
 
     showToast("Wygenerowano PDF");
-  } catch (err) {
-    console.error("CER generate -> network error", err);
-    showToast("Blad generowania", "error");
+  } catch {
+    showToast("B\u0142\u0105d generowania", "error");
   }
 });
+
