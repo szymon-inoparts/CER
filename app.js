@@ -525,14 +525,14 @@ s2SearchBtn.addEventListener("click", async () => {
 
   try {
     // wysyłamy zarówno order jak i claimId, żeby backend mógł dopasować
-    const params = new URLSearchParams({ order: num, claim: num, number: num });
+    const params = new URLSearchParams({ order: num, claim: num, number: num, t: Date.now().toString() });
     const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?${params.toString()}`);
     const data = await res.json();
     const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
     s2SingleBox.classList.remove("hidden");
     s2SingleBox.innerHTML = renderClaimCard(
       claim,
-      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowied</button>`
+      `<button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId || claim.orderId || num}'">Generuj odpowied</button>`
     );
 
     showToast("Pobrano zg\u0142oszenie");
@@ -643,7 +643,7 @@ ${escapeHtml(rawText)}</pre>
           <td>
             <div class="action-cell">
               <button class="expand-btn" onclick="toggleRowDetails('${expId}', this)">v</button>
-              <button class="btn" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button>
+              <button class="btn" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId || claim.orderId || ''}'">Generuj</button>
             </div>
           </td>
         </tr>
@@ -732,7 +732,11 @@ s3FetchBtn.addEventListener("click", async () => {
   if (!num) return showToast("Podaj numer", "error");
 
   try {
-    const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}?number=${encodeURIComponent(num)}`);
+    const params = new URLSearchParams({
+      number: num,
+      t: Date.now().toString()
+    });
+    const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}?${params.toString()}`);
     const data = await res.json();
     const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
     s3CurrentClaim = claim;
