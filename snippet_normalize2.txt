@@ -1,0 +1,20 @@
+return {
+    claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
+    orderId: flat.orderId || flat.order || "",
+    customer: customerValue !== undefined && customerValue !== null ? String(customerValue) : "",
+    customerLogin: flat.customerLogin || flat.clientNick || flat.customerNick,
+    marketplace: flat.marketplace || flat.platform || "",
+    status: flat.status || (flat.isClosed ? "Zako\u0144czone" : ""),
+    value:
+      flat.value ??
+      flat.valueNumber ??
+      flat.valueRaw ??
+      flat.amount ??
+      flat.total ??
+      (flat.pricing && flat.pricing.total),
+    currency: currencyValue,
+    reason: flat.reason,
+    type: flat.type,
+    decision: flat.decision,
+    resolution: flat.resolution,
+    agent: flat.age

@@ -1,0 +1,28 @@
+function renderClaimCard(raw, actionHtml = "") {
+  const claim = normalizeClaim(raw);
+  const productsBlock =
+    claim.products && Array.isArray(claim.products) && claim.products.length
+      ? `<ul class="products-list">${claim.products
+          .map((p) => {
+            return `<li>
+              ${p.name ? `Nazwa: ${escapeHtml(p.name)}<br>` : ""}
+              ${p.sku ? `SKU: ${escapeHtml(p.sku)}<br>` : ""}
+              ${p.ean ? `EAN: ${escapeHtml(p.ean)}<br>` : ""}
+              ${
+                p.price !== undefined && p.price !== null && p.price !== ""
+                  ? `Wartoæ: ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}<br>`
+                  : ""
+              }
+              ${p.quantity ? `Iloæ: ${p.quantity}<br>` : ""}
+            </li>`;
+          })
+          .join("")}</ul>`
+      : `<div class="value">-</div>`;
+
+  return `
+    <div class="claim-card claim-card--split">
+      <div class="claim-card__panel claim-card__panel--main">
+        <div class="claim-card__header">
+          <div>
+            <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
+            <div class="claim-card__order">

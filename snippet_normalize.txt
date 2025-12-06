@@ -1,0 +1,51 @@
+function normalizeClaim(raw = {}) {
+  // Obsuga odpowiedzi w stylu n8n: { json: { ... } } albo tablicy elementw
+  const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
+  const dates = flat.dates || {};
+  const customerValue =
+    flat.customer ||
+    flat.clientNick ||
+    flat.customerNick ||
+    flat.client ||
+    flat.clientName ||
+    flat.customerName;
+  const addressValue = flat.address || flat.billAddressFull || (flat.orderDetails && flat.orderDetails.billAddressFull);
+  const productsArr =
+    flat.products ||
+    (flat.orderDetails && flat.orderDetails.products) ||
+    (flat.body && flat.body.products);
+  const currencyValue = flat.currency || flat.orderCurrency || (flat.orderDetails && flat.orderDetails.currency);
+
+  let products =
+    typeof productsArr === "string"
+      ? splitSemicolons(productsArr).map((name) => ({ name }))
+      : Array.isArray(productsArr)
+      ? productsArr
+      : [];
+
+  if (!products.length) {
+    const names = splitSemicolons(flat["Produkt Nazwa"] || flat.productName);
+    const skus = splitSemicolons(flat["Produkt SKU"] || flat.productSku);
+    const eans = splitSemicolons(flat["Produkt EAN"] || flat.productEan);
+    const qtys = splitSemicolons(flat["Produkt Iloæ"] || flat.productQty);
+    const vals = splitSemicolons(flat["Wartoæ"] || flat.valueRaw);
+    const currs = splitSemicolons(flat["Waluta"] || currencyValue);
+    const maxLen = Math.max(names.length, skus.length, eans.length, qtys.length, vals.length, currs.length);
+    if (maxLen > 0) {
+      products = Array.from({ length: maxLen }).map((_, i) => ({
+        name: names[i],
+        sku: skus[i],
+        ean: eans[i],
+        quantity: qtys[i],
+        price: vals[i],
+        currency: currs[i]
+      }));
+    }
+  }
+
+  return {
+    claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
+    orderId: flat.orderId || flat.order || "",
+    customer: customerValue !== undefined && customerValue !== null ? String(customerValue) : "",
+    customerLogin: flat.customerLogin || flat.clientNick || flat.customerNick,
+    marketplace: flat.marketplace |
