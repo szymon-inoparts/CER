@@ -80,7 +80,7 @@ function formatCurrency(value) {
   const cleaned = typeof value === "string" ? value.replace(",", ".") : value;
   const num = Number(cleaned);
   if (Number.isNaN(num)) return value;
-  return `${num.toFixed(2)} z\u0142`;
+  return `${num.toFixed(2)}`;
 }
 
 function escapeHtml(str = "") {
@@ -304,7 +304,13 @@ function resetPage1() {
     "s1-type",
     "s1-reason",
     "s1-employee",
-    "s1-note"
+    "s1-note",
+    "s1-bill-street",
+    "s1-bill-flat",
+    "s1-bill-city",
+    "s1-bill-postcode",
+    "s1-bill-country",
+    "s1-bill-phone"
   ].forEach((id) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -379,6 +385,7 @@ s1FetchBtn.addEventListener("click", async () => {
     const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
     const data = await res.json();
     s1FetchedOrder = data;
+    const currency = data.currency || "PLN";
 
     // Wywietlenie boxa
     s1OrderBox.classList.remove("hidden");
@@ -395,7 +402,7 @@ s1FetchBtn.addEventListener("click", async () => {
         <div class="product-row">
           <label>
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-            ${p.name} (${p.sku}) - ${p.price ?? ""} z\u0142 zam\u00f3wiono: ${p.quantity}
+            ${p.name} (${p.sku})${p.ean ? ` EAN: ${p.ean}` : ""} - ${p.price ?? ""} ${currency} zam\u00f3wiono: ${p.quantity}
           </label>
           <input type="number" class="s1-prod-qty" data-index="${idx}" min="0" max="${p.quantity}" value="0" />
         </div>
@@ -410,7 +417,16 @@ s1FetchBtn.addEventListener("click", async () => {
     document.getElementById("s1-country").value = data.country;
     document.getElementById("s1-date").value = data.orderDate;
     document.getElementById("s1-platform").value = data.platform;
-    document.getElementById("s1-shipping").value = data.shippingCost;
+    document.getElementById("s1-shipping").value = `${formatCurrency(data.shippingCost)} ${currency}`;
+
+    const bill = data.bill_address || {};
+    const streetLine = [bill.street, bill.home_number].filter(Boolean).join(" ");
+    document.getElementById("s1-bill-street").value = streetLine || "";
+    document.getElementById("s1-bill-flat").value = bill.flat_number || "";
+    document.getElementById("s1-bill-city").value = bill.city || "";
+    document.getElementById("s1-bill-postcode").value = bill.postcode || "";
+    document.getElementById("s1-bill-country").value = bill.country?.name || bill.country?.code || "";
+    document.getElementById("s1-bill-phone").value = bill.phone || "";
 
     showToast("Pobrano dane zam\u00f3wienia");
   } catch (err) {
