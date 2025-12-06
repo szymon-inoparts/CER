@@ -433,6 +433,8 @@ s1SaveBtn.addEventListener("click", async () => {
   const payload = {
     order: s1OrderInput.value,
     orderDetails: s1FetchedOrder,
+    currency: s1FetchedOrder?.currency || "PLN",
+    billAddressFull: document.getElementById("s1-bill-full")?.value || "",
     reportDate: document.getElementById("s1-report-date").value,
     type: document.getElementById("s1-type").value,
     reason: document.getElementById("s1-reason").value,
@@ -449,7 +451,9 @@ s1SaveBtn.addEventListener("click", async () => {
         sku: meta.sku,
         name: meta.name,
         orderedQuantity: meta.quantity,
-        price: Number(meta.price ?? 0)
+        price: Number(meta.price ?? 0),
+        ean: meta.ean,
+        currency: s1FetchedOrder?.currency || "PLN"
       };
     })
   };
