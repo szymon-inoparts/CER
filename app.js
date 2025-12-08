@@ -2211,117 +2211,20 @@ s1FetchBtn.addEventListener("click", async () => {
     const productsArr = Array.isArray(data?.products) ? data.products : [];
 
     s1Products.innerHTML = productsArr.length
-
-
-
-
-
-
-
-      .map(
-
-
-
-
-
-
-
-        (p, idx) => `
-
-
-
-
-
-
-
+      ? productsArr
+          .map(
+            (p, idx) => `
         <div class="product-row">
-
-
-
-
-
-
-
           <label>
-
-
-
-
-
-
-
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-
-
-
-
-
-
-
-            ${p.name} (${p.sku}) - ${p.price ?? ""} z\u0142 zam\u00f3wiono: ${p.quantity}
-
-
-
-
-
-
-
+            ${p.name} (${p.sku}) - ${p.price ?? ""} z? zam?wiono: ${p.quantity}
           </label>
-
-
-
-
-
-
-
           <input type="number" class="s1-prod-qty" data-index="${idx}" min="0" max="${p.quantity}" value="0" />
-
-
-
-
-
-
-
         </div>
-
-
-
-
-
-
-
       `
-
-
-
-
-
-
-
-      )
-
-
-
-
-
-
-
-      .join("")
-      : `<div class="muted">Brak produktów w odpowiedzi</div>`;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+          )
+          .join("")
+      : `<div class="muted">Brak produkt?w w odpowiedzi</div>`;
 
     document.getElementById("s1-client-name").value = data.clientName || "";
 
