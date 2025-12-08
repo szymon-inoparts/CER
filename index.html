@@ -7,6 +7,7 @@
   <title>CER  System Reklamacji</title>
   <!-- czenie CSS -->
   <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/docx@8.0.0/build/index.min.js"></script>
 </head>
 <body>
 
@@ -269,7 +270,10 @@
       </div>
     </div>
 
-    <button class="btn btn-primary" id="s3-generate">Generuj odpowied&#378;</button>
+    <div class="row-inline" style="gap:12px;">
+      <button class="btn btn-primary" id="s3-generate">Generuj odpowied&#378;</button>
+      <button class="btn" id="s3-docx">Pobierz DOCX</button>
+    </div>
   </section>
 
 </div>

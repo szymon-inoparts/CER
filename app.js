@@ -144,6 +144,128 @@ const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-o
 
 const PASSWORD_VALUE = "inoparts";
 
+const DOCX_TRANSLATIONS = {
+  PL: {
+    companyLabel: "Dane firmy:",
+    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    customerLabel: "Dane klienta:",
+    title: "Odpowiedź na reklamację",
+    subjectLabel: "Przedmiot reklamacji:",
+    valueLabel: "Wartość produktu:",
+    complaintDateLabel: "Data zgłoszenia reklamacji:",
+    purchaseDateLabel: "Data zakupu:",
+    reasonLabel: "Powód reklamacji:",
+    descriptionLabel: "Opis:",
+    decisionLabel: "Decyzja reklamacyjna:",
+    resolutionLabel: "Rozwiązanie sytuacji/Uzasadnienie:",
+    footer:
+      "Reklamacja została rozpatrzona z uwzględnieniem wszelkich praw wynikających z ustawy o prawach konsumenta oraz kodeksu cywilnego. Pragnę również poinformować, iż na niniejszą odpowiedź przysługuje prawo do odwołania się.\nZ wyrazami szacunku",
+    complaintTitle: "Odpowiedź na reklamację",
+    productLabel: "Produkt",
+    complaintValueLabel: "Wartość produktu:",
+    decisionValues: { pozytywna: "Pozytywna", negatywna: "Negatywna" }
+  },
+  CZ: {
+    companyLabel: "Údaje o společnosti:",
+    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    customerLabel: "Údaje o zákazníkovi:",
+    title: "Odpověď na stížnost",
+    subjectLabel: "Předmět stížnosti:",
+    valueLabel: "Hodnota produktu:",
+    complaintDateLabel: "Datum podání stížnosti:",
+    purchaseDateLabel: "Datum nákupu:",
+    reasonLabel: "Důvod stížnosti:",
+    descriptionLabel: "Popis:",
+    decisionLabel: "Řešení stížnosti:",
+    resolutionLabel: "Řešení/Odůvodnění:",
+    footer:
+      "Stížnost byla posouzena s ohledem na všechna práva vyplývající ze zákona o právech spotřebitelů a občanského zákoníku. Rád/a bych Vás také informoval/a, že mám právo se proti této odpovědi odvolat.\nS pozdravem,",
+    complaintTitle: "Odpověď na stížnost",
+    productLabel: "Produkt",
+    complaintValueLabel: "Hodnota produktu:",
+    decisionValues: { pozytywna: "Pozitivní", negatywna: "Negativní" }
+  },
+  DE: {
+    companyLabel: "Firmenangaben:",
+    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    customerLabel: "Kundendaten:",
+    title: "Antwort auf die Beschwerde",
+    subjectLabel: "Betreff der Beschwerde:",
+    valueLabel: "Produktwert:",
+    complaintDateLabel: "Datum der Beschwerde:",
+    purchaseDateLabel: "Kaufdatum:",
+    reasonLabel: "Grund der Beschwerde:",
+    descriptionLabel: "Beschreibung:",
+    decisionLabel: "Lösung der Beschwerde:",
+    resolutionLabel: "Lösung/Begründung:",
+    footer:
+      "Meine Beschwerde wurde unter Berücksichtigung aller Rechte gemäß Verbraucherrecht und Bürgerlichem Gesetzbuch geprüft. Ich weise Sie darauf hin, dass ich gegen diese Antwort Widerspruch einlegen kann.\nMit freundlichen Grüßen,",
+    complaintTitle: "Antwort auf die Beschwerde",
+    productLabel: "Produkt",
+    complaintValueLabel: "Produktwert:",
+    decisionValues: { pozytywna: "Positiv", negatywna: "Negativ" }
+  },
+  SK: {
+    companyLabel: "Údaje o spoločnosti:",
+    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    customerLabel: "Údaje o zákazníkovi:",
+    title: "Odpoveď na sťažnosť",
+    subjectLabel: "Predmet sťažnosti:",
+    valueLabel: "Hodnota produktu:",
+    complaintDateLabel: "Dátum sťažnosti:",
+    purchaseDateLabel: "Dátum nákupu:",
+    reasonLabel: "Dôvod sťažnosti:",
+    descriptionLabel: "Popis:",
+    decisionLabel: "Riešenie sťažnosti:",
+    resolutionLabel: "Riešenie/Odôvodnenie:",
+    footer:
+      "Sťažnosť bola posúdená s ohľadom na všetky práva vyplývajúce zo zákona o právach spotrebiteľov a Občianskeho zákonníka. Zároveň by som vás chcel informovať, že mám právo sa proti tejto odpovedi odvolať.\nS pozdravom,",
+    complaintTitle: "Odpoveď na sťažnosť",
+    productLabel: "Produkt",
+    complaintValueLabel: "Hodnota produktu:",
+    decisionValues: { pozytywna: "Pozitívna", negatywna: "Negatívna" }
+  },
+  HU: {
+    companyLabel: "Cégadatok:",
+    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    customerLabel: "Ügyféladatok:",
+    title: "Válasz a panaszra",
+    subjectLabel: "A panasz tárgya:",
+    valueLabel: "Termék értéke:",
+    complaintDateLabel: "A panasz dátuma:",
+    purchaseDateLabel: "Vásárlás dátuma:",
+    reasonLabel: "A panasz oka:",
+    descriptionLabel: "Leírás:",
+    decisionLabel: "A panasz megoldása:",
+    resolutionLabel: "Megoldás/Indoklás:",
+    footer:
+      "A panaszt a fogyasztóvédelmi törvényből és a Polgári Törvénykönyvből eredő összes jog figyelembevételével elbíráltuk. Szeretném tájékoztatni Önöket arról is, hogy jogom van fellebbezni a válasz ellen.\nTisztelettel",
+    complaintTitle: "Válasz a panaszra",
+    productLabel: "Termék",
+    complaintValueLabel: "Termék értéke:",
+    decisionValues: { pozytywna: "Pozitív", negatywna: "Negatív" }
+  },
+  EN: {
+    companyLabel: "Company Details:",
+    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    customerLabel: "Customer Details:",
+    title: "Response to Complaint",
+    subjectLabel: "Subject of Complaint:",
+    valueLabel: "Product Value:",
+    complaintDateLabel: "Date of Complaint:",
+    purchaseDateLabel: "Purchase Date:",
+    reasonLabel: "Reason for Complaint:",
+    descriptionLabel: "Description:",
+    decisionLabel: "Complaint Resolution:",
+    resolutionLabel: "Resolution/Justification:",
+    footer:
+      "The complaint has been considered taking into account all rights arising from the Consumer Rights Act and the Civil Code. I would also like to inform you that I have the right to appeal this response.\nSincerely",
+    complaintTitle: "Response to Complaint",
+    productLabel: "Product",
+    complaintValueLabel: "Product Value:",
+    decisionValues: { pozytywna: "Positive", negatywna: "Negative" }
+  }
+};
 
 
 
@@ -1967,6 +2089,81 @@ function handleGenerateClick(id) {
 
 window.handleGenerateClick = handleGenerateClick;
 
+function buildDocx(claim, lang, answerText, decisionValue) {
+  if (!window.docx) throw new Error("Brak biblioteki docx");
+  const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
+  const t = DOCX_TRANSLATIONS[lang] || DOCX_TRANSLATIONS.PL;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const docChildren = [];
+
+  const addParagraph = (label, value) => {
+    docChildren.push(
+      new Paragraph({
+        children: [
+          new TextRun({ text: label + " ", bold: true }),
+          new TextRun({ text: value || "-" })
+        ],
+        spacing: { after: 120 }
+      })
+    );
+  };
+
+  // Company
+  docChildren.push(
+    new Paragraph({ children: [new TextRun({ text: t.companyLabel, bold: true })], spacing: { after: 80 } })
+  );
+  t.companyValue.split("\n").forEach((line) =>
+    docChildren.push(new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: 40 } }))
+  );
+
+  // Client
+  docChildren.push(
+    new Paragraph({ children: [new TextRun({ text: t.customerLabel, bold: true })], spacing: { before: 120, after: 80 } })
+  );
+  if (claim.customer) docChildren.push(new Paragraph({ children: [new TextRun({ text: claim.customer })], spacing: { after: 40 } }));
+  if (claim.address)
+    docChildren.push(new Paragraph({ children: [new TextRun({ text: claim.address })], spacing: { after: 120 } }));
+
+  // Title
+  docChildren.push(
+    new Paragraph({
+      children: [new TextRun({ text: t.title, bold: true })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 200 }
+    })
+  );
+
+  const products = Array.isArray(claim.products) ? claim.products : [];
+  if (products.length) {
+    products.forEach((p, idx) => {
+      addParagraph(`${t.productLabel} ${idx + 1}:`, "");
+      addParagraph("Nazwa:", p.name || "-");
+      addParagraph("SKU:", p.sku || "-");
+      addParagraph("EAN:", p.ean || "-");
+      addParagraph("Ilość:", p.quantity !== undefined ? String(p.quantity) : "-");
+      addParagraph(t.complaintValueLabel, `${p.price ?? ""} ${p.currency || claim.currency || ""}`.trim());
+    });
+  }
+
+  addParagraph(t.complaintDateLabel, formatDate(claim.receivedAt || today));
+  addParagraph(t.purchaseDateLabel, formatDate(claim.purchaseDate || claim.orderDate));
+  addParagraph(t.reasonLabel, claim.type || "-");
+  addParagraph(t.descriptionLabel, claim.reason || "-");
+  addParagraph(t.decisionLabel, decisionValue || "-");
+  addParagraph(t.resolutionLabel, answerText || "-");
+
+  t.footer.split("\n").forEach((line) =>
+    docChildren.push(new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: 80 } }))
+  );
+
+  return Packer.toBlob(
+    new Document({
+      sections: [{ children: docChildren }]
+    })
+  );
+}
+
 
 
 
@@ -2224,7 +2421,7 @@ s1FetchBtn.addEventListener("click", async () => {
       `
           )
           .join("")
-      : `<div class="muted">Brak produkt?w w odpowiedzi</div>`;
+      : `<div class="muted">Brak produktów w odpowiedzi</div>`;
 
     const bill =
       data.bill_address ||
@@ -3845,6 +4042,7 @@ const s3DetailsBox = document.getElementById("s3-details");
 
 
 const s3GenBtn = document.getElementById("s3-generate");
+const s3DocxBtn = document.getElementById("s3-docx");
 
 
 
@@ -3853,6 +4051,7 @@ const s3GenBtn = document.getElementById("s3-generate");
 
 
 let selectedLang = "PL";
+const mapLangForBackend = (lang) => (lang === "CZ" ? "CS" : lang);
 
 
 
@@ -4396,7 +4595,7 @@ s3GenBtn.addEventListener("click", async () => {
 
 
 
-    language: selectedLang,
+    language: mapLangForBackend(selectedLang),
 
 
 
@@ -4740,6 +4939,31 @@ s3GenBtn.addEventListener("click", async () => {
 
 
 
+});
+
+s3DocxBtn?.addEventListener("click", async () => {
+  if (!s3CurrentClaim) return showToast("Brak danych do wygenerowania", "error");
+  try {
+    const decision = document.getElementById("s3-decision").value;
+    const answer = document.getElementById("s3-answer").value;
+    const lang = (selectedLang || "PL").toUpperCase();
+    const t = DOCX_TRANSLATIONS[lang] || DOCX_TRANSLATIONS.PL;
+    const decisionValue = t.decisionValues?.[decision] || decision;
+
+    const blob = await buildDocx(s3CurrentClaim, lang, answer, decisionValue);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `odpowiedz-${s3CurrentClaim.claimId || "reklamacja"}.docx`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast("Plik DOCX wygenerowany");
+  } catch (err) {
+    console.error(err);
+    showToast("Błąd generowania DOCX", "error");
+  }
 });
 
 
