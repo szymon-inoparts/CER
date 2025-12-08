@@ -4492,480 +4492,82 @@ s3FetchBtn.addEventListener("click", async () => {
 
 
 s3GenBtn.addEventListener("click", async () => {
-
-
-
-
-
-
+  if (!window.docx) return showToast("Brak biblioteki DOCX", "error");
 
   const num = s3NumberInput.value.trim();
-
-
-
-
-
-
-
   const decision = document.getElementById("s3-decision").value;
-
-
-
-
-
-
-
   const noResp = document.getElementById("s3-noresp").checked;
-
-
-
-
-
-
 
   if (!num) return showToast("Podaj numer", "error");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const answer = noResp
-
-
-
-
-
-
-
-    ? "Brak mo\u017cliwo\u015bci weryfikacji: Pomimo naszych pr\u00f3b kontaktu nie otrzymali\u015bmy odpowiedzi, dlatego zamykamy zg\u0142oszenie."
-
-
-
-
-
-
-
+    ? "Brak mo?liwo?ci weryfikacji: Pomimo naszych pr?b kontaktu nie otrzymali?my odpowiedzi, dlatego zamykamy zg?oszenie."
     : document.getElementById("s3-answer").value;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const payload = {
-
-
-
-
-
-
-
     number: num,
-
-
-
-
-
-
-
     decision,
-
-
-
-
-
-
-
     language: mapLangForBackend(selectedLang),
-
-
-
-
-
-
-
     answer,
-
-
-
-
-
-
-
     noResponse: noResp,
-
-
-
-
-
-
-
     claim: s3CurrentClaim
-
-
-
-
-
-
-
       ? {
-
-
-
-
-
-
-
           claimId: s3CurrentClaim.claimId,
-
-
-
-
-
-
-
           orderId: s3CurrentClaim.orderId,
-
-
-
-
-
-
-
           customer: s3CurrentClaim.customer,
-
-
-
-
-
-
-
           marketplace: s3CurrentClaim.marketplace,
-
-
-
-
-
-
-
           status: s3CurrentClaim.status,
-
-
-
-
-
-
-
           value: s3CurrentClaim.value,
-
-
-
-
-
-
-
           reason: s3CurrentClaim.reason,
-
-
-
-
-
-
-
           type: s3CurrentClaim.type,
-
-
-
-
-
-
-
           decisionOriginal: s3CurrentClaim.decision,
-
-
-
-
-
-
-
           resolution: s3CurrentClaim.resolution,
-
-
-
-
-
-
-
           agent: s3CurrentClaim.agent,
-
-
-
-
-
-
-
           myNewField: s3CurrentClaim.myNewField,
-
-
-
-
-
-
-
           receivedAt: s3CurrentClaim.receivedAt,
-
-
-
-
-
-
-
           decisionDue: s3CurrentClaim.decisionDue,
-
-
-
-
-
-
-
           resolvedAt: s3CurrentClaim.resolvedAt
-
-
-
-
-
-
-
         }
-
-
-
-
-
-
-
       : null
-
-
-
-
-
-
-
   };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   try {
-
-
-
-
-
-
-
     const res = await fetch(GENERATE_WEBHOOK, {
-
-
-
-
-
-
-
       method: "POST",
-
-
-
-
-
-
-
       headers: { "Content-Type": "application/json" },
-
-
-
-
-
-
-
       body: JSON.stringify(payload)
-
-
-
-
-
-
-
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const blob = await res.blob();
-
-
-
-
-
-
-
-    const url = URL.createObjectURL(blob);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const a = document.createElement("a");
-
-
-
-
-
-
-
-    a.href = url;
-
-
-
-
-
-
-
-    a.download = `CER-${num}.pdf`;
-
-
-
-
-
-
-
-    a.click();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    showToast("Wygenerowano PDF");
-
-
-
-
-
-
-
-  } catch {
-
-
-
-
-
-
-
-    showToast("B\u0142\u0105d generowania", "error");
-
-
-
-
-
-
-
-  }
-
-
-
-
-
-
-
-});
-
-s3DocxBtn?.addEventListener("click", async () => {
-  if (!window.docx) return showToast("Brak biblioteki DOCX", "error");
-  if (!s3CurrentClaim) return showToast("Brak danych do wygenerowania", "error");
-  try {
-    const decision = document.getElementById("s3-decision").value;
-    const answer = document.getElementById("s3-answer").value;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const responseJson = await res.json();
+    const translations = Array.isArray(responseJson?.translations) ? responseJson.translations : [];
+    const translatedAnswer = translations[0]?.text || answer;
+    const translatedDecision = translations[1]?.text || decision;
+    const translatedReason = translations[2]?.text || s3CurrentClaim?.reason;
+
+    const docClaim = { ...s3CurrentClaim, reason: translatedReason };
     const lang = (selectedLang || "PL").toUpperCase();
     const t = DOCX_TRANSLATIONS[lang] || DOCX_TRANSLATIONS.PL;
-    const decisionValue = t.decisionValues?.[decision] || decision;
+    const decisionValue = translatedDecision || t.decisionValues?.[decision] || decision;
 
-    const blob = await buildDocx(s3CurrentClaim, lang, answer, decisionValue);
+    const blob = await buildDocx(docClaim, lang, translatedAnswer, decisionValue);
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `odpowiedz-${s3CurrentClaim.claimId || "reklamacja"}.docx`;
+    a.download = `CER-${num}.docx`;
     document.body.appendChild(a);
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    showToast("Plik DOCX wygenerowany");
+
+    showToast("Wygenerowano DOCX");
   } catch (err) {
     console.error(err);
-    showToast("Błąd generowania DOCX", "error");
+    showToast("B??d generowania", "error");
   }
 });
+
 
 
 
