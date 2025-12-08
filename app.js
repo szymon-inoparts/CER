@@ -1547,49 +1547,22 @@ function normalizeClaim(raw = {}) {
 
 
   if (!addressValue && bill) {
+    const parts = [];
 
-
-
-    const streetLine = [bill.street, bill.home_number, bill.flat_number ? `/${bill.flat_number}` : ""]
-
-
-
-      .filter(Boolean)
-
-
-
-      .join(" ")
-
-
-
-      .trim();
-
-
-
-    const cityLine = [bill.city, bill.postcode].filter(Boolean).join(" ").trim();
-
-
+    if (bill.street) parts.push(String(bill.street).trim());
+    if (bill.home_number) parts.push(String(bill.home_number).trim());
+    if (bill.flat_number) parts.push(String(bill.flat_number).trim());
+    if (bill.postcode) parts.push(String(bill.postcode).trim());
+    if (bill.city) parts.push(String(bill.city).trim());
 
     const countryLine =
-
-
-
       bill.country && typeof bill.country === "object"
-
-
-
         ? bill.country.code || bill.country.name
-
-
-
         : bill.country;
 
+    if (countryLine) parts.push(String(countryLine).trim());
 
-
-    addressValue = [streetLine, cityLine, countryLine].filter(Boolean).join(", ");
-
-
-
+    addressValue = parts.filter(Boolean).join(", ");
   }
 
 
@@ -1846,7 +1819,11 @@ function renderClaimCard(raw, actionHtml = "") {
                   ? `<strong>Wartość:</strong> ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}<br>`
                   : ""
               }
-              ${p.quantity ? `<strong>Ilość:</strong> ${p.quantity}<br>` : ""}
+              ${
+                p.quantity !== undefined && p.quantity !== null && p.quantity !== ""
+                  ? `<strong>Ilość:</strong> ${p.quantity}<br>`
+                  : ""
+              }
             </li>`;
           })
           .join("")}</ul>`
@@ -1858,7 +1835,7 @@ function renderClaimCard(raw, actionHtml = "") {
         <div class="claim-card__header">
           <div>
             <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
-            <div class="claim-card__order">Zam?wienie: ${claim.orderId || "-"}</div>
+            <div class="claim-card__order">Zamówienie: ${claim.orderId || "-"}</div>
           </div>
           ${claim.status ? `<div class="claim-card__status">${claim.status}</div>` : ""}
         </div>
@@ -1869,9 +1846,9 @@ function renderClaimCard(raw, actionHtml = "") {
         </div>
 
         <div class="claim-card__timeline">
-          <div><span>Data przyj?cia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+          <div><span>Data przyjęcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
           <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
-          <div><span>Data rozwi?zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+          <div><span>Data rozwiązania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
         </div>
 
         <div class="claim-card__grid">
@@ -1882,10 +1859,10 @@ function renderClaimCard(raw, actionHtml = "") {
         </div>
 
         <div class="claim-card__grid">
-          <div><div class="label">Pow?d zg?oszenia</div><div class="value">${claim.reason || "-"}</div></div>
+          <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
           <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
           <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-          <div><div class="label">Rozwi?zanie</div><div class="value">${claim.resolution || "-"}</div></div>
+          <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
           ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
           ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
         </div>
@@ -3805,41 +3782,50 @@ ${escapeHtml(rawText)}</pre>
 
 
     let html = `
-
-
-
-
-
-
-
       <table>
         <tr>
           <th>#</th>
           <th>Reklamacja</th>
-          <th>Zam?wienie</th>
+          <th>Zamówienie</th>
           <th>Klient</th>
           <th>Marketplace</th>
           <th>Status</th>
-          <th>Przyj?cie</th>
+          <th>Przyjęcie</th>
           <th>Termin decyzji</th>
-          <th>Rozwi?zanie</th>
+          <th>Rozwiązanie</th>
           <th>Akcja</th>
-        </tr></table>`;
+        </tr>`;
 
+    rows.forEach((row, idx) => {
+      const claim = normalizeClaim(row);
+      const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
 
+      html += `
+        <tr>
+          <td>${claim.rowNumber ? claim.rowNumber : idx + 1}</td>
+          <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId || ""}'">${claim.claimId || "-"}</td>
+          <td>${claim.orderId || "-"}</td>
+          <td>${claim.customer || "-"}</td>
+          <td>${claim.marketplace || "-"}</td>
+          <td>${claim.status || "-"}</td>
+          <td>${formatDate(claim.receivedAt)}</td>
+          <td>${formatDate(claim.decisionDue)}</td>
+          <td>${formatDate(claim.resolvedAt)}</td>
+          <td>
+            <div class="action-cell">
+              <button class="expand-btn expand-btn--wide" onclick="handleExpand('${expId}', this)">Rozwiń ▼</button>
+              <button class="btn btn-dark" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="expand-row" data-exp-id="${expId}" style="display:none">
+          <td colspan="10">
+            ${renderClaimCard(claim)}
+          </td>
+        </tr>`;
+    });
 
-
-
-
-
-
-
-
-
-
-
-
-
+    html += `</table>`;
     s2ListBox.innerHTML = html;
 
 
@@ -4184,7 +4170,7 @@ s3FetchBtn.addEventListener("click", async () => {
 
 
 
-    // Ukryj pola Decyzja, Rozwi?zanie i Data rozwi?zania tylko w generatorze
+    // Ukryj pola Decyzja, Rozwiązanie i Data rozwiązania tylko w generatorze
 
 
 
