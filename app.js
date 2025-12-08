@@ -2217,7 +2217,7 @@ s1FetchBtn.addEventListener("click", async () => {
         <div class="product-row">
           <label>
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-            ${p.name} (${p.sku}) - ${p.price ?? ""} z? zam?wiono: ${p.quantity}
+            ${p.name} (${p.sku}) - ${p.price ?? ""} zł zamówiono: ${p.quantity}
           </label>
           <input type="number" class="s1-prod-qty" data-index="${idx}" min="0" max="${p.quantity}" value="0" />
         </div>
@@ -2225,6 +2225,29 @@ s1FetchBtn.addEventListener("click", async () => {
           )
           .join("")
       : `<div class="muted">Brak produkt?w w odpowiedzi</div>`;
+
+    const bill =
+      data.bill_address ||
+      data.billAddress ||
+      data.billAddressRaw ||
+      data.billAddressFull ||
+      (data.orderDetails && data.orderDetails.bill_address);
+
+    const billParts = [];
+    if (bill) {
+      if (bill.street) billParts.push(String(bill.street).trim());
+      if (bill.home_number) billParts.push(String(bill.home_number).trim());
+      if (bill.flat_number) billParts.push(String(bill.flat_number).trim());
+      if (bill.postcode) billParts.push(String(bill.postcode).trim());
+      if (bill.city) billParts.push(String(bill.city).trim());
+      const countryLine =
+        bill.country && typeof bill.country === "object"
+          ? bill.country.code || bill.country.name
+          : bill.country;
+      if (countryLine) billParts.push(String(countryLine).trim());
+    }
+    const billInput = document.getElementById("s1-bill-full");
+    if (billInput) billInput.value = billParts.filter(Boolean).join(", ");
 
     document.getElementById("s1-client-name").value = data.clientName || "";
 
