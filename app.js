@@ -1572,25 +1572,27 @@ function normalizeClaim(raw = {}) {
 
 
   let products =
-
-
-
     typeof productsArr === "string"
-
-
-
       ? splitSemicolons(productsArr).map((name) => ({ name }))
-
-
-
       : Array.isArray(productsArr)
-
-
-
-      ? productsArr
-
-
-
+      ? productsArr.map((p) => {
+          const quantity =
+            p.quantity ??
+            p.qty ??
+            p.orderedQuantity ??
+            p.ordered_quantity ??
+            p.amount;
+          const priceValue =
+            p.price ??
+            p.value ??
+            p.valueRaw ??
+            p.amount;
+          const currencyGuess =
+            p.currency ??
+            p.curr ??
+            currencyValue;
+          return { ...p, quantity, price: priceValue, currency: currencyGuess };
+        })
       : [];
 
 
@@ -1820,7 +1822,7 @@ function renderClaimCard(raw, actionHtml = "") {
                   : ""
               }
               ${
-                p.quantity !== undefined && p.quantity !== null && p.quantity !== ""
+                p.quantity !== undefined && p.quantity !== null
                   ? `<strong>Ilość:</strong> ${p.quantity}<br>`
                   : ""
               }
@@ -2129,36 +2131,11 @@ s1FetchBtn.addEventListener("click", async () => {
 
     const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
 
-
-
-
-
-
-
-    const data = await res.json();
-
-
-
-
-
-
+    const rawData = await res.json();
+    const dataItem = Array.isArray(rawData) ? rawData[0] : rawData;
+    const data = dataItem && typeof dataItem === "object" && dataItem.json ? dataItem.json : dataItem;
 
     s1FetchedOrder = data;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Wywietlenie boxa
 
 
@@ -2231,7 +2208,9 @@ s1FetchBtn.addEventListener("click", async () => {
 
 
 
-    s1Products.innerHTML = data.products
+    const productsArr = Array.isArray(data?.products) ? data.products : [];
+
+    s1Products.innerHTML = productsArr.length
 
 
 
@@ -2327,7 +2306,8 @@ s1FetchBtn.addEventListener("click", async () => {
 
 
 
-      .join("");
+      .join("")
+      : `<div class="muted">Brak produktów w odpowiedzi</div>`;
 
 
 
@@ -2343,7 +2323,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
 
 
-    document.getElementById("s1-client-name").value = data.clientName;
+    document.getElementById("s1-client-name").value = data.clientName || "";
 
 
 
@@ -2351,7 +2331,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
 
 
-    document.getElementById("s1-client-email").value = data.clientEmail;
+    document.getElementById("s1-client-email").value = data.clientEmail || "";
 
 
 
@@ -2359,7 +2339,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
 
 
-    document.getElementById("s1-client-phone").value = data.clientPhone;
+    document.getElementById("s1-client-phone").value = data.clientPhone || "";
 
 
 
@@ -2367,7 +2347,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
 
 
-    document.getElementById("s1-client-nick").value = data.clientNick;
+    document.getElementById("s1-client-nick").value = data.clientNick || "";
 
 
 
@@ -2375,7 +2355,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
 
 
-    document.getElementById("s1-country").value = data.country;
+    document.getElementById("s1-country").value = data.country || "";
 
 
 
@@ -2383,7 +2363,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
 
 
-    document.getElementById("s1-date").value = data.orderDate;
+    document.getElementById("s1-date").value = data.orderDate || "";
 
 
 
@@ -2391,7 +2371,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
 
 
-    document.getElementById("s1-platform").value = data.platform;
+    document.getElementById("s1-platform").value = data.platform || "";
 
 
 
@@ -2399,7 +2379,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
 
 
-    document.getElementById("s1-shipping").value = data.shippingCost;
+    document.getElementById("s1-shipping").value = data.shippingCost ?? "";
 
 
 
