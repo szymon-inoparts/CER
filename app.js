@@ -64,6 +64,7 @@ const N8N_BASE_URL = "https://kamil-inoparts.app.n8n.cloud/webhook"; // <<< PODM
 
 const SELLASIST_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-z-sellasist";
 
+const PROCESSORS_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/procesorzy-reklamacji";
 
 
 
@@ -4042,7 +4043,9 @@ const s3DetailsBox = document.getElementById("s3-details");
 
 
 const s3GenBtn = document.getElementById("s3-generate");
-const s3DocxBtn = document.getElementById("s3-docx");
+const homeProcAddBtn = document.getElementById("home-proc-add");
+const homeProcName = document.getElementById("home-proc-name");
+const homeProcEmail = document.getElementById("home-proc-email");
 
 
 
@@ -4564,10 +4567,32 @@ s3GenBtn.addEventListener("click", async () => {
     showToast("Wygenerowano DOCX");
   } catch (err) {
     console.error(err);
-    showToast("B??d generowania", "error");
+    showToast("Błąd generowania", "error");
   }
 });
 
+homeProcAddBtn?.addEventListener("click", async () => {
+  const name = (homeProcName?.value || "").trim();
+  const email = (homeProcEmail?.value || "").trim();
+  if (!name || !email) {
+    showToast("Podaj imię i email", "error");
+    return;
+  }
+  try {
+    const res = await fetch(PROCESSORS_WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (homeProcName) homeProcName.value = "";
+    if (homeProcEmail) homeProcEmail.value = "";
+    showToast("Dodano osobę");
+  } catch (err) {
+    console.error(err);
+    showToast("Błąd dodawania", "error");
+  }
+});
 
 
 

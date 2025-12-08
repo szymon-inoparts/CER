@@ -49,8 +49,16 @@
       </div>
       <div class="home-right">
         <div class="card home-secondary">
-          <h3>Panel pomocniczy</h3>
-          <p class="muted">Miejsce na dodatkowe dane lub widok live.</p>
+          <h3>Osoby procesujące reklamacje</h3>
+          <div class="field">
+            <label>Imię</label>
+            <input id="home-proc-name" type="text" placeholder="np. Anna" />
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input id="home-proc-email" type="email" placeholder="np. anna@example.com" />
+          </div>
+          <button class="btn btn-primary" id="home-proc-add">Dodaj</button>
         </div>
         <div class="card home-modules">
           <h3>Modu&#322;y</h3>
@@ -270,10 +278,7 @@
       </div>
     </div>
 
-    <div class="row-inline" style="gap:12px;">
-      <button class="btn btn-primary" id="s3-generate">Generuj odpowied&#378;</button>
-      <button class="btn" id="s3-docx">Pobierz DOCX</button>
-    </div>
+    <button class="btn btn-primary" id="s3-generate">Generuj odpowied&#378;</button>
   </section>
 
 </div>
