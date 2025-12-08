@@ -104,6 +104,8 @@ const SHOW_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/wy%C
 
 const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-odpowiedz";
 
+const PROCESSORS_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/procesorzy-reklamacji";
+
 
 
 
@@ -144,128 +146,143 @@ const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-o
 
 const PASSWORD_VALUE = "inoparts";
 
+const COMPANY_VALUE = "INOPARTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104\nUl. Adama Staszczyka 1/20, 30-123 Krak\u00f3w\nNIP: 6772477900";
+
 const DOCX_TRANSLATIONS = {
-  PL: {
-    companyLabel: "Dane firmy:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
-    customerLabel: "Dane klienta:",
-    title: "Odpowiedź na reklamację",
-    subjectLabel: "Przedmiot reklamacji:",
-    valueLabel: "Wartość produktu:",
-    complaintDateLabel: "Data zgłoszenia reklamacji:",
-    purchaseDateLabel: "Data zakupu:",
-    reasonLabel: "Powód reklamacji:",
-    descriptionLabel: "Opis:",
-    decisionLabel: "Decyzja reklamacyjna:",
-    resolutionLabel: "Rozwiązanie sytuacji/Uzasadnienie:",
-    footer:
-      "Reklamacja została rozpatrzona z uwzględnieniem wszelkich praw wynikających z ustawy o prawach konsumenta oraz kodeksu cywilnego. Pragnę również poinformować, iż na niniejszą odpowiedź przysługuje prawo do odwołania się.\nZ wyrazami szacunku",
-    complaintTitle: "Odpowiedź na reklamację",
-    productLabel: "Produkt",
-    complaintValueLabel: "Wartość produktu:",
-    decisionValues: { pozytywna: "Pozytywna", negatywna: "Negatywna" }
+  "PL": {
+    "companyLabel": "Dane firmy:",
+    "companyValue": COMPANY_VALUE,
+    "customerLabel": "Dane klienta:",
+    "title": "Odpowiedź na reklamację",
+    "subjectLabel": "Przedmiot reklamacji:",
+    "valueLabel": "Wartość produktu:",
+    "complaintDateLabel": "Data zgłoszenia reklamacji:",
+    "purchaseDateLabel": "Data zakupu:",
+    "reasonLabel": "Powód reklamacji:",
+    "descriptionLabel": "Opis:",
+    "decisionLabel": "Decyzja reklamacyjna:",
+    "resolutionLabel": "Rozwiązanie sytuacji/Uzasadnienie:",
+    "footer": "Reklamacja została rozpatrzona z uwzględnieniem wszelkich praw wynikających z ustawy o prawach konsumenta oraz kodeksu cywilnego. Pragnę również poinformować, iż na niniejszą odpowiedź przysługuje prawo do odwołania się.\nZ wyrazami szacunku",
+    "complaintTitle": "Odpowiedź na reklamację",
+    "productLabel": "Produkt",
+    "complaintValueLabel": "Wartość produktu:",
+    "decisionValues": {
+      "pozytywna": "Pozytywna",
+      "negatywna": "Negatywna"
+    }
   },
-  CZ: {
-    companyLabel: "Údaje o společnosti:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
-    customerLabel: "Údaje o zákazníkovi:",
-    title: "Odpověď na stížnost",
-    subjectLabel: "Předmět stížnosti:",
-    valueLabel: "Hodnota produktu:",
-    complaintDateLabel: "Datum podání stížnosti:",
-    purchaseDateLabel: "Datum nákupu:",
-    reasonLabel: "Důvod stížnosti:",
-    descriptionLabel: "Popis:",
-    decisionLabel: "Řešení stížnosti:",
-    resolutionLabel: "Řešení/Odůvodnění:",
-    footer:
-      "Stížnost byla posouzena s ohledem na všechna práva vyplývající ze zákona o právech spotřebitelů a občanského zákoníku. Rád/a bych Vás také informoval/a, že mám právo se proti této odpovědi odvolat.\nS pozdravem,",
-    complaintTitle: "Odpověď na stížnost",
-    productLabel: "Produkt",
-    complaintValueLabel: "Hodnota produktu:",
-    decisionValues: { pozytywna: "Pozitivní", negatywna: "Negativní" }
+  "CZ": {
+    "companyLabel": "Údaje o společnosti:",
+    "companyValue": COMPANY_VALUE,
+    "customerLabel": "Údaje o zákazníkovi:",
+    "title": "Odpověď na stížnost",
+    "subjectLabel": "Předmět stížnosti:",
+    "valueLabel": "Hodnota produktu:",
+    "complaintDateLabel": "Datum podání stížnosti:",
+    "purchaseDateLabel": "Datum nákupu:",
+    "reasonLabel": "Důvod stížnosti:",
+    "descriptionLabel": "Popis:",
+    "decisionLabel": "Řešení stížnosti:",
+    "resolutionLabel": "Řešení/Odůvodnění:",
+    "footer": "Stížnost byla posouzena s ohledem na všechna práva vyplývající ze zákona o právech spotřebitelů a občanského zákoníku. Rád/a bych Vás také informował/a, že mám právo se proti této odpovědi odvolat.\nS pozdravem,",
+    "complaintTitle": "Odpověď na stížnost",
+    "productLabel": "Produkt",
+    "complaintValueLabel": "Hodnota produktu:",
+    "decisionValues": {
+      "pozytywna": "Pozitivní",
+      "negatywna": "Negativní"
+    }
   },
-  DE: {
-    companyLabel: "Firmenangaben:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
-    customerLabel: "Kundendaten:",
-    title: "Antwort auf die Beschwerde",
-    subjectLabel: "Betreff der Beschwerde:",
-    valueLabel: "Produktwert:",
-    complaintDateLabel: "Datum der Beschwerde:",
-    purchaseDateLabel: "Kaufdatum:",
-    reasonLabel: "Grund der Beschwerde:",
-    descriptionLabel: "Beschreibung:",
-    decisionLabel: "Lösung der Beschwerde:",
-    resolutionLabel: "Lösung/Begründung:",
-    footer:
-      "Meine Beschwerde wurde unter Berücksichtigung aller Rechte gemäß Verbraucherrecht und Bürgerlichem Gesetzbuch geprüft. Ich weise Sie darauf hin, dass ich gegen diese Antwort Widerspruch einlegen kann.\nMit freundlichen Grüßen,",
-    complaintTitle: "Antwort auf die Beschwerde",
-    productLabel: "Produkt",
-    complaintValueLabel: "Produktwert:",
-    decisionValues: { pozytywna: "Positiv", negatywna: "Negativ" }
+  "DE": {
+    "companyLabel": "Firmenangaben:",
+    "companyValue": COMPANY_VALUE,
+    "customerLabel": "Kundendaten:",
+    "title": "Antwort auf die Beschwerde",
+    "subjectLabel": "Betreff der Beschwerde:",
+    "valueLabel": "Produktwert:",
+    "complaintDateLabel": "Datum der Beschwerde:",
+    "purchaseDateLabel": "Kaufdatum:",
+    "reasonLabel": "Grund der Beschwerde:",
+    "descriptionLabel": "Beschreibung:",
+    "decisionLabel": "Lösung der Beschwerde:",
+    "resolutionLabel": "Lösung/Begründung:",
+    "footer": "Meine Beschwerde wurde unter Berücksichtigung aller Rechte gemäß Verbraucherrecht und Bürgerlichem Gesetzbuch geprüft. Ich weise Sie darauf hin, dass ich gegen diese Antwort Widerspruch einlegen kann.\nMit freundlichen Grüßen,",
+    "complaintTitle": "Antwort auf die Beschwerde",
+    "productLabel": "Produkt",
+    "complaintValueLabel": "Produktwert:",
+    "decisionValues": {
+      "pozytywna": "Positiv",
+      "negatywna": "Negativ"
+    }
   },
-  SK: {
-    companyLabel: "Údaje o spoločnosti:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
-    customerLabel: "Údaje o zákazníkovi:",
-    title: "Odpoveď na sťažnosť",
-    subjectLabel: "Predmet sťažnosti:",
-    valueLabel: "Hodnota produktu:",
-    complaintDateLabel: "Dátum sťažnosti:",
-    purchaseDateLabel: "Dátum nákupu:",
-    reasonLabel: "Dôvod sťažnosti:",
-    descriptionLabel: "Popis:",
-    decisionLabel: "Riešenie sťažnosti:",
-    resolutionLabel: "Riešenie/Odôvodnenie:",
-    footer:
-      "Sťažnosť bola posúdená s ohľadom na všetky práva vyplývajúce zo zákona o právach spotrebiteľov a Občianskeho zákonníka. Zároveň by som vás chcel informovať, že mám právo sa proti tejto odpovedi odvolať.\nS pozdravom,",
-    complaintTitle: "Odpoveď na sťažnosť",
-    productLabel: "Produkt",
-    complaintValueLabel: "Hodnota produktu:",
-    decisionValues: { pozytywna: "Pozitívna", negatywna: "Negatívna" }
+  "SK": {
+    "companyLabel": "Údaje o spoločnosti:",
+    "companyValue": COMPANY_VALUE,
+    "customerLabel": "Údaje o zákazníkovi:",
+    "title": "Odpoveď na sťažnosť",
+    "subjectLabel": "Predmet sťažnosti:",
+    "valueLabel": "Hodnota produktu:",
+    "complaintDateLabel": "Dátum sťažnosti:",
+    "purchaseDateLabel": "Dátum nákupu:",
+    "reasonLabel": "Dôvod sťažnosti:",
+    "descriptionLabel": "Popis:",
+    "decisionLabel": "Riešenie sťažnosti:",
+    "resolutionLabel": "Riešenie/Odôvodnenie:",
+    "footer": "Sťažnosť bola posúdená s ohľadom na všetky práva vyplývajúce zo zákona o právach spotrebiteľov a Občianskeho zákonníka. Zároveň by som vás chcel informovať, že mám právo sa proti tejto odpovedi odvolať.\nS pozdravom,",
+    "complaintTitle": "Odpoveď na sťažnosť",
+    "productLabel": "Produkt",
+    "complaintValueLabel": "Hodnota produktu:",
+    "decisionValues": {
+      "pozytywna": "Pozitívna",
+      "negatywna": "Negatívna"
+    }
   },
-  HU: {
-    companyLabel: "Cégadatok:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
-    customerLabel: "Ügyféladatok:",
-    title: "Válasz a panaszra",
-    subjectLabel: "A panasz tárgya:",
-    valueLabel: "Termék értéke:",
-    complaintDateLabel: "A panasz dátuma:",
-    purchaseDateLabel: "Vásárlás dátuma:",
-    reasonLabel: "A panasz oka:",
-    descriptionLabel: "Leírás:",
-    decisionLabel: "A panasz megoldása:",
-    resolutionLabel: "Megoldás/Indoklás:",
-    footer:
-      "A panaszt a fogyasztóvédelmi törvényből és a Polgári Törvénykönyvből eredő összes jog figyelembevételével elbíráltuk. Szeretném tájékoztatni Önöket arról is, hogy jogom van fellebbezni a válasz ellen.\nTisztelettel",
-    complaintTitle: "Válasz a panaszra",
-    productLabel: "Termék",
-    complaintValueLabel: "Termék értéke:",
-    decisionValues: { pozytywna: "Pozitív", negatywna: "Negatív" }
+  "HU": {
+    "companyLabel": "Cégadatok:",
+    "companyValue": COMPANY_VALUE,
+    "customerLabel": "Ügyféladatok:",
+    "title": "Válasz a panaszra",
+    "subjectLabel": "A panasz tárgya:",
+    "valueLabel": "Termék értéke:",
+    "complaintDateLabel": "A panasz dátuma:",
+    "purchaseDateLabel": "Vásárlás dátuma:",
+    "reasonLabel": "A panasz oka:",
+    "descriptionLabel": "Leírás:",
+    "decisionLabel": "A panasz megoldása:",
+    "resolutionLabel": "Megoldás/Indoklás:",
+    "footer": "A panaszt a fogyasztóvédelmi törvényből és a Polgári Törvénykönyvből eredő összes jog figyelembevételével elbíráltuk. Szeretném tájékoztatni Önöket arról is, hogy jogom van fellebbezni a válasz ellen.\nTisztelettel",
+    "complaintTitle": "Válasz a panaszra",
+    "productLabel": "Termék",
+    "complaintValueLabel": "Termék értéke:",
+    "decisionValues": {
+      "pozytywna": "Pozitív",
+      "negatywna": "Negatív"
+    }
   },
-  EN: {
-    companyLabel: "Company Details:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
-    customerLabel: "Customer Details:",
-    title: "Response to Complaint",
-    subjectLabel: "Subject of Complaint:",
-    valueLabel: "Product Value:",
-    complaintDateLabel: "Date of Complaint:",
-    purchaseDateLabel: "Purchase Date:",
-    reasonLabel: "Reason for Complaint:",
-    descriptionLabel: "Description:",
-    decisionLabel: "Complaint Resolution:",
-    resolutionLabel: "Resolution/Justification:",
-    footer:
-      "The complaint has been considered taking into account all rights arising from the Consumer Rights Act and the Civil Code. I would also like to inform you that I have the right to appeal this response.\nSincerely",
-    complaintTitle: "Response to Complaint",
-    productLabel: "Product",
-    complaintValueLabel: "Product Value:",
-    decisionValues: { pozytywna: "Positive", negatywna: "Negative" }
+  "EN": {
+    "companyLabel": "Company Details:",
+    "companyValue": COMPANY_VALUE,
+    "customerLabel": "Customer Details:",
+    "title": "Response to Complaint",
+    "subjectLabel": "Subject of Complaint:",
+    "valueLabel": "Product Value:",
+    "complaintDateLabel": "Date of Complaint:",
+    "purchaseDateLabel": "Purchase Date:",
+    "reasonLabel": "Reason for Complaint:",
+    "descriptionLabel": "Description:",
+    "decisionLabel": "Complaint Resolution:",
+    "resolutionLabel": "Resolution/Justification:",
+    "footer": "The complaint has been considered taking into account all rights arising from the Consumer Rights Act and the Civil Code. I would also like to inform you that I have the right to appeal this response.\nSincerely",
+    "complaintTitle": "Response to Complaint",
+    "productLabel": "Product",
+    "complaintValueLabel": "Product Value:",
+    "decisionValues": {
+      "pozytywna": "Positive",
+      "negatywna": "Negative"
+    }
   }
 };
+
 
 
 
@@ -4567,6 +4584,8 @@ s3GenBtn.addEventListener("click", async () => {
     showToast("B??d generowania", "error");
   }
 });
+
+
 
 
 
