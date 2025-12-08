@@ -1,0 +1,229 @@
+<table>
+
+
+
+
+
+
+
+        <tr>
+
+
+
+
+
+
+
+          <th>#</th>
+
+
+
+
+
+
+
+          <th>Reklamacja</th>
+
+
+
+
+
+
+
+          <th>Zamówienie</th>
+
+
+
+
+
+
+
+          <th>Klient</th>
+
+
+
+
+
+
+
+          <th>Marketplace</th>
+
+
+
+
+
+
+
+          <th>Status</th>
+
+
+
+          <th>Przyjęcie</th>
+
+
+
+          <th>Termin decyzji</th>
+
+
+
+          <th>Rozwiązanie</th>
+
+
+
+          <th>Akcja</th>
+
+
+
+        </tr>`;
+
+
+
+
+
+
+
+    rows.forEach((row, idx) => {
+
+
+
+      const claim = normalizeClaim(row);
+
+
+
+      const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
+
+
+
+
+
+
+
+      html += `
+
+
+
+
+
+
+
+        <tr>
+
+
+
+
+
+
+
+          <td>${claim.rowNumber ? claim.rowNumber : idx + 1}</td>
+
+
+
+
+
+
+
+          <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId}'">${claim.claimId || "-"}</td>
+
+
+
+
+
+
+
+          <td>${claim.orderId || "-"}</td>
+
+
+
+
+
+
+
+          <td>${claim.customer || "-"}</td>
+
+
+
+
+
+
+
+          <td>${claim.marketplace || "-"}</td>
+
+
+
+          <td>${claim.status || "-"}</td>
+
+
+
+          <td>${formatDate(claim.receivedAt)}</td>
+
+
+
+          <td>${formatDate(claim.decisionDue)}</td>
+
+
+
+          <td>${formatDate(claim.resolvedAt)}</td>
+
+
+
+          <td>
+
+
+
+            <div class="action-cell">
+
+
+
+              <button class="expand-btn expand-btn--wide" onclick="handleExpand('${expId}', this)">Rozwiń ▼</button>
+
+
+
+              <button class="btn btn-dark" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj</button>
+
+
+
+            </div>
+
+
+
+          </td>
+
+
+
+        </tr>
+
+
+
+        <tr class="expand-row" data-exp-id="${expId}" style="display:none">
+
+
+
+          <td colspan="10">
+
+
+
+            ${renderClaimCard(claim)}
+
+
+
+          </td>
+
+
+
+        </tr>`;
+
+
+
+    });
+
+
+
+
+
+
+
+
+
+
+
+    html += `</table>`;

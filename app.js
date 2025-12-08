@@ -1794,7 +1794,7 @@ function normalizeClaim(raw = {}) {
 
 
 
-    receivedAt: flat.receivedAt || dates.receivedAt,
+    receivedAt: flat.receivedAt || dates.receivedAt || new Date().toISOString().slice(0, 10),
 
 
 
@@ -1858,7 +1858,7 @@ function renderClaimCard(raw, actionHtml = "") {
         <div class="claim-card__header">
           <div>
             <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
-            <div class="claim-card__order">Zamówienie: ${claim.orderId || "-"}</div>
+            <div class="claim-card__order">Zam?wienie: ${claim.orderId || "-"}</div>
           </div>
           ${claim.status ? `<div class="claim-card__status">${claim.status}</div>` : ""}
         </div>
@@ -1869,9 +1869,9 @@ function renderClaimCard(raw, actionHtml = "") {
         </div>
 
         <div class="claim-card__timeline">
-          <div><span>Data przyjęcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+          <div><span>Data przyj?cia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
           <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
-          <div><span>Data rozwiązania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+          <div><span>Data rozwi?zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
         </div>
 
         <div class="claim-card__grid">
@@ -1882,10 +1882,10 @@ function renderClaimCard(raw, actionHtml = "") {
         </div>
 
         <div class="claim-card__grid">
-          <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
+          <div><div class="label">Pow?d zg?oszenia</div><div class="value">${claim.reason || "-"}</div></div>
           <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
           <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-          <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
+          <div><div class="label">Rozwi?zanie</div><div class="value">${claim.resolution || "-"}</div></div>
           ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
           ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
         </div>
@@ -3813,234 +3813,18 @@ ${escapeHtml(rawText)}</pre>
 
 
       <table>
-
-
-
-
-
-
-
         <tr>
-
-
-
-
-
-
-
           <th>#</th>
-
-
-
-
-
-
-
           <th>Reklamacja</th>
-
-
-
-
-
-
-
-          <th>Zamwienie</th>
-
-
-
-
-
-
-
+          <th>Zam?wienie</th>
           <th>Klient</th>
-
-
-
-
-
-
-
           <th>Marketplace</th>
-
-
-
-
-
-
-
           <th>Status</th>
-
-
-
-          <th>Przyjcie</th>
-
-
-
+          <th>Przyj?cie</th>
           <th>Termin decyzji</th>
-
-
-
-          <th>Rozwiązanie</th>
-
-
-
+          <th>Rozwi?zanie</th>
           <th>Akcja</th>
-
-
-
-        </tr>`;
-
-
-
-
-
-
-
-    rows.forEach((row, idx) => {
-
-
-
-      const claim = normalizeClaim(row);
-
-
-
-      const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
-
-
-
-
-
-
-
-      html += `
-
-
-
-
-
-
-
-        <tr>
-
-
-
-
-
-
-
-          <td>${claim.rowNumber ? claim.rowNumber : idx + 1}</td>
-
-
-
-
-
-
-
-          <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId}'">${claim.claimId || "-"}</td>
-
-
-
-
-
-
-
-          <td>${claim.orderId || "-"}</td>
-
-
-
-
-
-
-
-          <td>${claim.customer || "-"}</td>
-
-
-
-
-
-
-
-          <td>${claim.marketplace || "-"}</td>
-
-
-
-          <td>${claim.status || "-"}</td>
-
-
-
-          <td>${formatDate(claim.receivedAt)}</td>
-
-
-
-          <td>${formatDate(claim.decisionDue)}</td>
-
-
-
-          <td>${formatDate(claim.resolvedAt)}</td>
-
-
-
-          <td>
-
-
-
-            <div class="action-cell">
-
-
-
-              <button class="expand-btn expand-btn--wide" onclick="handleExpand('${expId}', this)">Rozwiń ▼</button>
-
-
-
-              <button class="btn btn-dark" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj</button>
-
-
-
-            </div>
-
-
-
-          </td>
-
-
-
-        </tr>
-
-
-
-        <tr class="expand-row" data-exp-id="${expId}" style="display:none">
-
-
-
-          <td colspan="10">
-
-
-
-            ${renderClaimCard(claim)}
-
-
-
-          </td>
-
-
-
-        </tr>`;
-
-
-
-    });
-
-
-
-
-
-
-
-
-
-
-
-    html += `</table>`;
+        </tr></table>`;
 
 
 
