@@ -1939,7 +1939,7 @@ function handleGenerateClick(id) {
 
 
 
-  switchPage(3);
+  switchPage(4);
 
 
 
