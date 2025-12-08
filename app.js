@@ -4942,6 +4942,7 @@ s3GenBtn.addEventListener("click", async () => {
 });
 
 s3DocxBtn?.addEventListener("click", async () => {
+  if (!window.docx) return showToast("Brak biblioteki DOCX", "error");
   if (!s3CurrentClaim) return showToast("Brak danych do wygenerowania", "error");
   try {
     const decision = document.getElementById("s3-decision").value;
