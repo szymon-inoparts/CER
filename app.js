@@ -580,13 +580,15 @@ function buildProductsFromFields(flat, currencyValue) {
 
   const names = splitSemicolons(pickField(flat, ["Produkt Nazwa", "productName", "product_name"]));
 
-  const skus = splitSemicolons(pickField(flat, ["Produkt SKU", "productSku", "product_sku"]));
+  const skus = splitSemicolons(pickField(flat, ["Produkt SKU", "productSku", "product_sku", "skus"]));
 
-  const eans = splitSemicolons(pickField(flat, ["Produkt EAN", "productEan", "product_ean"]));
+  const eans = splitSemicolons(pickField(flat, ["Produkt EAN", "productEan", "product_ean", "eans"]));
 
-  const qtys = splitSemicolons(pickField(flat, ["Produkt Ilość", "Produkt Ilosc", "productQty", "product_qty"]));
+  const qtys = splitSemicolons(
+    pickField(flat, ["Produkt Ilość", "Produkt Ilosc", "productQty", "product_qty", "quantities"])
+  );
 
-  const vals = splitSemicolons(pickField(flat, ["Wartość", "Wartosc", "valueRaw", "value"]));
+  const vals = splitSemicolons(pickField(flat, ["Wartość", "Wartosc", "valueRaw", "value", "prices"]));
 
   const currsSource = pickField(flat, ["Waluta", "currency", "orderCurrency"]) || currencyValue;
 
@@ -1065,7 +1067,7 @@ function attachS1FetchListener() {
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
             ${p.name} (${p.sku}) - ${p.price ?? ""} zł zamówiono: ${p.quantity}
           </label>
-          <input type="number" class="s1-prod-qty" data-index="${idx}" min="0" max="${p.quantity}" value="0" />
+          <input type="number" class="s1-prod-qty" data-index="${idx}" min="1" max="${p.quantity || 1}" value="${p.quantity || 1}" />
         </div>
       `
           )
@@ -1151,16 +1153,17 @@ function attachS1SaveListener() {
         const check = row.querySelector(".s1-prod-check");
         const qty = row.querySelector(".s1-prod-qty");
         const meta = s1FetchedOrder?.products?.[idx] || {};
+        const qtyValue = Math.max(1, Number(qty.value || 1));
         return {
-          include: check.checked,
-          qty: Number(qty.value),
+          include: check.checked === true,
+          qty: qtyValue,
           sku: meta.sku,
           name: meta.name,
           orderedQuantity: meta.quantity,
           price: Number(meta.price ?? 0)
         };
       })
-      .filter((p) => p.include && p.qty > 0)
+      .filter((p) => p.include)
 
   };
 
@@ -1692,6 +1695,35 @@ function attachNoResponseToggle() {
   toggle();
 }
 
+function attachProcessorForm() {
+  const nameInput = document.getElementById("home-proc-name");
+  const emailInput = document.getElementById("home-proc-email");
+  const addBtn = document.getElementById("home-proc-add");
+
+  if (!nameInput || !emailInput || !addBtn) return;
+
+  addBtn.addEventListener("click", async () => {
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    if (!name || !email) return showToast("Podaj imię i email", "error");
+
+    try {
+      const res = await fetch(PROCESSORS_WEBHOOK, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      showToast("Dodano osobę procesującą");
+      nameInput.value = "";
+      emailInput.value = "";
+    } catch (err) {
+      console.error(err);
+      showToast("Błąd dodawania", "error");
+    }
+  });
+}
+
 function initEvents() {
 
   document.addEventListener("DOMContentLoaded", initPasswordGate);
@@ -1704,6 +1736,7 @@ function initEvents() {
   attachS3FetchListener();
   attachS3GenerateListener();
   attachNoResponseToggle();
+  attachProcessorForm();
 
 }
 
