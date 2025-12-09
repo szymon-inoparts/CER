@@ -313,6 +313,20 @@ function escapeHtml(str = "") {
 
 }
 
+function renderPreTableBox(title, rawText = "") {
+
+  return `
+
+    <div class="table-box">
+
+      <pre style="white-space:pre-wrap; padding:12px;">${escapeHtml(title)}
+
+${escapeHtml(rawText)}</pre>
+
+    </div>`;
+
+}
+
 function safeJsonParse(text) {
 
   const cleaned = String(text || "").trim().replace(/^\uFEFF/, "");
@@ -1367,15 +1381,7 @@ function attachS2RangeListener() {
 
     if (!res.ok) {
 
-      s2ListBox.innerHTML = `
-
-        <div class="table-box">
-
-          <pre style="white-space:pre-wrap; padding:12px;">B\u0142\u0105d HTTP ${res.status}
-
-${escapeHtml(rawText)}</pre>
-
-        </div>`;
+      s2ListBox.innerHTML = renderPreTableBox(`B\u0142\u0105d HTTP ${res.status}`, rawText);
 
       showToast(`B\u0142\u0105d pobierania (${res.status})`, "error");
 
@@ -1385,15 +1391,13 @@ ${escapeHtml(rawText)}</pre>
 
     if (!rows.length) {
 
-      s2ListBox.innerHTML = `
+      s2ListBox.innerHTML = renderPreTableBox(
 
-        <div class="table-box">
+        "Brak rozpoznanych danych. Surowa odpowied webhooka:",
 
-          <pre style="white-space:pre-wrap; padding:12px;">Brak rozpoznanych danych. Surowa odpowied webhooka:
+        rawText
 
-${escapeHtml(rawText)}</pre>
-
-        </div>`;
+      );
 
       showToast("Brak danych z webhooka", "error");
 
