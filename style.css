@@ -473,7 +473,8 @@ textarea {
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--panel);
-  margin-top: 20px;
+  margin: 20px auto;
+  max-width: 1200px;
 }
 
 table {

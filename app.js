@@ -44,6 +44,9 @@ const langButtons = document.querySelectorAll(".lang-btn");
 
 const PASSWORD_VALUE = "inoparts";
 
+const DEFAULT_NO_RESPONSE_TEXT =
+  "Brak możliwości weryfikacji: Pomimo naszych prób kontaktu nie otrzymaliśmy odpowiedzi, dlatego zamykamy zgłoszenie.";
+
 const COMPANY_VALUE =
   "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900";
 
@@ -1608,9 +1611,7 @@ function attachS3GenerateListener() {
 
     if (!num) return showToast("Podaj numer", "error");
 
-    const answer = noResp
-      ? "Brak mo?liwo?ci weryfikacji: Pomimo naszych pr?b kontaktu nie otrzymali?my odpowiedzi, dlatego zamykamy zg?oszenie."
-      : document.getElementById("s3-answer").value;
+    const answer = noResp ? DEFAULT_NO_RESPONSE_TEXT : document.getElementById("s3-answer").value;
 
     const payload = {
       number: num,
@@ -1677,6 +1678,20 @@ function attachS3GenerateListener() {
   });
 }
 
+function attachNoResponseToggle() {
+  const cb = document.getElementById("s3-noresp");
+  const area = document.getElementById("s3-answer");
+  const toggle = () => {
+    if (!area) return;
+    const hide = cb && cb.checked;
+    area.style.display = hide ? "none" : "block";
+    area.disabled = !!hide;
+    if (hide) area.value = "";
+  };
+  if (cb) cb.addEventListener("change", toggle);
+  toggle();
+}
+
 function initEvents() {
 
   document.addEventListener("DOMContentLoaded", initPasswordGate);
@@ -1688,10 +1703,12 @@ function initEvents() {
   attachLanguageListeners();
   attachS3FetchListener();
   attachS3GenerateListener();
+  attachNoResponseToggle();
 
 }
 
 initEvents();
+
 
 
 
