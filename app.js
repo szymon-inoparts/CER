@@ -1288,7 +1288,7 @@ function attachS2SearchListener() {
 
       claim,
 
-      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowied</button>`
+      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedź</button>`
 
     );
 
@@ -1426,7 +1426,8 @@ function attachS2RangeListener() {
           <th>Termin decyzji</th>
           <th>Rozwiązanie</th>
           <th>Akcja</th>
-        </tr>`;
+        </tr>;
+`;
 
     rows.forEach((row, idx) => {
       const claim = normalizeClaim(row);
@@ -1446,7 +1447,7 @@ function attachS2RangeListener() {
           <td>
             <div class="action-cell">
               <button class="expand-btn expand-btn--wide" onclick="handleExpand('${expId}', this)">Rozwiń ▼</button>
-              <button class="btn btn-dark" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj</button>
+              <button class="btn btn-dark" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj odpowiedź</button>
             </div>
           </td>
         </tr>
@@ -1691,4 +1692,6 @@ function initEvents() {
 }
 
 initEvents();
+
+
 
