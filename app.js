@@ -1148,22 +1148,25 @@ function attachS1SaveListener() {
 
     note: document.getElementById("s1-note").value,
 
-    products: Array.from(document.querySelectorAll(".product-row"))
-      .map((row, idx) => {
+    products: (() => {
+      const out = [];
+      Array.from(document.querySelectorAll(".product-row")).forEach((row, idx) => {
         const check = row.querySelector(".s1-prod-check");
+        if (!check || !check.checked) return;
         const qty = row.querySelector(".s1-prod-qty");
         const meta = s1FetchedOrder?.products?.[idx] || {};
-        const qtyValue = Math.max(1, Number(qty.value || 1));
-        return {
-          include: check.checked === true,
-          qty: qtyValue,
+        const quantity = Math.max(1, Number(qty?.value || meta.quantity || 1));
+        out.push({
+          quantity,
           sku: meta.sku,
           name: meta.name,
           orderedQuantity: meta.quantity,
-          price: Number(meta.price ?? 0)
-        };
-      })
-      .filter((p) => p.include)
+          price: Number(meta.price ?? 0),
+          ean: meta.ean
+        });
+      });
+      return out;
+    })()
 
   };
 
