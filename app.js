@@ -25,6 +25,16 @@ const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-o
 
 /* ------------------------------------------------------------
 
+   GLOBALNE REFERENCJE DO DOM
+
+------------------------------------------------------------- */
+
+const pages = document.querySelectorAll(".page");
+
+const langButtons = document.querySelectorAll(".lang-btn");
+
+/* ------------------------------------------------------------
+
    BLOKADA HAS\u0141EM  prosty resetowany mechanizm
 
 ------------------------------------------------------------- */
@@ -206,7 +216,6 @@ document.addEventListener("DOMContentLoaded", initPasswordGate);
    NAWIGACJA MIĘDZY PODSTRONAMI
 ------------------------------------------------------------- */
 function switchPage(pageIndex) {
-  const pages = document.querySelectorAll(".page");
   pages.forEach((page, idx) => {
     page.classList.toggle("page-active", idx === pageIndex - 1);
   });
@@ -1349,13 +1358,13 @@ let s3CurrentClaim = null;
 
 /* Zmiana jzyka tumaczenia */
 
-document.querySelectorAll(".lang-btn").forEach((btn) => {
+langButtons.forEach((btn) => {
 
   btn.addEventListener("click", () => {
 
     selectedLang = btn.dataset.lang;
 
-    document.querySelectorAll(".lang-btn").forEach((b) => (b.style.background = ""));
+    langButtons.forEach((b) => (b.style.background = ""));
 
     btn.style.background = "var(--orange)";
 
