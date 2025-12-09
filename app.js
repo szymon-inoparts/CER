@@ -200,8 +200,6 @@ function initPasswordGate() {
 
 }
 
-document.addEventListener("DOMContentLoaded", initPasswordGate);
-
 /* ------------------------------------------------------------
    NAWIGACJA MIĘDZY PODSTRONAMI
 ------------------------------------------------------------- */
@@ -882,7 +880,11 @@ let s1FetchedOrder = null;
 
 /* Pobieranie danych zam\u00f3wienia */
 
-s1FetchBtn.addEventListener("click", async () => {
+function attachS1FetchListener() {
+
+  if (!s1FetchBtn) return;
+
+  s1FetchBtn.addEventListener("click", async () => {
 
   const num = s1OrderInput.value.trim();
 
@@ -978,11 +980,16 @@ s1FetchBtn.addEventListener("click", async () => {
 
   }
 
-});
+  });
+}
 
 /* Zapisywanie zgoszenia */
 
-s1SaveBtn.addEventListener("click", async () => {
+function attachS1SaveListener() {
+
+  if (!s1SaveBtn) return;
+
+  s1SaveBtn.addEventListener("click", async () => {
 
   const payload = {
 
@@ -1038,7 +1045,8 @@ s1SaveBtn.addEventListener("click", async () => {
 
   }
 
-});
+  });
+}
 
 /* ============================================================
 
@@ -1120,7 +1128,11 @@ const s2ListBox = document.getElementById("s2-list");
 
 /* Pobieranie pojedynczego zgoszenia */
 
-s2SearchBtn.addEventListener("click", async () => {
+function attachS2SearchListener() {
+
+  if (!s2SearchBtn) return;
+
+  s2SearchBtn.addEventListener("click", async () => {
 
   const num = s2SearchInput.value.trim();
 
@@ -1152,11 +1164,16 @@ s2SearchBtn.addEventListener("click", async () => {
 
   }
 
-});
+  });
+}
 
 /* Pobieranie listy zgosze (tabela) */
 
-s2RangeBtn.addEventListener("click", async () => {
+function attachS2RangeListener() {
+
+  if (!s2RangeBtn) return;
+
+  s2RangeBtn.addEventListener("click", async () => {
 
   const range = s2RangeSelect.value;
 
@@ -1325,7 +1342,8 @@ ${escapeHtml(rawText)}</pre>
 
   }
 
-});
+  });
+}
 
 /* ============================================================
 
@@ -1349,25 +1367,35 @@ let s3CurrentClaim = null;
 
 /* Zmiana jzyka tumaczenia */
 
-document.querySelectorAll(".lang-btn").forEach((btn) => {
+function attachLanguageListeners() {
 
-  btn.addEventListener("click", () => {
+  const langButtons = document.querySelectorAll(".lang-btn");
 
-    selectedLang = btn.dataset.lang;
+  langButtons.forEach((btn) => {
 
-    document.querySelectorAll(".lang-btn").forEach((b) => (b.style.background = ""));
+    btn.addEventListener("click", () => {
 
-    btn.style.background = "var(--orange)";
+      selectedLang = btn.dataset.lang;
 
-    btn.style.color = "#fff";
+      langButtons.forEach((b) => (b.style.background = ""));
+
+      btn.style.background = "var(--orange)";
+
+      btn.style.color = "#fff";
+
+    });
 
   });
 
-});
+}
 
 /* Pobieranie danych zgoszenia */
 
-s3FetchBtn.addEventListener("click", async () => {
+function attachS3FetchListener() {
+
+  if (!s3FetchBtn) return;
+
+  s3FetchBtn.addEventListener("click", async () => {
 
   const num = s3NumberInput.value.trim();
 
@@ -1435,51 +1463,56 @@ s3FetchBtn.addEventListener("click", async () => {
 
   }
 
-});
+  });
+}
 
 /* Generowanie PDF */
 
-s3GenBtn.addEventListener("click", async () => {
-  if (!window.docx) return showToast("Brak biblioteki DOCX", "error");
+function attachS3GenerateListener() {
 
-  const num = s3NumberInput.value.trim();
-  const decision = document.getElementById("s3-decision").value;
-  const noResp = document.getElementById("s3-noresp").checked;
+  if (!s3GenBtn) return;
 
-  if (!num) return showToast("Podaj numer", "error");
+  s3GenBtn.addEventListener("click", async () => {
+    if (!window.docx) return showToast("Brak biblioteki DOCX", "error");
 
-  const answer = noResp
-    ? "Brak mo?liwo?ci weryfikacji: Pomimo naszych pr?b kontaktu nie otrzymali?my odpowiedzi, dlatego zamykamy zg?oszenie."
-    : document.getElementById("s3-answer").value;
+    const num = s3NumberInput.value.trim();
+    const decision = document.getElementById("s3-decision").value;
+    const noResp = document.getElementById("s3-noresp").checked;
 
-  const payload = {
-    number: num,
-    decision,
-    language: mapLangForBackend(selectedLang),
-    answer,
-    noResponse: noResp,
-    claim: s3CurrentClaim
-      ? {
-          claimId: s3CurrentClaim.claimId,
-          orderId: s3CurrentClaim.orderId,
-          customer: s3CurrentClaim.customer,
-          marketplace: s3CurrentClaim.marketplace,
-          status: s3CurrentClaim.status,
-          value: s3CurrentClaim.value,
-          reason: s3CurrentClaim.reason,
-          type: s3CurrentClaim.type,
-          decisionOriginal: s3CurrentClaim.decision,
-          resolution: s3CurrentClaim.resolution,
-          agent: s3CurrentClaim.agent,
-          myNewField: s3CurrentClaim.myNewField,
-          receivedAt: s3CurrentClaim.receivedAt,
-          decisionDue: s3CurrentClaim.decisionDue,
-          resolvedAt: s3CurrentClaim.resolvedAt
-        }
-      : null
-  };
+    if (!num) return showToast("Podaj numer", "error");
 
-  try {
+    const answer = noResp
+      ? "Brak mo?liwo?ci weryfikacji: Pomimo naszych pr?b kontaktu nie otrzymali?my odpowiedzi, dlatego zamykamy zg?oszenie."
+      : document.getElementById("s3-answer").value;
+
+    const payload = {
+      number: num,
+      decision,
+      language: mapLangForBackend(selectedLang),
+      answer,
+      noResponse: noResp,
+      claim: s3CurrentClaim
+        ? {
+            claimId: s3CurrentClaim.claimId,
+            orderId: s3CurrentClaim.orderId,
+            customer: s3CurrentClaim.customer,
+            marketplace: s3CurrentClaim.marketplace,
+            status: s3CurrentClaim.status,
+            value: s3CurrentClaim.value,
+            reason: s3CurrentClaim.reason,
+            type: s3CurrentClaim.type,
+            decisionOriginal: s3CurrentClaim.decision,
+            resolution: s3CurrentClaim.resolution,
+            agent: s3CurrentClaim.agent,
+            myNewField: s3CurrentClaim.myNewField,
+            receivedAt: s3CurrentClaim.receivedAt,
+            decisionDue: s3CurrentClaim.decisionDue,
+            resolvedAt: s3CurrentClaim.resolvedAt
+          }
+        : null
+    };
+
+    try {
     const res = await fetch(GENERATE_WEBHOOK, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1510,8 +1543,25 @@ s3GenBtn.addEventListener("click", async () => {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 
     showToast("Wygenerowano DOCX");
-  } catch (err) {
-    console.error(err);
-    showToast("Błąd generowania", "error");
-  }
-});
+    } catch (err) {
+      console.error(err);
+      showToast("Błąd generowania", "error");
+    }
+  });
+}
+
+function initEvents() {
+
+  document.addEventListener("DOMContentLoaded", initPasswordGate);
+
+  attachS1FetchListener();
+  attachS1SaveListener();
+  attachS2SearchListener();
+  attachS2RangeListener();
+  attachLanguageListeners();
+  attachS3FetchListener();
+  attachS3GenerateListener();
+
+}
+
+initEvents();
