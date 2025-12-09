@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
 
    app.js  pe\u0142ny JS do obs\u0142ugi 3 podstron CER
 
@@ -23,6 +23,9 @@ const SHOW_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/wy%C
 
 const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-odpowiedz";
 
+const PROCESSORS_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/procesorzy-reklamacji";
+
+
 /* ------------------------------------------------------------
 
    GLOBALNE REFERENCJE DO DOM
@@ -41,10 +44,13 @@ const langButtons = document.querySelectorAll(".lang-btn");
 
 const PASSWORD_VALUE = "inoparts";
 
+const COMPANY_VALUE =
+  "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900";
+
 const DOCX_TRANSLATIONS = {
   PL: {
     companyLabel: "Dane firmy:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    companyValue: COMPANY_VALUE,
     customerLabel: "Dane klienta:",
     title: "Odpowiedź na reklamację",
     subjectLabel: "Przedmiot reklamacji:",
@@ -64,19 +70,19 @@ const DOCX_TRANSLATIONS = {
   },
   CZ: {
     companyLabel: "Údaje o společnosti:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    companyValue: COMPANY_VALUE,
     customerLabel: "Údaje o zákazníkovi:",
     title: "Odpověď na stížnost",
     subjectLabel: "Předmět stížnosti:",
     valueLabel: "Hodnota produktu:",
     complaintDateLabel: "Datum podání stížnosti:",
     purchaseDateLabel: "Datum nákupu:",
-    reasonLabel: "Důvod stížnosti:",
+    reasonLabel: "Důvod stížności:",
     descriptionLabel: "Popis:",
     decisionLabel: "Řešení stížnosti:",
     resolutionLabel: "Řešení/Odůvodnění:",
     footer:
-      "Stížnost byla posouzena s ohledem na všechna práva vyplývající ze zákona o právech spotřebitelů a občanského zákoníku. Rád/a bych Vás také informoval/a, že mám právo se proti této odpovědi odvolat.\nS pozdravem,",
+      "Stížnost była posouzena z uwzględnieniem wszystkich praw wynikających ze zákona o právech spotřebitelů a občanského zákoníku. Rád/a bych Vás także informował/a, że mám prawo se proti této odpovědi odwołać.\nS pozdravem,",
     complaintTitle: "Odpověď na stížnost",
     productLabel: "Produkt",
     complaintValueLabel: "Hodnota produktu:",
@@ -84,7 +90,7 @@ const DOCX_TRANSLATIONS = {
   },
   DE: {
     companyLabel: "Firmenangaben:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    companyValue: COMPANY_VALUE,
     customerLabel: "Kundendaten:",
     title: "Antwort auf die Beschwerde",
     subjectLabel: "Betreff der Beschwerde:",
@@ -104,19 +110,19 @@ const DOCX_TRANSLATIONS = {
   },
   SK: {
     companyLabel: "Údaje o spoločnosti:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    companyValue: COMPANY_VALUE,
     customerLabel: "Údaje o zákazníkovi:",
-    title: "Odpoveď na sťažnosť",
+    title: "Odpoveď na sťažność",
     subjectLabel: "Predmet sťažnosti:",
     valueLabel: "Hodnota produktu:",
-    complaintDateLabel: "Dátum sťažnosti:",
+    complaintDateLabel: "Dátum sťažności:",
     purchaseDateLabel: "Dátum nákupu:",
-    reasonLabel: "Dôvod sťažnosti:",
+    reasonLabel: "Dôvod sťažności:",
     descriptionLabel: "Popis:",
     decisionLabel: "Riešenie sťažnosti:",
     resolutionLabel: "Riešenie/Odôvodnenie:",
     footer:
-      "Sťažnosť bola posúdená s ohľadom na všetky práva vyplývajúce zo zákona o právach spotrebiteľov a Občianskeho zákonníka. Zároveň by som vás chcel informovať, že mám právo sa proti tejto odpovedi odvolať.\nS pozdravom,",
+      "Sťažność była posúdena z uwzględnieniem wszystkich praw wynikających ze zákona o právach spotrebiteľov a Občianskeho zákonníka. Zároveň by som vás chcel informovať, że mám prawo sa proti tejto odpovedi odwołać.\nS pozdravom,",
     complaintTitle: "Odpoveď na sťažnosť",
     productLabel: "Produkt",
     complaintValueLabel: "Hodnota produktu:",
@@ -124,7 +130,7 @@ const DOCX_TRANSLATIONS = {
   },
   HU: {
     companyLabel: "Cégadatok:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    companyValue: COMPANY_VALUE,
     customerLabel: "Ügyféladatok:",
     title: "Válasz a panaszra",
     subjectLabel: "A panasz tárgya:",
@@ -136,7 +142,7 @@ const DOCX_TRANSLATIONS = {
     decisionLabel: "A panasz megoldása:",
     resolutionLabel: "Megoldás/Indoklás:",
     footer:
-      "A panaszt a fogyasztóvédelmi törvényből és a Polgári Törvénykönyvből eredő összes jog figyelembevételével elbíráltuk. Szeretném tájékoztatni Önöket arról is, hogy jogom van fellebbezni a válasz ellen.\nTisztelettel",
+      "A panaszt a fogyasztóvédelmi törvényből i kodeksu cywilnego figyelembevételével elbíráltuk. Szeretném tájékoztatni Önöket arról is, że jogom van fellebbezni a válasz ellen.\nTisztelettel",
     complaintTitle: "Válasz a panaszra",
     productLabel: "Termék",
     complaintValueLabel: "Termék értéke:",
@@ -144,7 +150,7 @@ const DOCX_TRANSLATIONS = {
   },
   EN: {
     companyLabel: "Company Details:",
-    companyValue: "INOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\nUl. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    companyValue: COMPANY_VALUE,
     customerLabel: "Customer Details:",
     title: "Response to Complaint",
     subjectLabel: "Subject of Complaint:",
@@ -163,6 +169,8 @@ const DOCX_TRANSLATIONS = {
     decisionValues: { pozytywna: "Positive", negatywna: "Negative" }
   }
 };
+
+
 
 function initPasswordGate() {
 
@@ -1683,3 +1691,4 @@ function initEvents() {
 }
 
 initEvents();
+
