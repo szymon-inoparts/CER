@@ -60,6 +60,16 @@ const PLACEHOLDER = "-";
 
 /* ------------------------------------------------------------
 
+   GLOBALNE REFERENCJE DO DOM
+
+------------------------------------------------------------- */
+
+const pages = document.querySelectorAll(".page");
+
+const langButtons = document.querySelectorAll(".lang-btn");
+
+/* ------------------------------------------------------------
+
    BLOKADA HAS\u0141EM  prosty resetowany mechanizm
 
 ------------------------------------------------------------- */
@@ -409,59 +419,65 @@ function parseObjectsFromText(rawText) {
 
 // Rozwiniecie odpowiedzi n8n niezaleznie od ksztaltu (tablica, data[], items[], elementy z json)
 
+function parseStringPayload(payload) {
+
+  try {
+
+    const parsed = JSON.parse(payload);
+
+    if (Array.isArray(parsed)) return { array: parsed, object: null };
+
+    if (parsed && typeof parsed === "object") return { array: null, object: parsed };
+
+  } catch {
+
+    return { array: [], object: null };
+
+  }
+
+  return { array: [], object: null };
+
+}
+
+function extractArrayFromObject(payload) {
+
+  const candidates = [payload.data, payload.items, payload.json, payload.body, payload.result, payload.records, payload.list];
+
+  for (const c of candidates) if (Array.isArray(c)) return c;
+
+  const keys = Object.keys(payload || {});
+
+  if (keys.length && (keys.includes("claimId") || keys.includes("orderId") || keys.includes("Nr. Rek.") || keys.includes("rowNumber"))) {
+
+    return [payload];
+
+  }
+
+  return null;
+
+}
+
 function toArray(payload) {
 
   if (Array.isArray(payload)) return payload;
 
   if (typeof payload === "string") {
 
-    try {
+    const { array, object } = parseStringPayload(payload);
 
-      const parsed = JSON.parse(payload);
+    if (array) return array;
 
-      if (Array.isArray(parsed)) return parsed;
+    if (object) return toArray(object);
 
-      if (parsed && typeof parsed === "object") return toArray(parsed);
-
-    } catch {
-
-      return [];
-
-    }
+    return [];
 
   }
 
   if (payload && typeof payload === "object") {
 
-    const candidates = [
+    const extracted = extractArrayFromObject(payload);
 
-      payload.data,
-
-      payload.items,
-
-      payload.json,
-
-      payload.body,
-
-      payload.result,
-
-      payload.records,
-
-      payload.list
-
-    ];
-
-    for (const c of candidates) if (Array.isArray(c)) return c;
-
-    // jeeli to pojedynczy rekord (ma claimId/orderId itp.), zwr jako jednoelementowa tablica
-
-    const keys = Object.keys(payload);
-
-    if (keys.length && (keys.includes("claimId") || keys.includes("orderId") || keys.includes("Nr. Rek.") || keys.includes("row_number"))) {
-
-      return [payload];
-
-    }
+    if (extracted) return extracted;
 
   }
 
@@ -509,144 +525,123 @@ function pickField(obj, keys = []) {
 
 }
 
-function normalizeClaim(raw = {}) {
+function flattenClaim(raw = {}) {
 
-  const flat = raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
+  return raw.json && typeof raw.json === "object" ? { ...raw, ...raw.json } : raw;
 
-  const dates = flat.dates || {};
+}
 
-  const customerValue = pickField(flat, [
+function buildAddressFromBill(bill) {
 
-    "customer",
+  const parts = [];
 
-    "clientNick",
+  if (bill.street) parts.push(String(bill.street).trim());
 
-    "customerNick",
+  if (bill.home_number) parts.push(String(bill.home_number).trim());
 
-    "client",
+  if (bill.flat_number) parts.push(String(bill.flat_number).trim());
 
-    "clientName",
+  if (bill.postcode) parts.push(String(bill.postcode).trim());
 
-    "customerName"
+  if (bill.city) parts.push(String(bill.city).trim());
 
-  ]);
+  const countryLine = bill.country && typeof bill.country === "object" ? bill.country.code || bill.country.name : bill.country;
 
-  const productsArr =
+  if (countryLine) parts.push(String(countryLine).trim());
 
-    flat.products ||
+  return parts.filter(Boolean).join(", ");
 
-    (flat.orderDetails && flat.orderDetails.products) ||
+}
 
-    (flat.body && flat.body.products);
+function deriveAddress(flat) {
 
-  const currencyValue =
-
-    pickField(flat, ["currency", "orderCurrency"]) ||
-
-    (flat.orderDetails && flat.orderDetails.currency);
-
-  const rawAddress =
-
-    pickField(flat, ["address", "billAddressFull"]) ||
-
-    (flat.orderDetails && flat.orderDetails.billAddressFull);
+  const rawAddress = pickField(flat, ["address", "billAddressFull"]) || (flat.orderDetails && flat.orderDetails.billAddressFull);
 
   const bill =
 
-    flat.bill_address ||
+    flat.bill_address || flat.billAddress || flat.billAddressRaw || (flat.orderDetails && flat.orderDetails.bill_address);
 
-    flat.billAddress ||
+  if (rawAddress) return rawAddress;
 
-    flat.billAddressRaw ||
+  if (bill) return buildAddressFromBill(bill);
 
-    (flat.orderDetails && flat.orderDetails.bill_address);
+  return undefined;
 
-  let addressValue = rawAddress;
+}
 
-  if (!addressValue && bill) {
-    const parts = [];
+function normalizeProductArray(productsArr, currencyValue) {
 
-    if (bill.street) parts.push(String(bill.street).trim());
-    if (bill.home_number) parts.push(String(bill.home_number).trim());
-    if (bill.flat_number) parts.push(String(bill.flat_number).trim());
-    if (bill.postcode) parts.push(String(bill.postcode).trim());
-    if (bill.city) parts.push(String(bill.city).trim());
+  if (typeof productsArr === "string") return splitSemicolons(productsArr).map((name) => ({ name }));
 
-    const countryLine =
-      bill.country && typeof bill.country === "object"
-        ? bill.country.code || bill.country.name
-        : bill.country;
+  if (!Array.isArray(productsArr)) return [];
 
-    if (countryLine) parts.push(String(countryLine).trim());
+  return productsArr.map((p) => {
 
-    addressValue = parts.filter(Boolean).join(", ");
-  }
+    const quantity = p.quantity ?? p.qty ?? p.orderedQuantity ?? p.ordered_quantity ?? p.amount;
 
-  let products =
-    typeof productsArr === "string"
-      ? splitSemicolons(productsArr).map((name) => ({ name }))
-      : Array.isArray(productsArr)
-      ? productsArr.map((p) => {
-          const quantity =
-            p.quantity ??
-            p.qty ??
-            p.orderedQuantity ??
-            p.ordered_quantity ??
-            p.amount;
-          const priceValue =
-            p.price ??
-            p.value ??
-            p.valueRaw ??
-            p.amount;
-          const currencyGuess =
-            p.currency ??
-            p.curr ??
-            currencyValue;
-          return { ...p, quantity, price: priceValue, currency: currencyGuess };
-        })
-      : [];
+    const priceValue = p.price ?? p.value ?? p.valueRaw ?? p.amount;
 
-  if (!products.length) {
+    const currencyGuess = p.currency ?? p.curr ?? currencyValue;
 
-    const names = splitSemicolons(pickField(flat, ["Produkt Nazwa", "productName", "product_name"]));
+    return { ...p, quantity, price: priceValue, currency: currencyGuess };
 
-    const skus = splitSemicolons(pickField(flat, ["Produkt SKU", "productSku", "product_sku"]));
+  });
 
-    const eans = splitSemicolons(pickField(flat, ["Produkt EAN", "productEan", "product_ean"]));
+}
 
-    const qtys = splitSemicolons(
-      pickField(flat, ["Produkt Ilość", "Produkt Ilosc", "productQty", "product_qty"])
-    );
+function buildProductsFromFields(flat, currencyValue) {
 
-    const vals = splitSemicolons(pickField(flat, ["Wartość", "Wartosc", "valueRaw", "value"]));
+  const names = splitSemicolons(pickField(flat, ["Produkt Nazwa", "productName", "product_name"]));
 
-    const currsSource = pickField(flat, ["Waluta", "currency", "orderCurrency"]) || currencyValue;
+  const skus = splitSemicolons(pickField(flat, ["Produkt SKU", "productSku", "product_sku"]));
 
-    const currs = splitSemicolons(currsSource);
+  const eans = splitSemicolons(pickField(flat, ["Produkt EAN", "productEan", "product_ean"]));
 
-    const maxLen = Math.max(names.length, skus.length, eans.length, qtys.length, vals.length, currs.length);
+  const qtys = splitSemicolons(pickField(flat, ["Produkt Ilość", "Produkt Ilosc", "productQty", "product_qty"]));
 
-    if (maxLen > 0) {
+  const vals = splitSemicolons(pickField(flat, ["Wartość", "Wartosc", "valueRaw", "value"]));
 
-      products = Array.from({ length: maxLen }).map((_, i) => ({
+  const currsSource = pickField(flat, ["Waluta", "currency", "orderCurrency"]) || currencyValue;
 
-        name: names[i],
+  const currs = splitSemicolons(currsSource);
 
-        sku: skus[i],
+  const maxLen = Math.max(names.length, skus.length, eans.length, qtys.length, vals.length, currs.length);
 
-        ean: eans[i],
+  if (!maxLen) return [];
 
-        quantity: qtys[i],
+  return Array.from({ length: maxLen }).map((_, i) => ({
 
-        price: vals[i],
+    name: names[i],
 
-        currency: currs[i]
+    sku: skus[i],
 
-      }));
+    ean: eans[i],
 
-    }
+    quantity: qtys[i],
 
-  }
+    price: vals[i],
+
+    currency: currs[i]
+
+  }));
+
+}
+
+function collectProducts(flat, currencyValue) {
+
+  const productsArr =
+
+    flat.products || (flat.orderDetails && flat.orderDetails.products) || (flat.body && flat.body.products);
+
+  const normalized = normalizeProductArray(productsArr, currencyValue);
+
+  if (normalized.length) return normalized;
+
+  return buildProductsFromFields(flat, currencyValue);
+
+}
+
+function buildClaimPayload(flat, dates, customerValue, currencyValue) {
 
   return {
 
@@ -698,28 +693,55 @@ function normalizeClaim(raw = {}) {
 
     rowNumber: flat.rowNumber,
 
-    address: addressValue,
+    address: deriveAddress(flat),
 
-    products
+    products: collectProducts(flat, currencyValue)
 
   };
 
 }
 
-function renderClaimCard(raw, actionHtml = "") {
-  const claim = normalizeClaim(raw);
+function normalizeClaim(raw = {}) {
 
-  const productsBlock =
-    claim.products && Array.isArray(claim.products) && claim.products.length
-      ? `<ul class="products-list">${claim.products
-          .map((p) => {
-            return `<li>
+  const flat = flattenClaim(raw);
+
+  const dates = flat.dates || {};
+
+  const customerValue = pickField(flat, [
+
+    "customer",
+
+    "clientNick",
+
+    "customerNick",
+
+    "client",
+
+    "clientName",
+
+    "customerName"
+
+  ]);
+
+  const currencyValue =
+
+    pickField(flat, ["currency", "orderCurrency"]) ||
+
+    (flat.orderDetails && flat.orderDetails.currency);
+
+  return buildClaimPayload(flat, dates, customerValue, currencyValue);
+
+}
+
+function renderProductItem(p, currencyFallback) {
+
+  return `<li>
               ${p.name ? `<strong>Nazwa:</strong> ${escapeHtml(p.name)}<br>` : ""}
               ${p.sku ? `<strong>SKU:</strong> ${escapeHtml(p.sku)}<br>` : ""}
               ${p.ean ? `<strong>EAN:</strong> ${escapeHtml(p.ean)}<br>` : ""}
               ${
                 p.price !== undefined && p.price !== null && p.price !== ""
-                  ? `<strong>Wartość:</strong> ${formatCurrency(p.price)} ${p.currency || claim.currency || ""}<br>`
+                  ? `<strong>Wartość:</strong> ${formatCurrency(p.price)} ${p.currency || currencyFallback}<br>`
                   : ""
               }
               ${
@@ -748,11 +770,25 @@ function renderClaimCard(raw, actionHtml = "") {
           <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || PLACEHOLDER}</div></div>
         </div>
 
-        <div class="claim-card__timeline">
+  const currencyFallback = claim.currency || "";
+
+  const items = claim.products.map((p) => renderProductItem(p, currencyFallback)).join("");
+
+  return `<ul class="products-list">${items}</ul>`;
+
+}
+
+function renderClaimTimeline(claim) {
+
+  return `<div class="claim-card__timeline">
           <div><span>Data przyjęcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
           <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
           <div><span>Data rozwiązania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
-        </div>
+        </div>`;
+
+}
+
+function renderCustomerGrid(claim) {
 
         <div class="claim-card__grid">
           <div><div class="label">Dane klienta</div><div class="value">${claim.customer || PLACEHOLDER}</div></div>
@@ -768,7 +804,36 @@ function renderClaimCard(raw, actionHtml = "") {
           <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || PLACEHOLDER}</div></div>
           ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
           ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
+        </div>`;
+
+}
+
+function renderClaimCard(raw, actionHtml = "") {
+  const claim = normalizeClaim(raw);
+
+  const productsBlock = renderProductsBlock(claim);
+
+  return `
+    <div class="claim-card claim-card--split">
+      <div class="claim-card__panel claim-card__panel--main">
+        <div class="claim-card__header">
+          <div>
+            <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
+            <div class="claim-card__order">Zamówienie: ${claim.orderId || "-"}</div>
+          </div>
+          ${claim.status ? `<div class="claim-card__status">${claim.status}</div>` : ""}
         </div>
+
+        <div class="claim-card__keyline">
+          <div><div class="label">Klient</div><div class="value">${claim.customer || "-"}</div></div>
+          <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || "-"}</div></div>
+        </div>
+
+        ${renderClaimTimeline(claim)}
+
+        ${renderCustomerGrid(claim)}
+
+        ${renderDecisionGrid(claim)}
 
         <div class="claim-card__actions">${actionHtml || ""}</div>
       </div>
@@ -822,13 +887,7 @@ function handleGenerateClick(id) {
 
 window.handleGenerateClick = handleGenerateClick;
 
-function buildDocx(claim, lang, answerText, decisionValue) {
-  if (!window.docx) throw new Error("Brak biblioteki docx");
-  const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
-  const t = DOCX_TRANSLATIONS[lang] || DOCX_TRANSLATIONS.PL;
-
-  const today = new Date().toISOString().slice(0, 10);
-  const docChildren = [];
+function appendCompanySection(docChildren, t, Paragraph, TextRun) {
 
   const addParagraph = (label, value) => {
     docChildren.push(
@@ -846,26 +905,50 @@ function buildDocx(claim, lang, answerText, decisionValue) {
   docChildren.push(
     new Paragraph({ children: [new TextRun({ text: t.companyLabel, bold: true })], spacing: { after: 80 } })
   );
-  t.companyValue.split("\n").forEach((line) =>
-    docChildren.push(new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: 40 } }))
+
+  t.companyValue
+
+    .split("\n")
+
+    .forEach((line) => docChildren.push(new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: 40 } })));
+
+}
+
+function appendClientSection(docChildren, t, claim, Paragraph, TextRun) {
+
+  docChildren.push(
+
+    new Paragraph({ children: [new TextRun({ text: t.customerLabel, bold: true })], spacing: { before: 120, after: 80 } })
+
   );
 
-  // Client
-  docChildren.push(
-    new Paragraph({ children: [new TextRun({ text: t.customerLabel, bold: true })], spacing: { before: 120, after: 80 } })
-  );
   if (claim.customer) docChildren.push(new Paragraph({ children: [new TextRun({ text: claim.customer })], spacing: { after: 40 } }));
+
   if (claim.address)
+
     docChildren.push(new Paragraph({ children: [new TextRun({ text: claim.address })], spacing: { after: 120 } }));
 
-  // Title
+}
+
+function appendTitleSection(docChildren, t, Paragraph, TextRun, AlignmentType) {
+
   docChildren.push(
+
     new Paragraph({
+
       children: [new TextRun({ text: t.title, bold: true })],
+
       alignment: AlignmentType.CENTER,
+
       spacing: { after: 200 }
+
     })
+
   );
+
+}
+
+function appendProductsSection(docChildren, t, claim, addParagraph) {
 
   const products = Array.isArray(claim.products) ? claim.products : [];
   if (products.length) {
@@ -880,15 +963,51 @@ function buildDocx(claim, lang, answerText, decisionValue) {
   }
 
   addParagraph(t.complaintDateLabel, formatDate(claim.receivedAt || today));
+
   addParagraph(t.purchaseDateLabel, formatDate(claim.purchaseDate || claim.orderDate));
   addParagraph(t.reasonLabel, claim.type || PLACEHOLDER);
   addParagraph(t.descriptionLabel, claim.reason || PLACEHOLDER);
   addParagraph(t.decisionLabel, decisionValue || PLACEHOLDER);
   addParagraph(t.resolutionLabel, answerText || PLACEHOLDER);
 
-  t.footer.split("\n").forEach((line) =>
-    docChildren.push(new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: 80 } }))
-  );
+}
+
+function appendFooterSection(docChildren, t, Paragraph, TextRun) {
+
+  t.footer
+
+    .split("\n")
+
+    .forEach((line) => docChildren.push(new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: 80 } })));
+
+}
+
+function buildDocx(claim, lang, answerText, decisionValue) {
+  if (!window.docx) throw new Error("Brak biblioteki docx");
+  const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
+  const t = DOCX_TRANSLATIONS[lang] || DOCX_TRANSLATIONS.PL;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const docChildren = [];
+
+  const addParagraph = (label, value) => {
+    docChildren.push(
+      new Paragraph({
+        children: [
+          new TextRun({ text: label + " ", bold: true }),
+          new TextRun({ text: value || "-" })
+        ],
+        spacing: { after: 120 }
+      })
+    );
+  };
+
+  appendCompanySection(docChildren, t, Paragraph, TextRun);
+  appendClientSection(docChildren, t, claim, Paragraph, TextRun);
+  appendTitleSection(docChildren, t, Paragraph, TextRun, AlignmentType);
+  appendProductsSection(docChildren, t, claim, addParagraph);
+  appendMetadataSection(docChildren, t, claim, addParagraph, today, decisionValue, answerText);
+  appendFooterSection(docChildren, t, Paragraph, TextRun);
 
   return Packer.toBlob(
     new Document({
@@ -1384,13 +1503,13 @@ let s3CurrentClaim = null;
 
 /* Zmiana jzyka tumaczenia */
 
-document.querySelectorAll(".lang-btn").forEach((btn) => {
+langButtons.forEach((btn) => {
 
   btn.addEventListener("click", () => {
 
     selectedLang = btn.dataset.lang;
 
-    document.querySelectorAll(".lang-btn").forEach((b) => (b.style.background = ""));
+    langButtons.forEach((b) => (b.style.background = ""));
 
     btn.style.background = "var(--orange)";
 
