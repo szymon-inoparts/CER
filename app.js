@@ -10,7 +10,6 @@
 
 ------------------------------------------------------------ */
 
-const N8N_BASE_URL = "https://kamil-inoparts.app.n8n.cloud/webhook"; // <<< PODMIENISZ
 
 const SELLASIST_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-z-sellasist";
 
@@ -1513,6 +1512,6 @@ s3GenBtn.addEventListener("click", async () => {
     showToast("Wygenerowano DOCX");
   } catch (err) {
     console.error(err);
-    showToast("B??d generowania", "error");
+    showToast("Błąd generowania", "error");
   }
 });
