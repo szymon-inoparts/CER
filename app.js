@@ -10,6 +10,7 @@
 
 ------------------------------------------------------------ */
 
+
 const SELLASIST_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/pobierz-z-sellasist";
 
 const SEND_TO_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/przeslij-do-CER";
@@ -1214,6 +1215,24 @@ s2RangeBtn.addEventListener("click", async () => {
     }
 
     s2ListBox.classList.remove("hidden");
+
+    // Log diagnostyczny w konsoli przegldarki
+
+    console.info("CER list response", {
+
+      status: res.status,
+
+      contentType: res.headers.get("content-type"),
+
+      rawText,
+
+      parsed,
+
+      parseError,
+
+      rowsCount: rows.length
+
+    });
 
     if (!res.ok) {
 
