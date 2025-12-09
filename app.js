@@ -23,6 +23,41 @@ const SHOW_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/wy%C
 
 const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-odpowiedz";
 
+const CLASSNAMES = {
+  hidden: "hidden",
+  error: "error",
+  page: "page",
+  pageActive: "page-active"
+};
+
+const IDS = {
+  passwordOverlay: "password-overlay",
+  passwordInput: "password-input",
+  passwordSubmit: "password-submit",
+  passwordError: "password-error",
+  toast: "toast",
+  toastDot: "toast-dot",
+  toastText: "toast-text",
+  s1OrderData: "s1-order-data",
+  s2SingleResult: "s2-single-result",
+  s2Search: "s2-search",
+  s3Details: "s3-details",
+  s3Number: "s3-number",
+  s3Fetch: "s3-fetch",
+  s3Generate: "s3-generate",
+  s3Docx: "s3-docx",
+  s3Decision: "s3-decision",
+  s3NoResp: "s3-noresp",
+  s3Answer: "s3-answer"
+};
+
+const TOAST_TYPES = {
+  success: "success",
+  error: "error"
+};
+
+const PLACEHOLDER = "-";
+
 /* ------------------------------------------------------------
 
    GLOBALNE REFERENCJE DO DOM
@@ -166,13 +201,13 @@ const DOCX_TRANSLATIONS = {
 
 function initPasswordGate() {
 
-  const overlay = document.getElementById("password-overlay");
+  const overlay = document.getElementById(IDS.passwordOverlay);
 
-  const input = document.getElementById("password-input");
+  const input = document.getElementById(IDS.passwordInput);
 
-  const submit = document.getElementById("password-submit");
+  const submit = document.getElementById(IDS.passwordSubmit);
 
-  const errorBox = document.getElementById("password-error");
+  const errorBox = document.getElementById(IDS.passwordError);
 
   if (!overlay || !input || !submit || !errorBox) return;
 
@@ -180,15 +215,15 @@ function initPasswordGate() {
 
     if (input.value.trim() === PASSWORD_VALUE) {
 
-      overlay.classList.add("hidden");
+      overlay.classList.add(CLASSNAMES.hidden);
 
-      errorBox.classList.add("hidden");
+      errorBox.classList.add(CLASSNAMES.hidden);
 
       input.value = "";
 
     } else {
 
-      errorBox.classList.remove("hidden");
+      errorBox.classList.remove(CLASSNAMES.hidden);
 
       input.value = "";
 
@@ -216,15 +251,16 @@ document.addEventListener("DOMContentLoaded", initPasswordGate);
    NAWIGACJA MIĘDZY PODSTRONAMI
 ------------------------------------------------------------- */
 function switchPage(pageIndex) {
+  const pages = document.querySelectorAll(`.${CLASSNAMES.page}`);
   pages.forEach((page, idx) => {
-    page.classList.toggle("page-active", idx === pageIndex - 1);
+    page.classList.toggle(CLASSNAMES.pageActive, idx === pageIndex - 1);
   });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 window.switchPage = switchPage;
 
 function resetAllForms() {
-  const skipIds = new Set(["password-input", "password-submit"]);
+  const skipIds = new Set([IDS.passwordInput, IDS.passwordSubmit]);
   document.querySelectorAll("input, textarea, select").forEach((el) => {
     if (skipIds.has(el.id)) return;
     if (el.type === "checkbox" || el.type === "radio") {
@@ -235,12 +271,12 @@ function resetAllForms() {
       el.value = "";
     }
   });
-  if (typeof s1OrderBox !== "undefined") s1OrderBox.classList.add("hidden");
+  if (typeof s1OrderBox !== "undefined") s1OrderBox.classList.add(CLASSNAMES.hidden);
   if (typeof s1Products !== "undefined") s1Products.innerHTML = "";
   if (typeof s1FetchedOrder !== "undefined") s1FetchedOrder = null;
-  if (typeof s2SingleBox !== "undefined") { s2SingleBox.classList.add("hidden"); s2SingleBox.innerHTML = ""; }
-  if (typeof s2ListBox !== "undefined") { s2ListBox.classList.add("hidden"); s2ListBox.innerHTML = ""; }
-  if (typeof s3DetailsBox !== "undefined") { s3DetailsBox.classList.add("hidden"); s3DetailsBox.innerHTML = ""; }
+  if (typeof s2SingleBox !== "undefined") { s2SingleBox.classList.add(CLASSNAMES.hidden); s2SingleBox.innerHTML = ""; }
+  if (typeof s2ListBox !== "undefined") { s2ListBox.classList.add(CLASSNAMES.hidden); s2ListBox.innerHTML = ""; }
+  if (typeof s3DetailsBox !== "undefined") { s3DetailsBox.classList.add(CLASSNAMES.hidden); s3DetailsBox.innerHTML = ""; }
   showToast("Wyczyszczono formularze");
 }
 window.resetAllForms = resetAllForms;
@@ -251,19 +287,19 @@ window.resetAllForms = resetAllForms;
 
 ------------------------------------------------------------ */
 
-function showToast(msg, type = "success") {
+function showToast(msg, type = TOAST_TYPES.success) {
 
-  const toast = document.getElementById("toast");
+  const toast = document.getElementById(IDS.toast);
 
-  const dot = document.getElementById("toast-dot");
+  const dot = document.getElementById(IDS.toastDot);
 
-  const text = document.getElementById("toast-text");
+  const text = document.getElementById(IDS.toastText);
 
   text.textContent = msg;
 
-  if (type === "error") toast.classList.add("error");
+  if (type === TOAST_TYPES.error) toast.classList.add(CLASSNAMES.error);
 
-  else toast.classList.remove("error");
+  else toast.classList.remove(CLASSNAMES.error);
 
   toast.style.display = "flex";
 
@@ -279,7 +315,7 @@ function showToast(msg, type = "success") {
 
 function formatDate(value) {
 
-  if (!value) return "-";
+  if (!value) return PLACEHOLDER;
 
   const date = new Date(value);
 
@@ -291,7 +327,7 @@ function formatDate(value) {
 
 function formatCurrency(value) {
 
-  if (value === null || value === undefined || value === "") return "-";
+  if (value === null || value === undefined || value === "") return PLACEHOLDER;
 
   const cleaned = typeof value === "string" ? value.replace(",", ".") : value;
 
@@ -714,14 +750,25 @@ function renderProductItem(p, currencyFallback) {
                   : ""
               }
             </li>`;
+          })
+          .join("")}</ul>`
+      : `<div class="value">${PLACEHOLDER}</div>`;
 
-}
+  return `
+    <div class="claim-card claim-card--split">
+      <div class="claim-card__panel claim-card__panel--main">
+        <div class="claim-card__header">
+          <div>
+            <div class="claim-card__id">Reklamacja: ${claim.claimId || PLACEHOLDER}</div>
+            <div class="claim-card__order">Zamówienie: ${claim.orderId || PLACEHOLDER}</div>
+          </div>
+          ${claim.status ? `<div class="claim-card__status">${claim.status}</div>` : ""}
+        </div>
 
-function renderProductsBlock(claim) {
-
-  const hasProducts = claim.products && Array.isArray(claim.products) && claim.products.length;
-
-  if (!hasProducts) return `<div class="value">-</div>`;
+        <div class="claim-card__keyline">
+          <div><div class="label">Klient</div><div class="value">${claim.customer || PLACEHOLDER}</div></div>
+          <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || PLACEHOLDER}</div></div>
+        </div>
 
   const currencyFallback = claim.currency || "";
 
@@ -743,22 +790,18 @@ function renderClaimTimeline(claim) {
 
 function renderCustomerGrid(claim) {
 
-  return `<div class="claim-card__grid">
-          <div><div class="label">Dane klienta</div><div class="value">${claim.customer || "-"}</div></div>
-          <div><div class="label">Login</div><div class="value">${claim.customerLogin || "-"}</div></div>
-          <div><div class="label">Adres</div><div class="value">${claim.address || "-"}</div></div>
-          <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || "-"}</div></div>
-        </div>`;
+        <div class="claim-card__grid">
+          <div><div class="label">Dane klienta</div><div class="value">${claim.customer || PLACEHOLDER}</div></div>
+          <div><div class="label">Login</div><div class="value">${claim.customerLogin || PLACEHOLDER}</div></div>
+          <div><div class="label">Adres</div><div class="value">${claim.address || PLACEHOLDER}</div></div>
+          <div><div class="label">Marketplace</div><div class="value">${claim.marketplace || PLACEHOLDER}</div></div>
+        </div>
 
-}
-
-function renderDecisionGrid(claim) {
-
-  return `<div class="claim-card__grid">
-          <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
-          <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
-          <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-          <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
+        <div class="claim-card__grid">
+          <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || PLACEHOLDER}</div></div>
+          <div><div class="label">Typ</div><div class="value">${claim.type || PLACEHOLDER}</div></div>
+          <div><div class="label">Decyzja</div><div class="value">${claim.decision || PLACEHOLDER}</div></div>
+          <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || PLACEHOLDER}</div></div>
           ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
           ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
         </div>`;
@@ -832,11 +875,11 @@ function handleGenerateClick(id) {
 
   switchPage(4);
 
-  const input = document.getElementById("s3-number");
+  const input = document.getElementById(IDS.s3Number);
 
   if (input) input.value = id || "";
 
-  const fetchBtn = document.getElementById("s3-fetch");
+  const fetchBtn = document.getElementById(IDS.s3Fetch);
 
   if (fetchBtn) fetchBtn.click();
 
@@ -846,6 +889,19 @@ window.handleGenerateClick = handleGenerateClick;
 
 function appendCompanySection(docChildren, t, Paragraph, TextRun) {
 
+  const addParagraph = (label, value) => {
+    docChildren.push(
+      new Paragraph({
+        children: [
+          new TextRun({ text: label + " ", bold: true }),
+          new TextRun({ text: value || PLACEHOLDER })
+        ],
+        spacing: { after: 120 }
+      })
+    );
+  };
+
+  // Company
   docChildren.push(
     new Paragraph({ children: [new TextRun({ text: t.companyLabel, bold: true })], spacing: { after: 80 } })
   );
@@ -895,40 +951,24 @@ function appendTitleSection(docChildren, t, Paragraph, TextRun, AlignmentType) {
 function appendProductsSection(docChildren, t, claim, addParagraph) {
 
   const products = Array.isArray(claim.products) ? claim.products : [];
-
-  if (!products.length) return;
-
-  products.forEach((p, idx) => {
-
-    addParagraph(`${t.productLabel} ${idx + 1}:`, "");
-
-    addParagraph("Nazwa:", p.name || "-");
-
-    addParagraph("SKU:", p.sku || "-");
-
-    addParagraph("EAN:", p.ean || "-");
-
-    addParagraph("Ilość:", p.quantity !== undefined ? String(p.quantity) : "-");
-
-    addParagraph(t.complaintValueLabel, `${p.price ?? ""} ${p.currency || claim.currency || ""}`.trim());
-
-  });
-
-}
-
-function appendMetadataSection(docChildren, t, claim, addParagraph, today, decisionValue, answerText) {
+  if (products.length) {
+    products.forEach((p, idx) => {
+      addParagraph(`${t.productLabel} ${idx + 1}:`, "");
+      addParagraph("Nazwa:", p.name || PLACEHOLDER);
+      addParagraph("SKU:", p.sku || PLACEHOLDER);
+      addParagraph("EAN:", p.ean || PLACEHOLDER);
+      addParagraph("Ilość:", p.quantity !== undefined ? String(p.quantity) : PLACEHOLDER);
+      addParagraph(t.complaintValueLabel, `${p.price ?? ""} ${p.currency || claim.currency || ""}`.trim());
+    });
+  }
 
   addParagraph(t.complaintDateLabel, formatDate(claim.receivedAt || today));
 
   addParagraph(t.purchaseDateLabel, formatDate(claim.purchaseDate || claim.orderDate));
-
-  addParagraph(t.reasonLabel, claim.type || "-");
-
-  addParagraph(t.descriptionLabel, claim.reason || "-");
-
-  addParagraph(t.decisionLabel, decisionValue || "-");
-
-  addParagraph(t.resolutionLabel, answerText || "-");
+  addParagraph(t.reasonLabel, claim.type || PLACEHOLDER);
+  addParagraph(t.descriptionLabel, claim.reason || PLACEHOLDER);
+  addParagraph(t.decisionLabel, decisionValue || PLACEHOLDER);
+  addParagraph(t.resolutionLabel, answerText || PLACEHOLDER);
 
 }
 
@@ -986,7 +1026,7 @@ const s1FetchBtn = document.getElementById("s1-fetch");
 
 const s1OrderInput = document.getElementById("s1-order");
 
-const s1OrderBox = document.getElementById("s1-order-data");
+const s1OrderBox = document.getElementById(IDS.s1OrderData);
 
 const s1Products = document.getElementById("s1-products");
 
@@ -1000,7 +1040,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
   const num = s1OrderInput.value.trim();
 
-  if (!num) return showToast("Wpisz numer zam\u00f3wienia", "error");
+  if (!num) return showToast("Wpisz numer zam\u00f3wienia", TOAST_TYPES.error);
 
   try {
 
@@ -1015,7 +1055,7 @@ s1FetchBtn.addEventListener("click", async () => {
     s1FetchedOrder = data;
     // Wywietlenie boxa
 
-    s1OrderBox.classList.remove("hidden");
+    s1OrderBox.classList.remove(CLASSNAMES.hidden);
 
     // Produkty  przykad danych w komentarzu:
 
@@ -1088,7 +1128,7 @@ s1FetchBtn.addEventListener("click", async () => {
 
   } catch (err) {
 
-    showToast("B\u0142\u0105d pobierania", "error");
+    showToast("B\u0142\u0105d pobierania", TOAST_TYPES.error);
 
   }
 
@@ -1148,7 +1188,7 @@ s1SaveBtn.addEventListener("click", async () => {
 
   } catch (err) {
 
-    showToast("B\u0142\u0105d zapisu", "error");
+    showToast("B\u0142\u0105d zapisu", TOAST_TYPES.error);
 
   }
 
@@ -1162,9 +1202,9 @@ s1SaveBtn.addEventListener("click", async () => {
 
 const s2SearchBtn = document.getElementById("s2-search-btn");
 
-const s2SearchInput = document.getElementById("s2-search");
+const s2SearchInput = document.getElementById(IDS.s2Search);
 
-const s2SingleBox = document.getElementById("s2-single-result");
+const s2SingleBox = document.getElementById(IDS.s2SingleResult);
 
 const s2RangeBtn = document.getElementById("s2-range-btn");
 
@@ -1216,7 +1256,7 @@ const s2ListBox = document.getElementById("s2-list");
 
     // wstaw kontener przed wynikiem
 
-    const target = section.querySelector("#s2-single-result") || rangeField || section.firstChild;
+    const target = section.querySelector(`#${IDS.s2SingleResult}`) || rangeField || section.firstChild;
 
     section.insertBefore(container, target);
 
@@ -1238,7 +1278,7 @@ s2SearchBtn.addEventListener("click", async () => {
 
   const num = s2SearchInput.value.trim();
 
-  if (!num) return showToast("Podaj numer", "error");
+  if (!num) return showToast("Podaj numer", TOAST_TYPES.error);
 
   try {
 
@@ -1248,13 +1288,13 @@ s2SearchBtn.addEventListener("click", async () => {
 
     const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
 
-    s2SingleBox.classList.remove("hidden");
+    s2SingleBox.classList.remove(CLASSNAMES.hidden);
 
     s2SingleBox.innerHTML = renderClaimCard(
 
       claim,
 
-      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowied</button>`
+      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('${IDS.s3Number}').value='${claim.claimId}'">Generuj odpowied</button>`
 
     );
 
@@ -1262,7 +1302,7 @@ s2SearchBtn.addEventListener("click", async () => {
 
   } catch {
 
-    showToast("Nie znaleziono", "error");
+    showToast("Nie znaleziono", TOAST_TYPES.error);
 
   }
 
@@ -1328,7 +1368,7 @@ s2RangeBtn.addEventListener("click", async () => {
 
     }
 
-    s2ListBox.classList.remove("hidden");
+    s2ListBox.classList.remove(CLASSNAMES.hidden);
 
     // Log diagnostyczny w konsoli przegldarki
 
@@ -1360,7 +1400,7 @@ ${escapeHtml(rawText)}</pre>
 
         </div>`;
 
-      showToast(`B\u0142\u0105d pobierania (${res.status})`, "error");
+      showToast(`B\u0142\u0105d pobierania (${res.status})`, TOAST_TYPES.error);
 
       return;
 
@@ -1378,7 +1418,7 @@ ${escapeHtml(rawText)}</pre>
 
         </div>`;
 
-      showToast("Brak danych z webhooka", "error");
+      showToast("Brak danych z webhooka", TOAST_TYPES.error);
 
       return;
 
@@ -1406,11 +1446,11 @@ ${escapeHtml(rawText)}</pre>
       html += `
         <tr>
           <td>${claim.rowNumber ? claim.rowNumber : idx + 1}</td>
-          <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId || ""}'">${claim.claimId || "-"}</td>
-          <td>${claim.orderId || "-"}</td>
-          <td>${claim.customer || "-"}</td>
-          <td>${claim.marketplace || "-"}</td>
-          <td>${claim.status || "-"}</td>
+          <td class="link" onclick="document.getElementById('${IDS.s2Search}').value='${claim.claimId || ""}'">${claim.claimId || PLACEHOLDER}</td>
+          <td>${claim.orderId || PLACEHOLDER}</td>
+          <td>${claim.customer || PLACEHOLDER}</td>
+          <td>${claim.marketplace || PLACEHOLDER}</td>
+          <td>${claim.status || PLACEHOLDER}</td>
           <td>${formatDate(claim.receivedAt)}</td>
           <td>${formatDate(claim.decisionDue)}</td>
           <td>${formatDate(claim.resolvedAt)}</td>
@@ -1435,7 +1475,7 @@ ${escapeHtml(rawText)}</pre>
 
   } catch {
 
-    showToast("B\u0142\u0105d pobierania", "error");
+    showToast("B\u0142\u0105d pobierania", TOAST_TYPES.error);
 
   }
 
@@ -1447,14 +1487,14 @@ ${escapeHtml(rawText)}</pre>
 
    ============================================================ */
 
-const s3FetchBtn = document.getElementById("s3-fetch");
+const s3FetchBtn = document.getElementById(IDS.s3Fetch);
 
-const s3NumberInput = document.getElementById("s3-number");
+const s3NumberInput = document.getElementById(IDS.s3Number);
 
-const s3DetailsBox = document.getElementById("s3-details");
+const s3DetailsBox = document.getElementById(IDS.s3Details);
 
-const s3GenBtn = document.getElementById("s3-generate");
-const s3DocxBtn = document.getElementById("s3-docx");
+const s3GenBtn = document.getElementById(IDS.s3Generate);
+const s3DocxBtn = document.getElementById(IDS.s3Docx);
 
 let selectedLang = "PL";
 const mapLangForBackend = (lang) => (lang === "CZ" ? "CS" : lang);
@@ -1485,7 +1525,7 @@ s3FetchBtn.addEventListener("click", async () => {
 
   const num = s3NumberInput.value.trim();
 
-  if (!num) return showToast("Podaj numer", "error");
+  if (!num) return showToast("Podaj numer", TOAST_TYPES.error);
 
   try {
 
@@ -1497,7 +1537,7 @@ s3FetchBtn.addEventListener("click", async () => {
 
     s3CurrentClaim = claim;
 
-    s3DetailsBox.classList.remove("hidden");
+    s3DetailsBox.classList.remove(CLASSNAMES.hidden);
 
     s3DetailsBox.innerHTML = "";
 
@@ -1545,7 +1585,7 @@ s3FetchBtn.addEventListener("click", async () => {
 
   } catch {
 
-    showToast("Nie znaleziono", "error");
+    showToast("Nie znaleziono", TOAST_TYPES.error);
 
   }
 
@@ -1554,17 +1594,17 @@ s3FetchBtn.addEventListener("click", async () => {
 /* Generowanie PDF */
 
 s3GenBtn.addEventListener("click", async () => {
-  if (!window.docx) return showToast("Brak biblioteki DOCX", "error");
+  if (!window.docx) return showToast("Brak biblioteki DOCX", TOAST_TYPES.error);
 
   const num = s3NumberInput.value.trim();
-  const decision = document.getElementById("s3-decision").value;
-  const noResp = document.getElementById("s3-noresp").checked;
+  const decision = document.getElementById(IDS.s3Decision).value;
+  const noResp = document.getElementById(IDS.s3NoResp).checked;
 
-  if (!num) return showToast("Podaj numer", "error");
+  if (!num) return showToast("Podaj numer", TOAST_TYPES.error);
 
   const answer = noResp
     ? "Brak mo?liwo?ci weryfikacji: Pomimo naszych pr?b kontaktu nie otrzymali?my odpowiedzi, dlatego zamykamy zg?oszenie."
-    : document.getElementById("s3-answer").value;
+    : document.getElementById(IDS.s3Answer).value;
 
   const payload = {
     number: num,
@@ -1626,6 +1666,6 @@ s3GenBtn.addEventListener("click", async () => {
     showToast("Wygenerowano DOCX");
   } catch (err) {
     console.error(err);
-    showToast("Błąd generowania", "error");
+    showToast("Błąd generowania", TOAST_TYPES.error);
   }
 });
