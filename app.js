@@ -744,15 +744,15 @@ function renderProductItem(p, currencyFallback) {
 
 function renderProductsBlock(claim) {
 
-  const hasProducts = claim.products && Array.isArray(claim.products) && claim.products.length;
+  const products = Array.isArray(claim.products) ? claim.products : [];
 
-  if (!hasProducts) return `<div class="value">-</div>`;
+  if (!products.length) return { html: `<div class="value">-</div>`, count: 0 };
 
   const currencyFallback = claim.currency || "";
 
-  const items = claim.products.map((p) => renderProductItem(p, currencyFallback)).join("");
+  const items = products.map((p) => renderProductItem(p, currencyFallback)).join("");
 
-  return `<ul class="products-list">${items}</ul>`;
+  return { html: `<ul class="products-list">${items}</ul>`, count: products.length };
 
 }
 
@@ -793,7 +793,7 @@ function renderDecisionGrid(claim) {
 function renderClaimCard(raw, actionHtml = "") {
   const claim = normalizeClaim(raw);
 
-  const productsBlock = renderProductsBlock(claim);
+  const { html: productsBlock, count: productsCount } = renderProductsBlock(claim);
 
   return `
     <div class="claim-card claim-card--split">
@@ -822,7 +822,7 @@ function renderClaimCard(raw, actionHtml = "") {
 
       <div class="claim-card__panel claim-card__panel--products">
         <div class="products-block">
-          <div class="label" style="margin-bottom:6px;">Reklamowane produkty</div>
+          <div class="label" style="margin-bottom:6px;">Reklamowane produkty <span class="products-count">${productsCount}</span></div>
           ${productsBlock}
         </div>
       </div>
