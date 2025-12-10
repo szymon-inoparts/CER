@@ -1297,7 +1297,7 @@ function attachS2SearchListener() {
 
       claim,
 
-      `<button class="btn btn-primary" onclick="switchPage(3); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedź</button>`
+      `<button class="btn btn-primary" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj odpowiedź</button>`
 
     );
 

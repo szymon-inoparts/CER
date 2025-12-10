@@ -474,7 +474,8 @@ textarea {
   border: 1px solid var(--border);
   background: var(--panel);
   margin: 20px auto;
-  max-width: 1200px;
+  max-width: 1250px;
+  width: 95%;
 }
 
 table {
