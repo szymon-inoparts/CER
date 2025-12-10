@@ -65,8 +65,7 @@ const DOCX_TRANSLATIONS = {
     decisionLabel: "Decyzja reklamacyjna:",
     resolutionLabel: "Rozwiązanie sytuacji/Uzasadnienie:",
     footer:
-      "Reklamacja została rozpatrzona z uwzględnieniem wszelkich praw wynikających z ustawy o prawach konsumenta oraz kodeksu cywilnego. Pragnę również poinformować, iż na niniejszą odpowiedź przysługuje prawo do odwołania się.
-Z wyrazami szacunku",
+      "Reklamacja została rozpatrzona z uwzględnieniem wszelkich praw wynikających z ustawy o prawach konsumenta oraz kodeksu cywilnego. Pragnę również poinformować, iż na niniejszą odpowiedź przysługuje prawo do odwołania się.\nZ wyrazami szacunku",
     complaintTitle: "Odpowiedź na reklamację",
     productLabel: "Produkt",
     complaintValueLabel: "Wartość produktu:",
