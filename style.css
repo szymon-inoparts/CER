@@ -468,20 +468,20 @@ textarea {
    TABLE LISTA WIELOKROTNYCH ZGOSZE
    ============================================================ */
 .table-box {
-  overflow: auto;
+  overflow-x: auto;
   max-height: 720px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--panel);
-  margin: 20px auto;
-  max-width: 1250px;
-  width: 95%;
+  margin: 20px 0;
+  width: 100%;
+  max-width: none;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 th, td {
