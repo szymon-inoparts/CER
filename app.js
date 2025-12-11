@@ -1702,14 +1702,46 @@ function attachS3GenerateListener() {
     const decisionValue = translatedDecision || t.decisionValues?.[decision] || decision;
 
     const blob = await buildDocx(docClaim, lang, translatedAnswer, decisionValue);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `CER-${num}.docx`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const defaultDir = "W:\\Reklamacje\\Archiwum odpowiedzi na reklamacje";
+    const filename = `CER-${num}.docx`;
+    const suggestedName = `${defaultDir}\\${filename}`;
+
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName,
+          types: [
+            {
+              description: "Dokument DOCX",
+              accept: { "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"] }
+            }
+          ]
+        });
+
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+      } catch (pickerErr) {
+        console.warn("Save picker unavailable, falling back to download attribute", pickerErr);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = suggestedName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = suggestedName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
 
     showToast("Wygenerowano DOCX");
     } catch (err) {
