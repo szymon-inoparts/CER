@@ -25,6 +25,13 @@ const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-o
 
 const PROCESSORS_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/procesorzy-reklamacji";
 
+let archiveDirHandle = null;
+
+function sanitizePathSegment(segment, fallback = "reklamacja") {
+  if (!segment) return fallback;
+  return segment.replace(/[\\/:*?"<>|]/g, "-").trim() || fallback;
+}
+
 
 /* ------------------------------------------------------------
 
@@ -1704,46 +1711,76 @@ function attachS3GenerateListener() {
     const blob = await buildDocx(docClaim, lang, translatedAnswer, decisionValue);
     const defaultDir = "W:\\Reklamacje\\Archiwum odpowiedzi na reklamacje";
     const filename = `CER-${num}.docx`;
-    const suggestedName = `${defaultDir}\\${filename}`;
+    const folderName = sanitizePathSegment(num, "reklamacja");
+    let saved = false;
 
-    if (window.showSaveFilePicker) {
-      try {
-        const handle = await window.showSaveFilePicker({
-          suggestedName,
-          types: [
-            {
-              description: "Dokument DOCX",
-              accept: { "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"] }
-            }
-          ]
-        });
+    const writeBlobToHandle = async (fileHandle) => {
+      const writable = await fileHandle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      saved = true;
+    };
 
-        const writable = await handle.createWritable();
-        await writable.write(blob);
-        await writable.close();
-      } catch (pickerErr) {
-        console.warn("Save picker unavailable, falling back to download attribute", pickerErr);
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = suggestedName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const pickerTypes = [
+      {
+        description: "Dokument DOCX",
+        accept: { "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"] }
       }
-    } else {
+    ];
+
+    if (window.showDirectoryPicker) {
+      try {
+        const baseDir = await window.showDirectoryPicker({
+          mode: "readwrite",
+          id: "cer-archive-root",
+          startIn: archiveDirHandle || "documents"
+        });
+        archiveDirHandle = baseDir;
+        const claimDir = await baseDir.getDirectoryHandle(folderName, { create: true });
+        const fileHandle = await claimDir.getFileHandle(filename, { create: true });
+        await writeBlobToHandle(fileHandle);
+      } catch (dirErr) {
+        console.warn("Directory picker unavailable, trying file picker", dirErr);
+      }
+    }
+
+    if (!saved && window.showSaveFilePicker) {
+      const pickerOptions = {
+        suggestedName: filename,
+        startIn: archiveDirHandle || defaultDir,
+        types: pickerTypes
+      };
+
+      try {
+        const handle = await window.showSaveFilePicker(pickerOptions);
+        await writeBlobToHandle(handle);
+      } catch (pickerErr) {
+        console.warn("Save picker unavailable with preferred location, retrying without startIn", pickerErr);
+        try {
+          const fallbackHandle = await window.showSaveFilePicker({
+            suggestedName: filename,
+            types: pickerTypes
+          });
+          await writeBlobToHandle(fallbackHandle);
+        } catch (fallbackErr) {
+          console.warn("Save picker unavailable, falling back to download attribute", fallbackErr);
+        }
+      }
+    }
+
+    if (!saved) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = suggestedName;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
+      saved = true;
     }
 
-    showToast("Wygenerowano DOCX");
+    if (saved) showToast("Wygenerowano DOCX");
     } catch (err) {
       console.error(err);
       showToast("Błąd generowania", "error");
