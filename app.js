@@ -67,7 +67,11 @@ const DOCX_TRANSLATIONS = {
     footer:
       "Reklamacja została rozpatrzona z uwzględnieniem wszelkich praw wynikających z ustawy o prawach konsumenta oraz kodeksu cywilnego. Pragnę również poinformować, iż na niniejszą odpowiedź przysługuje prawo do odwołania się.\nZ wyrazami szacunku",
     complaintTitle: "Odpowiedź na reklamację",
-    productLabel: "Produkt",
+    productsLabel: "Produkty:",
+    productNameLabel: "Nazwa:",
+    productSkuLabel: "SKU:",
+    productEanLabel: "EAN:",
+    productQuantityLabel: "Ilość:",
     complaintValueLabel: "Wartość produktu:",
     decisionValues: { pozytywna: "Pozytywna", negatywna: "Negatywna" }
   },
@@ -87,7 +91,11 @@ const DOCX_TRANSLATIONS = {
     footer:
       "Stížnost była posouzena z uwzględnieniem wszystkich praw wynikających ze zákona o právech spotřebitelů a občanského zákoníku. Rád/a bych Vás także informował/a, że mám prawo se proti této odpovědi odwołać.\nS pozdravem,",
     complaintTitle: "Odpověď na stížnost",
-    productLabel: "Produkt",
+    productsLabel: "Produkty:",
+    productNameLabel: "Název:",
+    productSkuLabel: "SKU:",
+    productEanLabel: "EAN:",
+    productQuantityLabel: "Množství:",
     complaintValueLabel: "Hodnota produktu:",
     decisionValues: { pozytywna: "Pozitivní", negatywna: "Negativní" }
   },
@@ -107,7 +115,11 @@ const DOCX_TRANSLATIONS = {
     footer:
       "Meine Beschwerde wurde unter Berücksichtigung aller Rechte gemäß Verbraucherrecht und Bürgerlichem Gesetzbuch geprüft. Ich weise Sie darauf hin, dass ich gegen diese Antwort Widerspruch einlegen kann.\nMit freundlichen Grüßen,",
     complaintTitle: "Antwort auf die Beschwerde",
-    productLabel: "Produkt",
+    productsLabel: "Produkte:",
+    productNameLabel: "Name:",
+    productSkuLabel: "SKU:",
+    productEanLabel: "EAN:",
+    productQuantityLabel: "Menge:",
     complaintValueLabel: "Produktwert:",
     decisionValues: { pozytywna: "Positiv", negatywna: "Negativ" }
   },
@@ -127,7 +139,11 @@ const DOCX_TRANSLATIONS = {
     footer:
       "Sťažność była posúdena z uwzględnieniem wszystkich praw wynikających ze zákona o právach spotrebiteľov a Občianskeho zákonníka. Zároveň by som vás chcel informovať, że mám prawo sa proti tejto odpovedi odwołać.\nS pozdravom,",
     complaintTitle: "Odpoveď na sťažnosť",
-    productLabel: "Produkt",
+    productsLabel: "Produkty:",
+    productNameLabel: "Názov:",
+    productSkuLabel: "SKU:",
+    productEanLabel: "EAN:",
+    productQuantityLabel: "Množstvo:",
     complaintValueLabel: "Hodnota produktu:",
     decisionValues: { pozytywna: "Pozitívna", negatywna: "Negatívna" }
   },
@@ -147,7 +163,11 @@ const DOCX_TRANSLATIONS = {
     footer:
       "A panaszt a fogyasztóvédelmi törvényből i kodeksu cywilnego figyelembevételével elbíráltuk. Szeretném tájékoztatni Önöket arról is, że jogom van fellebbezni a válasz ellen.\nTisztelettel",
     complaintTitle: "Válasz a panaszra",
-    productLabel: "Termék",
+    productsLabel: "Termékek:",
+    productNameLabel: "Név:",
+    productSkuLabel: "SKU:",
+    productEanLabel: "EAN:",
+    productQuantityLabel: "Mennyiség:",
     complaintValueLabel: "Termék értéke:",
     decisionValues: { pozytywna: "Pozitív", negatywna: "Negatív" }
   },
@@ -167,7 +187,11 @@ const DOCX_TRANSLATIONS = {
     footer:
       "The complaint has been considered taking into account all rights arising from the Consumer Rights Act and the Civil Code. I would also like to inform you that I have the right to appeal this response.\nSincerely",
     complaintTitle: "Response to Complaint",
-    productLabel: "Product",
+    productsLabel: "Products:",
+    productNameLabel: "Name:",
+    productSkuLabel: "SKU:",
+    productEanLabel: "EAN:",
+    productQuantityLabel: "Quantity:",
     complaintValueLabel: "Product Value:",
     decisionValues: { pozytywna: "Positive", negatywna: "Negative" }
   }
@@ -674,6 +698,8 @@ function buildClaimPayload(flat, dates, customerValue, currencyValue) {
 
     myNewField: flat.myNewField,
 
+    note: flat.note,
+
     receivedAt: flat.receivedAt || dates.receivedAt || new Date().toISOString().slice(0, 10),
 
     decisionDue: flat.decisionDue || dates.decisionDue,
@@ -779,16 +805,17 @@ function renderCustomerGrid(claim) {
 
 function renderDecisionGrid(claim) {
 
-  return `<div class="claim-card__grid">
-          <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
-          <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
-          <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-          <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
-          ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
-          ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
-        </div>`;
+    return `<div class="claim-card__grid">
+            <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
+            <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
+            <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
+            <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
+            <div><div class="label">Notatka</div><div class="value">${claim.note || "-"}</div></div>
+            ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
+            ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
+          </div>`;
 
-}
+  }
 
 function renderClaimCard(raw, actionHtml = "") {
   const claim = normalizeClaim(raw);
@@ -923,17 +950,20 @@ function appendProductsSection(docChildren, t, claim, addParagraph) {
 
   if (!products.length) return;
 
-  products.forEach((p, idx) => {
+  addParagraph(t.productsLabel || t.productLabel || "", "");
 
-    addParagraph(`${t.productLabel} ${idx + 1}:`, "");
+  products.forEach((p) => {
 
-    addParagraph("Nazwa:", p.name || "-");
+    addParagraph(t.productNameLabel || "Nazwa:", p.name || "-");
 
-    addParagraph("SKU:", p.sku || "-");
+    addParagraph(t.productSkuLabel || "SKU:", p.sku || "-");
 
-    addParagraph("EAN:", p.ean || "-");
+    addParagraph(t.productEanLabel || "EAN:", p.ean || "-");
 
-    addParagraph("Ilość:", p.quantity !== undefined ? String(p.quantity) : "-");
+    addParagraph(
+      t.productQuantityLabel || "Ilość:",
+      p.quantity !== undefined && p.quantity !== null ? String(p.quantity) : "-"
+    );
 
     addParagraph(t.complaintValueLabel, `${p.price ?? ""} ${p.currency || claim.currency || ""}`.trim());
 
@@ -947,7 +977,7 @@ function appendMetadataSection(docChildren, t, claim, addParagraph, today, decis
 
   addParagraph(t.purchaseDateLabel, formatDate(claim.purchaseDate || claim.orderDate));
 
-  addParagraph(t.reasonLabel, claim.type || "-");
+  addParagraph(t.reasonLabel, claim.reason || claim.type || "-");
 
   addParagraph(t.descriptionLabel, claim.reason || "-");
 
@@ -1513,7 +1543,10 @@ function attachLanguageListeners() {
 
       selectedLang = btn.dataset.lang;
 
-      langButtons.forEach((b) => (b.style.background = ""));
+      langButtons.forEach((b) => {
+        b.style.background = "";
+        b.style.color = "";
+      });
 
       btn.style.background = "var(--orange)";
 
@@ -1638,6 +1671,7 @@ function attachS3GenerateListener() {
             decisionOriginal: s3CurrentClaim.decision,
             resolution: s3CurrentClaim.resolution,
             agent: s3CurrentClaim.agent,
+            note: s3CurrentClaim.note,
             myNewField: s3CurrentClaim.myNewField,
             receivedAt: s3CurrentClaim.receivedAt,
             decisionDue: s3CurrentClaim.decisionDue,
@@ -1656,7 +1690,8 @@ function attachS3GenerateListener() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const responseJson = await res.json();
-    const translations = Array.isArray(responseJson?.translations) ? responseJson.translations : [];
+    const responseItem = Array.isArray(responseJson) ? responseJson[0] : responseJson;
+    const translations = Array.isArray(responseItem?.translations) ? responseItem.translations : [];
     const translatedAnswer = translations[0]?.text || answer;
     const translatedDecision = translations[1]?.text || decision;
     const translatedReason = translations[2]?.text || s3CurrentClaim?.reason;
