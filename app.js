@@ -1709,7 +1709,7 @@ function attachS3GenerateListener() {
     const decisionValue = translatedDecision || t.decisionValues?.[decision] || decision;
 
     const blob = await buildDocx(docClaim, lang, translatedAnswer, decisionValue);
-    const defaultDir = "W:\\Reklamacje\\Archiwum odpowiedzi na reklamacje";
+    const defaultArchivePath = "W:\\Reklamacje\\Archiwum odpowiedzi na reklamacje";
     const filename = `CER-${num}.docx`;
     const folderName = sanitizePathSegment(num, "reklamacja");
     let saved = false;
@@ -1733,7 +1733,7 @@ function attachS3GenerateListener() {
         const baseDir = await window.showDirectoryPicker({
           mode: "readwrite",
           id: "cer-archive-root",
-          startIn: archiveDirHandle || "documents"
+          startIn: archiveDirHandle || defaultArchivePath
         });
         archiveDirHandle = baseDir;
         const claimDir = await baseDir.getDirectoryHandle(folderName, { create: true });
@@ -1747,7 +1747,7 @@ function attachS3GenerateListener() {
     if (!saved && window.showSaveFilePicker) {
       const pickerOptions = {
         suggestedName: filename,
-        startIn: archiveDirHandle || defaultDir,
+        startIn: archiveDirHandle || defaultArchivePath,
         types: pickerTypes
       };
 
