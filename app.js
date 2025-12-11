@@ -1683,7 +1683,8 @@ function attachS3GenerateListener() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const responseJson = await res.json();
-    const translations = Array.isArray(responseJson?.translations) ? responseJson.translations : [];
+    const responseItem = Array.isArray(responseJson) ? responseJson[0] : responseJson;
+    const translations = Array.isArray(responseItem?.translations) ? responseItem.translations : [];
     const translatedAnswer = translations[0]?.text || answer;
     const translatedDecision = translations[1]?.text || decision;
     const translatedReason = translations[2]?.text || s3CurrentClaim?.reason;
