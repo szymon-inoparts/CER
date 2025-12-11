@@ -698,6 +698,8 @@ function buildClaimPayload(flat, dates, customerValue, currencyValue) {
 
     myNewField: flat.myNewField,
 
+    note: flat.note,
+
     receivedAt: flat.receivedAt || dates.receivedAt || new Date().toISOString().slice(0, 10),
 
     decisionDue: flat.decisionDue || dates.decisionDue,
@@ -803,16 +805,17 @@ function renderCustomerGrid(claim) {
 
 function renderDecisionGrid(claim) {
 
-  return `<div class="claim-card__grid">
-          <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
-          <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
-          <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
-          <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
-          ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
-          ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
-        </div>`;
+    return `<div class="claim-card__grid">
+            <div><div class="label">Powód zgłoszenia</div><div class="value">${claim.reason || "-"}</div></div>
+            <div><div class="label">Typ</div><div class="value">${claim.type || "-"}</div></div>
+            <div><div class="label">Decyzja</div><div class="value">${claim.decision || "-"}</div></div>
+            <div><div class="label">Rozwiązanie</div><div class="value">${claim.resolution || "-"}</div></div>
+            <div><div class="label">Notatka</div><div class="value">${claim.note || "-"}</div></div>
+            ${claim.agent ? `<div><div class="label">Agent</div><div class="value">${claim.agent}</div></div>` : ""}
+            ${claim.myNewField ? `<div><div class="label">myNewField</div><div class="value">${claim.myNewField}</div></div>` : ""}
+          </div>`;
 
-}
+  }
 
 function renderClaimCard(raw, actionHtml = "") {
   const claim = normalizeClaim(raw);
@@ -1668,6 +1671,7 @@ function attachS3GenerateListener() {
             decisionOriginal: s3CurrentClaim.decision,
             resolution: s3CurrentClaim.resolution,
             agent: s3CurrentClaim.agent,
+            note: s3CurrentClaim.note,
             myNewField: s3CurrentClaim.myNewField,
             receivedAt: s3CurrentClaim.receivedAt,
             decisionDue: s3CurrentClaim.decisionDue,
