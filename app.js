@@ -1540,7 +1540,10 @@ function attachLanguageListeners() {
 
       selectedLang = btn.dataset.lang;
 
-      langButtons.forEach((b) => (b.style.background = ""));
+      langButtons.forEach((b) => {
+        b.style.background = "";
+        b.style.color = "";
+      });
 
       btn.style.background = "var(--orange)";
 
