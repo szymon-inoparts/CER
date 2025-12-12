@@ -657,6 +657,30 @@ th {
 
 .claim-card__actions {
   margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.claim-card--editing .value[data-field] {
+  background: #f6f8ff;
+  border-radius: var(--radius-md);
+}
+
+.edit-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+textarea.edit-input {
+  min-height: 72px;
+  resize: vertical;
 }
 
 .action-cell {
