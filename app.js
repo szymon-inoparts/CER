@@ -2151,15 +2151,21 @@ function attachProcessorForm() {
   const nameInput = document.getElementById("home-proc-name");
   const emailInput = document.getElementById("home-proc-email");
   const addBtn = document.getElementById("home-proc-add");
+  let isSubmitting = false;
 
   if (!nameInput || !emailInput || !addBtn) return;
 
   addBtn.addEventListener("click", async () => {
     const name = nameInput.value.trim();
     const email = emailInput.value.trim();
+    if (isSubmitting) return;
     if (!name || !email) return showToast("Podaj imię i email", "error");
 
     try {
+      isSubmitting = true;
+      addBtn.disabled = true;
+      addBtn.textContent = "Wysyłanie...";
+
       const res = await fetch(PROCESSORS_WEBHOOK, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -2172,6 +2178,10 @@ function attachProcessorForm() {
     } catch (err) {
       console.error(err);
       showToast("Błąd dodawania", "error");
+    } finally {
+      isSubmitting = false;
+      addBtn.disabled = false;
+      addBtn.textContent = "Dodaj";
     }
   });
 }
