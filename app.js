@@ -565,47 +565,55 @@ function flattenClaim(raw = {}) {
 
 }
 
+function normalizeAddressParts(value) {
+
+  if (!value) return [];
+
+  if (Array.isArray(value)) return value.map((v) => String(v).trim()).filter(Boolean);
+
+  return String(value)
+
+    .split(/[;\n,]+/)
+
+    .map((v) => v.trim())
+
+    .filter(Boolean);
+
+}
+
 function buildAddressFromBill(bill) {
 
-  if (!bill || typeof bill !== "object") return "";
+  if (!bill) return "";
 
   const parts = [];
 
-  const directAddress = bill.address || bill.full || bill.fullAddress || bill.full_address;
+  const directAddress =
 
-  if (directAddress) {
+    (typeof bill === "string" ? bill : null) || bill.address || bill.full || bill.fullAddress || bill.full_address;
 
-    const normalized = Array.isArray(directAddress)
+  const normalized = normalizeAddressParts(directAddress);
 
-      ? directAddress
+  if (normalized.length) parts.push(...normalized);
 
-      : String(directAddress)
+  if (typeof bill === "object" && bill) {
 
-          .split(/[;\n]+/)
+    if (bill.street) parts.push(String(bill.street).trim());
 
-          .map((v) => v.trim())
+    if (bill.home_number) parts.push(String(bill.home_number).trim());
 
-          .filter(Boolean);
+    if (bill.flat_number) parts.push(String(bill.flat_number).trim());
 
-    if (normalized.length) parts.push(...normalized);
+    if (bill.postcode) parts.push(String(bill.postcode).trim());
 
-    else if (directAddress) parts.push(String(directAddress).trim());
+    if (bill.city) parts.push(String(bill.city).trim());
+
+    const countryLine =
+
+      bill.country && typeof bill.country === "object" ? bill.country.code || bill.country.name : bill.country;
+
+    if (countryLine) parts.push(String(countryLine).trim());
 
   }
-
-  if (bill.street) parts.push(String(bill.street).trim());
-
-  if (bill.home_number) parts.push(String(bill.home_number).trim());
-
-  if (bill.flat_number) parts.push(String(bill.flat_number).trim());
-
-  if (bill.postcode) parts.push(String(bill.postcode).trim());
-
-  if (bill.city) parts.push(String(bill.city).trim());
-
-  const countryLine = bill.country && typeof bill.country === "object" ? bill.country.code || bill.country.name : bill.country;
-
-  if (countryLine) parts.push(String(countryLine).trim());
 
   return parts.filter(Boolean).join(", ");
 
@@ -1489,26 +1497,25 @@ function attachS1FetchListener() {
 
     const billParts = [];
     if (bill) {
-      const directAddress = bill.address || bill.full || bill.fullAddress || bill.full_address;
-      if (directAddress) {
-        const normalized = Array.isArray(directAddress)
-          ? directAddress
-          : String(directAddress)
-              .split(/[;\n]+/)
-              .map((v) => v.trim())
-              .filter(Boolean);
-        billParts.push(...normalized);
+      const directAddress =
+        (typeof bill === "string" ? bill : null) ||
+        bill.address ||
+        bill.full ||
+        bill.fullAddress ||
+        bill.full_address;
+      billParts.push(...normalizeAddressParts(directAddress));
+      if (typeof bill === "object" && bill) {
+        if (bill.street) billParts.push(String(bill.street).trim());
+        if (bill.home_number) billParts.push(String(bill.home_number).trim());
+        if (bill.flat_number) billParts.push(String(bill.flat_number).trim());
+        if (bill.postcode) billParts.push(String(bill.postcode).trim());
+        if (bill.city) billParts.push(String(bill.city).trim());
+        const countryLine =
+          bill.country && typeof bill.country === "object"
+            ? bill.country.code || bill.country.name
+            : bill.country;
+        if (countryLine) billParts.push(String(countryLine).trim());
       }
-      if (bill.street) billParts.push(String(bill.street).trim());
-      if (bill.home_number) billParts.push(String(bill.home_number).trim());
-      if (bill.flat_number) billParts.push(String(bill.flat_number).trim());
-      if (bill.postcode) billParts.push(String(bill.postcode).trim());
-      if (bill.city) billParts.push(String(bill.city).trim());
-      const countryLine =
-        bill.country && typeof bill.country === "object"
-          ? bill.country.code || bill.country.name
-          : bill.country;
-      if (countryLine) billParts.push(String(countryLine).trim());
     }
     const billInput = document.getElementById("s1-bill-full");
     if (billInput) billInput.value = billParts.filter(Boolean).join(", ");
@@ -2228,4 +2235,3 @@ function initEvents() {
 }
 
 initEvents();
-
