@@ -567,7 +567,31 @@ function flattenClaim(raw = {}) {
 
 function buildAddressFromBill(bill) {
 
+  if (!bill || typeof bill !== "object") return "";
+
   const parts = [];
+
+  const directAddress = bill.address || bill.full || bill.fullAddress || bill.full_address;
+
+  if (directAddress) {
+
+    const normalized = Array.isArray(directAddress)
+
+      ? directAddress
+
+      : String(directAddress)
+
+          .split(/[;\n]+/)
+
+          .map((v) => v.trim())
+
+          .filter(Boolean);
+
+    if (normalized.length) parts.push(...normalized);
+
+    else if (directAddress) parts.push(String(directAddress).trim());
+
+  }
 
   if (bill.street) parts.push(String(bill.street).trim());
 
@@ -2194,7 +2218,5 @@ function initEvents() {
 }
 
 initEvents();
-
-
 
 
