@@ -1489,6 +1489,16 @@ function attachS1FetchListener() {
 
     const billParts = [];
     if (bill) {
+      const directAddress = bill.address || bill.full || bill.fullAddress || bill.full_address;
+      if (directAddress) {
+        const normalized = Array.isArray(directAddress)
+          ? directAddress
+          : String(directAddress)
+              .split(/[;\n]+/)
+              .map((v) => v.trim())
+              .filter(Boolean);
+        billParts.push(...normalized);
+      }
       if (bill.street) billParts.push(String(bill.street).trim());
       if (bill.home_number) billParts.push(String(bill.home_number).trim());
       if (bill.flat_number) billParts.push(String(bill.flat_number).trim());
@@ -2218,5 +2228,4 @@ function initEvents() {
 }
 
 initEvents();
-
 
