@@ -4,7 +4,9 @@ let selectedLang = "PL";
 let s3CurrentClaim = null;
 
 function mapLangForBackend(lang) {
-  return (lang || "PL").toLowerCase();
+  const code = (lang || "PL").toUpperCase();
+  const map = { CZ: "cs", SK: "sk", PL: "pl", DE: "de", HU: "hu", EN: "en" };
+  return map[code] || code.toLowerCase();
 }
 
 function initLangButtons() {
@@ -103,15 +105,27 @@ function initS3() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const responseJson = await res.json();
+      const rawText = await res.text();
+      if (!rawText || !rawText.trim()) throw new Error("Pusta odpowiedź z generatora");
+      let responseJson;
+      try {
+        responseJson = JSON.parse(rawText);
+      } catch (err) {
+        console.error("Błąd parsowania JSON z generatora", { rawText });
+        throw err;
+      }
+
       const responseItem = Array.isArray(responseJson) ? responseJson[0] : responseJson;
       const translations = Array.isArray(responseItem?.translations) ? responseItem.translations : [];
       const translatedAnswer = translations[0]?.text || answer;
       const translatedDecision = translations[1]?.text || decision;
       const translatedReason = translations[2]?.text || s3CurrentClaim?.reason;
       const translatedProductNames = translations.slice(3).map((t) => t?.text).filter(Boolean);
+      const responseProducts = Array.isArray(responseItem?.products) ? responseItem.products : null;
       const translatedProducts =
-        Array.isArray(payload.products) && payload.products.length
+        responseProducts && responseProducts.length
+          ? responseProducts
+          : Array.isArray(payload.products) && payload.products.length
           ? payload.products.map((p, idx) => ({
               ...p,
               name: translatedProductNames[idx] || p.name
@@ -144,4 +158,3 @@ function initS3() {
     }
   });
 }
-
