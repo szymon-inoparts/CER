@@ -2014,7 +2014,7 @@ function buildDocxPolish(claim, answerText, decisionValue) {
 
   addParagraph({
     alignment: AlignmentType.RIGHT,
-    children: [new TextRun({ text: `${todayDot}, Krak?w`, bold: true })],
+    children: [new TextRun({ text: `${todayDot}, Kraków`, bold: true })],
     spacing: { after: 240 }
   });
 
@@ -2022,19 +2022,16 @@ function buildDocxPolish(claim, answerText, decisionValue) {
     children: [new TextRun({ text: "Sprzedawca: INOPARTS SP. Z O.O.", bold: true })],
     spacing: { after: 40 }
   });
-  addParagraph({ children: [new TextRun({ text: "Ul. Adama Staszczyka 1/20, 30-123 Krak?w" })], spacing: { after: 20 } });
+  addParagraph({ children: [new TextRun({ text: "Ul. Adama Staszczyka 1/20, 30-123 Kraków" })], spacing: { after: 20 } });
   addParagraph({ children: [new TextRun({ text: "NIP: 6772477900" })], spacing: { after: 200 } });
 
   const clientLines = formatClientLines(claim);
   if (clientLines.length) {
-    addParagraph({
-      children: [new TextRun({ text: "Dane Klienta:", bold: true })],
-      spacing: { after: 60 }
-    });
     clientLines.forEach((line, idx) =>
       addParagraph({
+        alignment: AlignmentType.RIGHT,
         children: [new TextRun({ text: line })],
-        spacing: { after: idx === clientLines.length - 1 ? 160 : 40 }
+        spacing: { after: idx === clientLines.length - 1 ? 200 : 40 }
       })
     );
   }
@@ -2045,20 +2042,20 @@ function buildDocxPolish(claim, answerText, decisionValue) {
     spacing: { after: 200 }
   });
 
-  addParagraph({ children: [new TextRun({ text: "Szczeg??y produktu:", bold: true })], spacing: { after: 80 } });
+  addParagraph({ children: [new TextRun({ text: "Szczegóły produktu:", bold: true })], spacing: { after: 80 } });
 
   if (products.length) {
     const bullets = [
       { label: "Nazwa produktu", value: firstProduct.name },
       { label: "SKU", value: firstProduct.sku },
       { label: "EAN", value: firstProduct.ean },
-      { label: "Ilo??", value: firstProduct.quantity },
-      { label: "Warto?? produktu", value: priceText }
+      { label: "Ilość", value: firstProduct.quantity },
+      { label: "Wartość produktu", value: priceText }
     ];
     bullets.forEach((item) => {
       addParagraph({
         children: [
-          new TextRun({ text: "?  " }),
+          new TextRun({ text: "•  " }),
           new TextRun({ text: `${item.label}: `, bold: true }),
           new TextRun({ text: item.value !== undefined && item.value !== null && item.value !== "" ? String(item.value) : "-" })
         ],
@@ -2066,7 +2063,7 @@ function buildDocxPolish(claim, answerText, decisionValue) {
       });
     });
   } else {
-    addParagraph({ children: [new TextRun({ text: "?  -" })], spacing: { after: 80 } });
+    addParagraph({ children: [new TextRun({ text: "•  -" })], spacing: { after: 80 } });
   }
 
   const addLabelValue = (label, value) => {
@@ -2077,8 +2074,8 @@ function buildDocxPolish(claim, answerText, decisionValue) {
   };
 
   addLabelValue("Data zakupu", purchaseDate);
-  addLabelValue("Data zg?oszenia reklamacji", complaintDate);
-  addLabelValue("Pow?d reklamacji", claim.reason || "-");
+  addLabelValue("Data zgłoszenia reklamacji", complaintDate);
+  addLabelValue("Powód reklamacji", claim.reason || "-");
   addLabelValue("Decyzja", decisionText || "-");
   addLabelValue("Uzasadnienie", answerText || "-");
 
@@ -2086,7 +2083,7 @@ function buildDocxPolish(claim, answerText, decisionValue) {
     children: [
       new TextRun({
         text:
-          "Pa?stwa reklamacja zosta?a rozpatrzona zgodnie z obowi?zuj?cymi przepisami prawa oraz z uwzgl?dnieniem praw konsumenta. Informujemy, ?e od powy?szej decyzji przys?uguje Pa?stwu prawo do odwo?ania. W przypadku dodatkowych pyta? pozostajemy do Pa?stwa dyspozycji.",
+          "Państwa reklamacja została rozpatrzona zgodnie z obowiązującymi przepisami prawa oraz z uwzględnieniem praw konsumenta. Informujemy, że od powyższej decyzji przysługuje Państwu prawo do odwołania. W przypadku dodatkowych pytań pozostajemy do Państwa dyspozycji.",
         bold: false
       })
     ],
@@ -2095,13 +2092,13 @@ function buildDocxPolish(claim, answerText, decisionValue) {
 
   addParagraph({
     alignment: AlignmentType.RIGHT,
-    children: [new TextRun({ text: "Z powa?aniem," })],
+    children: [new TextRun({ text: "Z poważaniem," })],
     spacing: { after: 80 }
   });
 
   addParagraph({
     alignment: AlignmentType.RIGHT,
-    children: [new TextRun({ text: "Zesp?? INOPARTS" })],
+    children: [new TextRun({ text: "Zespół INOPARTS" })],
     spacing: { after: 120 }
   });
 
