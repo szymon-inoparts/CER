@@ -85,28 +85,31 @@ const DOCX_TRANSLATIONS = {
     decisionValues: { pozytywna: "Pozytywna", negatywna: "Negatywna" }
   },
   CZ: {
-    companyLabel: "Údaje o společnosti:",
-    companyValue: "Ul. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
-    customerLabel: "Údaje o zákazníkovi:",
-    title: "Odpověď na stížnost",
-    subjectLabel: "Předmět stížnosti:",
+    companyLabel: "?daje o spole?nosti:",
+    companyValue: "Ul. Adama Staszczyka 1/20, 30-123 Krak?w
+NIP: 6772477900",
+    customerLabel: "?daje o z?kazn?kovi:",
+    title: "Vyj?d?en? k reklamaci",
+    subjectLabel: "Vyj?d?en? k reklamaci",
     valueLabel: "Hodnota produktu:",
-    complaintDateLabel: "Datum podání stížnosti:",
-    purchaseDateLabel: "Datum nákupu:",
-    reasonLabel: "Důvod stížności:",
-    descriptionLabel: "Popis:",
-    decisionLabel: "Řešení stížnosti:",
-    resolutionLabel: "Řešení/Odůvodnění:",
+    complaintDateLabel: "Datum p?ijet? reklamace:",
+    purchaseDateLabel: "Datum n?kupu:",
+    reasonLabel: "D?vod reklamace:",
+    descriptionLabel: "Od?vodn?n?:",
+    decisionLabel: "Rozhodnut? o reklamaci:",
+    resolutionLabel: "Od?vodn?n?:",
     footer:
-      "Stížnost była posouzena z uwzględnieniem wszystkich praw wynikających ze zákona o právech spotřebitelů a občanského zákoníku. Rád/a bych Vás także informował/a, że mám prawo se proti této odpovědi odwołać.\nS pozdravem,",
-    complaintTitle: "Odpověď na stížnost",
-    productsLabel: "Produkty:",
-    productNameLabel: "Název:",
+      "Va?e reklamace byla posouzena v souladu se v?emi z?konn?mi pr?vy spot?ebitele. Upozor?ujeme, ?e m?te pr?vo podat proti tomuto rozhodnut? odvol?n?. V p??pad? dal??ch dotaz? jsme V?m pln? k dispozici.
+S pozdravem,
+T?m INOPARTS",
+    complaintTitle: "Vyj?d?en? k reklamaci",
+    productsLabel: "Podrobnosti o produktu:",
+    productNameLabel: "N?zev:",
     productSkuLabel: "SKU:",
     productEanLabel: "EAN:",
-    productQuantityLabel: "Množství:",
+    productQuantityLabel: "Mno?stv?:",
     complaintValueLabel: "Hodnota produktu:",
-    decisionValues: { pozytywna: "Pozitivní", negatywna: "Negativní" }
+    decisionValues: { pozytywna: "Uzn?no", negatywna: "Zam?tnuto" }
   },
   DE: {
     companyLabel: "INOPARTS SP. Z O.O.",
@@ -1571,12 +1574,130 @@ function buildDocxGerman(claim, answerText, decisionValue) {
   );
 }
 
+function buildDocxCzech(claim, answerText, decisionValue) {
+  if (!window.docx) throw new Error("Brak biblioteki docx");
+  const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
+
+  const todayDot = formatDateDot(new Date());
+  const purchaseDate = formatDateDot(claim.purchaseDate || claim.orderDate);
+  const complaintDate = formatDateDot(claim.receivedAt || claim.decisionDue || new Date());
+  const decLower = String(decisionValue || "").toLowerCase();
+  const decisionText = decLower.includes("zam")
+    ? "Zamítnuto"
+    : decLower.includes("uzn") || decLower.includes("poz")
+    ? "Uznáno"
+    : decisionValue || "Zamítnuto";
+  const products = Array.isArray(claim.products) ? claim.products : [];
+  const firstProduct = products[0] || {};
+  const priceText = `${firstProduct.price ?? ""} ${firstProduct.currency || claim.currency || ""}`.trim();
+
+  const docChildren = [];
+  const addParagraph = (opts) => docChildren.push(new Paragraph(opts));
+
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: `${todayDot}, Kraków`, bold: true })],
+    spacing: { after: 240 }
+  });
+
+  addParagraph({
+    children: [new TextRun({ text: "INOPARTS SP. Z O.O.", bold: true })],
+    spacing: { after: 40 }
+  });
+  addParagraph({ children: [new TextRun({ text: "Ul. Adama Staszczyka 1/20, 30-123 Kraków" })], spacing: { after: 20 } });
+  addParagraph({ children: [new TextRun({ text: "NIP: 6772477900" })], spacing: { after: 200 } });
+
+  const clientLines = formatClientLines(claim);
+  if (clientLines.length) {
+    clientLines.forEach((line, idx) =>
+      addParagraph({
+        alignment: AlignmentType.RIGHT,
+        children: [new TextRun({ text: line })],
+        spacing: { after: idx === clientLines.length - 1 ? 200 : 40 }
+      })
+    );
+  }
+
+  addParagraph({
+    alignment: AlignmentType.CENTER,
+    children: [new TextRun({ text: "Vyjádření k reklamaci", bold: true })],
+    spacing: { after: 200 }
+  });
+
+  addParagraph({ children: [new TextRun({ text: "Podrobnosti o produktu:", bold: true })], spacing: { after: 80 } });
+
+  if (products.length) {
+    const bullets = [
+      { label: "Název", value: firstProduct.name },
+      { label: "SKU", value: firstProduct.sku },
+      { label: "EAN", value: firstProduct.ean },
+      { label: "Množství", value: firstProduct.quantity },
+      { label: "Hodnota produktu", value: priceText }
+    ];
+    bullets.forEach((item) => {
+      addParagraph({
+        children: [
+          new TextRun({ text: "•  " }),
+          new TextRun({ text: `${item.label}: `, bold: true }),
+          new TextRun({ text: item.value !== undefined && item.value !== null && item.value !== "" ? String(item.value) : "-" })
+        ],
+        spacing: { after: 40 }
+      });
+    });
+  } else {
+    addParagraph({ children: [new TextRun({ text: "•  -" })], spacing: { after: 80 } });
+  }
+
+  const addLabelValue = (label, value) => {
+    addParagraph({
+      children: [new TextRun({ text: `${label}: `, bold: true }), new TextRun({ text: value || "-" })],
+      spacing: { after: 120 }
+    });
+  };
+
+  addLabelValue("Datum nákupu", purchaseDate);
+  addLabelValue("Datum přijetí reklamace", complaintDate);
+  addLabelValue("Důvod reklamace", claim.reason || "-");
+  addLabelValue("Rozhodnutí o reklamaci", decisionText || "-");
+  addLabelValue("Odůvodnění", answerText || "-");
+
+  addParagraph({
+    children: [
+      new TextRun({
+        text:
+          "Vaše reklamace byla posouzena v souladu se všemi zákonnými právy spotřebitele. Upozorňujeme, že máte právo podat proti tomuto rozhodnutí odvolání. V případě dalších dotazů jsme Vám plně k dispozici.",
+        bold: false
+      })
+    ],
+    spacing: { before: 160, after: 200 }
+  });
+
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: "S pozdravem," })],
+    spacing: { after: 80 }
+  });
+
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: "Tým INOPARTS" })],
+    spacing: { after: 120 }
+  });
+
+  return Packer.toBlob(
+    new Document({
+      sections: [{ children: docChildren }]
+    })
+  );
+}
+
 function buildDocx(claim, lang, answerText, decisionValue) {
   if (!window.docx) throw new Error("Brak biblioteki docx");
   const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
   const t = DOCX_TRANSLATIONS[lang] || DOCX_TRANSLATIONS.PL;
 
   if (lang === "DE") return buildDocxGerman(claim, answerText, decisionValue);
+  if (lang === "CZ") return buildDocxCzech(claim, answerText, decisionValue);
 
   const today = new Date().toISOString().slice(0, 10);
   const docChildren = [];
