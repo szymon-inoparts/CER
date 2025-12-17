@@ -2175,6 +2175,16 @@ function attachS3GenerateListener() {
       language: mapLangForBackend(selectedLang),
       answer,
       noResponse: noResp,
+      products: Array.isArray(s3CurrentClaim?.products)
+        ? s3CurrentClaim.products.map((p) => ({
+            name: p.name,
+            sku: p.sku,
+            ean: p.ean,
+            quantity: p.quantity,
+            price: p.price,
+            currency: p.currency
+          }))
+        : [],
       claim: s3CurrentClaim
         ? {
             claimId: s3CurrentClaim.claimId,
