@@ -331,6 +331,15 @@ function formatDate(value) {
 
 }
 
+// Fallbacky, gdy w starych szablonach pojawiały się helpery formatDateTable/renderClaimTable
+function formatDateTable(value) {
+  return formatDate(value);
+}
+
+function renderClaimTable(claim) {
+  return renderClaimCard(claim);
+}
+
 function formatCurrency(value) {
 
   if (value === null || value === undefined || value === "") return "-";
