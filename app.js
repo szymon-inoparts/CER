@@ -62,7 +62,7 @@ const COMPANY_VALUE =
 const DOCX_TRANSLATIONS = {
   PL: {
     companyLabel: "Dane firmy:",
-    companyValue: COMPANY_VALUE,
+    companyValue: "Ul. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
     customerLabel: "Dane klienta:",
     title: "Odpowiedź na reklamację",
     subjectLabel: "Przedmiot reklamacji:",
@@ -86,7 +86,7 @@ const DOCX_TRANSLATIONS = {
   },
   CZ: {
     companyLabel: "Údaje o společnosti:",
-    companyValue: COMPANY_VALUE,
+    companyValue: "Ul. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
     customerLabel: "Údaje o zákazníkovi:",
     title: "Odpověď na stížnost",
     subjectLabel: "Předmět stížnosti:",
@@ -109,21 +109,23 @@ const DOCX_TRANSLATIONS = {
     decisionValues: { pozytywna: "Pozitivní", negatywna: "Negativní" }
   },
   DE: {
-    companyLabel: "Firmenangaben:",
-    companyValue: COMPANY_VALUE,
-    customerLabel: "Kundendaten:",
-    title: "Antwort auf die Beschwerde",
-    subjectLabel: "Betreff der Beschwerde:",
+    companyLabel: "INOPARTS SP. Z O.O.",
+    companyValue: "Ul. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    customerLabel: "Name des Kunden / Adresse des Kunden / PLZ und Ort des Kunden",
+    title: "Antwort auf Ihre Reklamation",
+    subjectLabel: "Betreff: Antwort auf Ihre Reklamation vom 05.11.2025",
     valueLabel: "Produktwert:",
-    complaintDateLabel: "Datum der Beschwerde:",
+    complaintDateLabel: "Datum:",
     purchaseDateLabel: "Kaufdatum:",
-    reasonLabel: "Grund der Beschwerde:",
-    descriptionLabel: "Beschreibung:",
-    decisionLabel: "Lösung der Beschwerde:",
-    resolutionLabel: "Lösung/Begründung:",
+    reasonLabel: "Sachverhalt laut Ihrer Beschreibung:",
+    descriptionLabel:
+      "Prüfung und Entscheidung: Trotz unserer mehrfachen Versuche, Sie zu kontaktieren, haben wir keine Rückmeldung von Ihnen erhalten.",
+    decisionLabel:
+      "Lösung: Aufgrund der mangelnden Kooperation und der damit verbundenen Unmöglichkeit, den Mangel zu überprüfen, müssen wir Ihre Reklamation als unbegründet ablehnen. Das Verfahren wird hiermit abgeschlossen.",
+    resolutionLabel: "Rechtliche Hinweise:",
     footer:
-      "Meine Beschwerde wurde unter Berücksichtigung aller Rechte gemäß Verbraucherrecht und Bürgerlichem Gesetzbuch geprüft. Ich weise Sie darauf hin, dass ich gegen diese Antwort Widerspruch einlegen kann.\nMit freundlichen Grüßen,",
-    complaintTitle: "Antwort auf die Beschwerde",
+      "Rechtliche Hinweise: Ihre Reklamation wurde unter Berücksichtigung aller gesetzlichen Rechte geprüft. Wir weisen Sie darauf hin, dass Sie das Recht haben, gegen diese Entscheidung Widerspruch einzulegen.\nFür weitere Rückfragen stehen wir Ihnen gerne zur Verfügung.\nMit freundlichen Grüßen\nINOPARTS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ\n[Podpis/Imię i Nazwisko osoby odpowiadającej]",
+    complaintTitle: "Antwort auf Ihre Reklamation",
     productsLabel: "Produkte:",
     productNameLabel: "Name:",
     productSkuLabel: "SKU:",
