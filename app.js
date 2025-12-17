@@ -1414,59 +1414,6 @@ function appendTitleSection(docChildren, t, Paragraph, TextRun, AlignmentType) {
 
 }
 
-function appendProductsSection(docChildren, t, claim, addParagraph) {
-
-  const products = Array.isArray(claim.products) ? claim.products : [];
-
-  if (!products.length) return;
-
-  addParagraph(t.productsLabel || t.productLabel || "", "");
-
-  products.forEach((p) => {
-
-    addParagraph(t.productNameLabel || "Nazwa:", p.name || "-");
-
-    addParagraph(t.productSkuLabel || "SKU:", p.sku || "-");
-
-    addParagraph(t.productEanLabel || "EAN:", p.ean || "-");
-
-    addParagraph(
-      t.productQuantityLabel || "Ilość:",
-      p.quantity !== undefined && p.quantity !== null ? String(p.quantity) : "-"
-    );
-
-    addParagraph(t.complaintValueLabel, `${p.price ?? ""} ${p.currency || claim.currency || ""}`.trim());
-
-  });
-
-}
-
-function appendMetadataSection(docChildren, t, claim, addParagraph, today, decisionValue, answerText) {
-
-  addParagraph(t.complaintDateLabel, formatDate(claim.receivedAt || today));
-
-  addParagraph(t.purchaseDateLabel, formatDate(claim.purchaseDate || claim.orderDate));
-
-  addParagraph(t.reasonLabel, claim.reason || claim.type || "-");
-
-  addParagraph(t.descriptionLabel, claim.reason || "-");
-
-  addParagraph(t.decisionLabel, decisionValue || "-");
-
-  addParagraph(t.resolutionLabel, answerText || "-");
-
-}
-
-function appendFooterSection(docChildren, t, Paragraph, TextRun) {
-
-  t.footer
-
-    .split("\n")
-
-    .forEach((line) => docChildren.push(new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: 80 } })));
-
-}
-
 function buildDocxGerman(claim, answerText, decisionValue) {
   if (!window.docx) throw new Error("Brak biblioteki docx");
   const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
@@ -1925,37 +1872,118 @@ function buildDocxHungarian(claim, answerText, decisionValue) {
   );
 }
 
-function buildDocx(claim, lang, answerText, decisionValue) {
+function buildDocxEnglish(claim, answerText, decisionValue) {
   if (!window.docx) throw new Error("Brak biblioteki docx");
   const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
-  const t = DOCX_TRANSLATIONS[lang] || DOCX_TRANSLATIONS.PL;
 
-  if (lang === "DE") return buildDocxGerman(claim, answerText, decisionValue);
-  if (lang === "CZ") return buildDocxCzech(claim, answerText, decisionValue);
-  if (lang === "SK") return buildDocxSlovak(claim, answerText, decisionValue);
-  if (lang === "HU") return buildDocxHungarian(claim, answerText, decisionValue);
+  const todayDot = formatDateDot(new Date());
+  const purchaseDate = formatDateDot(claim.purchaseDate || claim.orderDate);
+  const complaintDate = formatDateDot(claim.receivedAt || claim.decisionDue || new Date());
+  const decLower = String(decisionValue || "").toLowerCase();
+  const decisionText = decLower.includes("reject") || decLower.includes("decline") || decLower.includes("neg")
+    ? "Rejected"
+    : decLower.includes("accept") || decLower.includes("approve") || decLower.includes("poz")
+    ? "Accepted"
+    : decisionValue || "Rejected";
+  const products = Array.isArray(claim.products) ? claim.products : [];
+  const firstProduct = products[0] || {};
+  const priceText = `${firstProduct.price ?? ""} ${firstProduct.currency || claim.currency || ""}`.trim();
 
-  const today = new Date().toISOString().slice(0, 10);
   const docChildren = [];
+  const addParagraph = (opts) => docChildren.push(new Paragraph(opts));
 
-  const addParagraph = (label, value) => {
-    docChildren.push(
-      new Paragraph({
-        children: [
-          new TextRun({ text: label + " ", bold: true }),
-          new TextRun({ text: value || "-" })
-        ],
-        spacing: { after: 120 }
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: `${todayDot}, Kraków`, bold: true })],
+    spacing: { after: 240 }
+  });
+
+  addParagraph({
+    children: [new TextRun({ text: "INOPARTS SP. Z O.O.", bold: true })],
+    spacing: { after: 40 }
+  });
+  addParagraph({
+    children: [new TextRun({ text: "Ul. Adama Staszczyka 1/20, 30-123 Kraków, Poland" })],
+    spacing: { after: 20 }
+  });
+  addParagraph({ children: [new TextRun({ text: "VAT ID: PL6772477900" })], spacing: { after: 200 } });
+
+  const clientLines = formatClientLines(claim);
+  if (clientLines.length) {
+    clientLines.forEach((line, idx) =>
+      addParagraph({
+        alignment: AlignmentType.RIGHT,
+        children: [new TextRun({ text: line })],
+        spacing: { after: idx === clientLines.length - 1 ? 200 : 40 }
       })
     );
+  }
+
+  addParagraph({
+    alignment: AlignmentType.CENTER,
+    children: [new TextRun({ text: "Response to Complaint", bold: true })],
+    spacing: { after: 200 }
+  });
+
+  addParagraph({ children: [new TextRun({ text: "Product Details:", bold: true })], spacing: { after: 80 } });
+
+  if (products.length) {
+    const bullets = [
+      { label: "Product Name", value: firstProduct.name },
+      { label: "SKU", value: firstProduct.sku },
+      { label: "EAN", value: firstProduct.ean },
+      { label: "Quantity", value: firstProduct.quantity },
+      { label: "Product Value", value: priceText }
+    ];
+    bullets.forEach((item) => {
+      addParagraph({
+        children: [
+          new TextRun({ text: "•  " }),
+          new TextRun({ text: `${item.label}: `, bold: true }),
+          new TextRun({ text: item.value !== undefined && item.value !== null && item.value !== "" ? String(item.value) : "-" })
+        ],
+        spacing: { after: 40 }
+      });
+    });
+  } else {
+    addParagraph({ children: [new TextRun({ text: "•  -" })], spacing: { after: 80 } });
+  }
+
+  const addLabelValue = (label, value) => {
+    addParagraph({
+      children: [new TextRun({ text: `${label}: `, bold: true }), new TextRun({ text: value || "-" })],
+      spacing: { after: 120 }
+    });
   };
 
-  appendCompanySection(docChildren, t, Paragraph, TextRun);
-  appendClientSection(docChildren, t, claim, Paragraph, TextRun);
-  appendTitleSection(docChildren, t, Paragraph, TextRun, AlignmentType);
-  appendProductsSection(docChildren, t, claim, addParagraph);
-  appendMetadataSection(docChildren, t, claim, addParagraph, today, decisionValue, answerText);
-  appendFooterSection(docChildren, t, Paragraph, TextRun);
+  addLabelValue("Purchase Date", purchaseDate);
+  addLabelValue("Date of Complaint", complaintDate);
+  addLabelValue("Reason for Complaint", claim.reason || "-");
+  addLabelValue("Decision", decisionText || "-");
+  addLabelValue("Justification", answerText || "-");
+
+  addParagraph({
+    children: [
+      new TextRun({
+        text:
+          "Your complaint has been reviewed in accordance with all applicable consumer rights and statutory regulations. Please be advised that you have the right to appeal this decision. Should you have any further questions, please do not hesitate to contact us.",
+        bold: false
+      })
+    ],
+    spacing: { before: 160, after: 200 }
+  });
+
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: "Yours sincerely," })],
+    spacing: { after: 80 }
+  });
+
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: "INOPARTS Team" })],
+    spacing: { after: 120 }
+  });
 
   return Packer.toBlob(
     new Document({
@@ -1964,845 +1992,135 @@ function buildDocx(claim, lang, answerText, decisionValue) {
   );
 }
 
-/* ============================================================
+function buildDocxPolish(claim, answerText, decisionValue) {
+  if (!window.docx) throw new Error("Brak biblioteki docx");
+  const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
 
-   CZ\u0118 1  DODAWANIE ZGOSZENIA
+  const todayDot = formatDateDot(new Date());
+  const purchaseDate = formatDateDot(claim.purchaseDate || claim.orderDate);
+  const complaintDate = formatDateDot(claim.receivedAt || claim.decisionDue || new Date());
+  const decLower = String(decisionValue || "").toLowerCase();
+  const decisionText = decLower.includes("odrz") || decLower.includes("neg")
+    ? "Odrzucona"
+    : decLower.includes("uzn") || decLower.includes("poz")
+    ? "Uznana"
+    : decisionValue || "";
+  const products = Array.isArray(claim.products) ? claim.products : [];
+  const firstProduct = products[0] || {};
+  const priceText = `${firstProduct.price ?? ""} ${firstProduct.currency || claim.currency || ""}`.trim();
 
-   ============================================================ */
+  const docChildren = [];
+  const addParagraph = (opts) => docChildren.push(new Paragraph(opts));
 
-const s1FetchBtn = document.getElementById("s1-fetch");
-
-const s1OrderInput = document.getElementById("s1-order");
-
-const s1OrderBox = document.getElementById("s1-order-data");
-
-const s1Products = document.getElementById("s1-products");
-
-const s1SaveBtn = document.getElementById("s1-save");
-
-let s1FetchedOrder = null;
-
-/* Pobieranie danych zam\u00f3wienia */
-
-function attachS1FetchListener() {
-
-  if (!s1FetchBtn) return;
-
-  s1FetchBtn.addEventListener("click", async () => {
-
-  const num = s1OrderInput.value.trim();
-
-  if (!num) return showToast("Wpisz numer zam\u00f3wienia", "error");
-
-  try {
-
-    // Uycie jawnego linku webhooka pomaga unika bdnych skadek i pokazuje peny adres dla GitHub Pages
-
-    const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
-
-    const rawData = await res.json();
-    const dataItem = Array.isArray(rawData) ? rawData[0] : rawData;
-    const data = dataItem && typeof dataItem === "object" && dataItem.json ? dataItem.json : dataItem;
-
-    s1FetchedOrder = data;
-    // Wywietlenie boxa
-
-    s1OrderBox.classList.remove("hidden");
-
-    // Produkty  przykad danych w komentarzu:
-
-    // data.products = [
-
-    //   { sku: "SKU123", name: "Buty zimowe", quantity: 2 },
-
-    //   { sku: "SKU999", name: "Czapka", quantity: 1 }
-
-    // ]
-
-    const productsArr = Array.isArray(data?.products) ? data.products : [];
-
-    s1Products.innerHTML = productsArr.length
-      ? productsArr
-          .map(
-            (p, idx) => `
-        <div class="product-row">
-          <label>
-            <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-            ${p.name} (${p.sku}) - ${p.price ?? ""} zł zamówiono: ${p.quantity}
-          </label>
-          <input type="number" class="s1-prod-qty" data-index="${idx}" min="1" max="${p.quantity || 1}" value="${p.quantity || 1}" />
-        </div>
-      `
-          )
-          .join("")
-      : `<div class="muted">Brak produktów w odpowiedzi</div>`;
-
-    const bill =
-      data.bill_address ||
-      data.billAddress ||
-      data.billAddressRaw ||
-      data.billAddressFull ||
-      (data.orderDetails && data.orderDetails.bill_address);
-
-    const billParts = [];
-    if (bill) {
-      const directAddress =
-        (typeof bill === "string" ? bill : null) ||
-        bill.address ||
-        bill.full ||
-        bill.fullAddress ||
-        bill.full_address;
-      billParts.push(...normalizeAddressParts(directAddress));
-      if (typeof bill === "object" && bill) {
-        if (bill.street) billParts.push(String(bill.street).trim());
-        if (bill.home_number) billParts.push(String(bill.home_number).trim());
-        if (bill.flat_number) billParts.push(String(bill.flat_number).trim());
-        if (bill.postcode) billParts.push(String(bill.postcode).trim());
-        if (bill.city) billParts.push(String(bill.city).trim());
-        const countryLine =
-          bill.country && typeof bill.country === "object"
-            ? bill.country.code || bill.country.name
-            : bill.country;
-        if (countryLine) billParts.push(String(countryLine).trim());
-      }
-    }
-    const billInput = document.getElementById("s1-bill-full");
-    if (billInput) billInput.value = billParts.filter(Boolean).join(", ");
-
-    document.getElementById("s1-client-name").value = data.clientName || "";
-
-    document.getElementById("s1-client-email").value = data.clientEmail || "";
-
-    document.getElementById("s1-client-phone").value = data.clientPhone || "";
-
-    document.getElementById("s1-client-nick").value = data.clientNick || "";
-
-    document.getElementById("s1-country").value = data.country || "";
-
-    document.getElementById("s1-date").value = data.orderDate || "";
-
-    document.getElementById("s1-platform").value = data.platform || "";
-
-    document.getElementById("s1-shipping").value = data.shippingCost ?? "";
-
-    showToast("Pobrano dane zam\u00f3wienia");
-
-  } catch (err) {
-
-    showToast("B\u0142\u0105d pobierania", "error");
-
-  }
-
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: `${todayDot}, Krak?w`, bold: true })],
+    spacing: { after: 240 }
   });
-}
 
-/* Zapisywanie zgoszenia */
+  addParagraph({
+    children: [new TextRun({ text: "Sprzedawca: INOPARTS SP. Z O.O.", bold: true })],
+    spacing: { after: 40 }
+  });
+  addParagraph({ children: [new TextRun({ text: "Ul. Adama Staszczyka 1/20, 30-123 Krak?w" })], spacing: { after: 20 } });
+  addParagraph({ children: [new TextRun({ text: "NIP: 6772477900" })], spacing: { after: 200 } });
 
-function attachS1SaveListener() {
-
-  if (!s1SaveBtn) return;
-
-  s1SaveBtn.addEventListener("click", async () => {
-
-  const payload = {
-
-    order: s1OrderInput.value,
-
-    orderDetails: s1FetchedOrder,
-
-    reportDate: document.getElementById("s1-report-date").value,
-
-    type: document.getElementById("s1-type").value,
-
-    reason: document.getElementById("s1-reason").value,
-
-    employee: document.getElementById("s1-employee").value,
-
-    note: document.getElementById("s1-note").value,
-
-    products: (() => {
-      const out = [];
-      Array.from(document.querySelectorAll(".product-row")).forEach((row, idx) => {
-        const check = row.querySelector(".s1-prod-check");
-        if (!check || !check.checked) return;
-        const qty = row.querySelector(".s1-prod-qty");
-        const meta = s1FetchedOrder?.products?.[idx] || {};
-        const quantity = Math.max(1, Number(qty?.value || meta.quantity || 1));
-        out.push({
-          quantity,
-          sku: meta.sku,
-          name: meta.name,
-          orderedQuantity: meta.quantity,
-          price: Number(meta.price ?? 0),
-          ean: meta.ean
-        });
-      });
-      return out;
-    })()
-
-  };
-
-  try {
-
-    await fetch(SEND_TO_CER_WEBHOOK, {
-
-      method: "POST",
-
-      headers: { "Content-Type": "application/json" },
-
-      body: JSON.stringify(payload)
-
+  const clientLines = formatClientLines(claim);
+  if (clientLines.length) {
+    addParagraph({
+      children: [new TextRun({ text: "Dane Klienta:", bold: true })],
+      spacing: { after: 60 }
     });
-
-    showToast("Zapisano zg\u0142oszenie");
-
-  } catch (err) {
-
-    showToast("B\u0142\u0105d zapisu", "error");
-
-  }
-
-  });
-}
-
-/* ============================================================
-
-   CZ\u0118 2  EWIDENCJA
-
-   ============================================================ */
-
-const s2SearchBtn = document.getElementById("s2-search-btn");
-
-const s2SearchInput = document.getElementById("s2-search");
-
-const s2SingleBox = document.getElementById("s2-single-result");
-
-const s2RangeBtn = document.getElementById("s2-range-btn");
-
-const s2RangeSelect = document.getElementById("s2-range");
-
-const s2ListBox = document.getElementById("s2-list");
-
-// ustawienie kontrolek w jednej linii + usuniecie zbdnych separatorw
-
-(function arrangeS2Controls() {
-
-  const section = document.getElementById("page-3");
-
-  const searchField = s2SearchInput?.closest(".field");
-
-  const rangeRow = s2RangeSelect?.closest(".row-inline");
-
-  const rangeField = rangeRow ? rangeRow.parentElement : null;
-
-  const hr = section.querySelector("hr");
-
-  const h3 = section.querySelector("h3");
-
-  if (searchField && rangeRow) {
-
-    const container = document.createElement("div");
-
-    container.className = "s2-controls";
-
-    // przenie blok wyszukiwania
-
-    container.appendChild(searchField);
-
-    // utwrz pole dla zakresu
-
-    const field = document.createElement("div");
-
-    field.className = "field";
-
-    const label = document.createElement("label");
-
-    label.textContent = "Pobierz wiele zg\u0142osze\u0144";
-
-    field.appendChild(label);
-
-    field.appendChild(rangeRow);
-
-    container.appendChild(field);
-
-    // wstaw kontener przed wynikiem
-
-    const target = section.querySelector("#s2-single-result") || rangeField || section.firstChild;
-
-    section.insertBefore(container, target);
-
-    // usu stary nagwek i hr
-
-    if (rangeField && rangeField !== field && rangeField.parentElement) rangeField.parentElement.removeChild(rangeField);
-
-    if (h3 && h3.parentElement) h3.parentElement.removeChild(h3);
-
-    if (hr && hr.parentElement) hr.parentElement.removeChild(hr);
-
-  }
-
-})();
-
-/* Pobieranie pojedynczego zgoszenia */
-
-function attachS2SearchListener() {
-
-  if (!s2SearchBtn) return;
-
-  s2SearchBtn.addEventListener("click", async () => {
-
-  const num = s2SearchInput.value.trim();
-
-  if (!num) return showToast("Podaj numer", "error");
-
-  try {
-
-    const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?order=${encodeURIComponent(num)}`);
-
-    const data = await res.json();
-
-    const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
-
-    s2SingleBox.classList.remove("hidden");
-
-    s2SingleBox.innerHTML = renderClaimCard(
-
-      claim,
-
-      `<button class="btn btn-primary" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj odpowiedź</button>`
-
+    clientLines.forEach((line, idx) =>
+      addParagraph({
+        children: [new TextRun({ text: line })],
+        spacing: { after: idx === clientLines.length - 1 ? 160 : 40 }
+      })
     );
-
-    showToast("Pobrano zg\u0142oszenie");
-
-  } catch {
-
-    showToast("Nie znaleziono", "error");
-
   }
 
-  });
-}
-
-/* Pobieranie listy zgosze (tabela) */
-
-function attachS2RangeListener() {
-
-  if (!s2RangeBtn) return;
-
-  s2RangeBtn.addEventListener("click", async () => {
-
-  const range = s2RangeSelect.value;
-
-  try {
-
-    // wysyamy preset (5 wariantw z selecta) jako query param GET
-
-    const params = new URLSearchParams({ preset: range, range });
-
-    const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
-
-    const rawText = await res.text();
-
-    // proste parsowanie: json -> array | object -> array; jak nie, to wycignij obiekty z tekstu
-
-    let parsed;
-
-    let parseError = null;
-
-    try {
-
-      parsed = JSON.parse(rawText);
-
-    } catch (err) {
-
-      parseError = err;
-
-      parsed = rawText;
-
-    }
-
-    let rows = [];
-
-    if (Array.isArray(parsed)) {
-
-      rows = parsed;
-
-    } else if (parsed && typeof parsed === "object") {
-
-      rows = [parsed];
-
-    }
-
-    if (!rows.length) {
-
-      rows = parseObjectsFromText(rawText);
-
-    }
-
-    // ostateczny fallback  sprbuj unwrap n8n
-
-    if (!rows.length) {
-
-      rows = unwrapArray(parsed);
-
-    }
-
-    s2ListBox.classList.remove("hidden");
-
-    // Log diagnostyczny w konsoli przegldarki
-
-    console.info("CER list response", {
-
-      status: res.status,
-
-      contentType: res.headers.get("content-type"),
-
-      rawText,
-
-      parsed,
-
-      parseError,
-
-      rowsCount: rows.length
-
-    });
-
-    if (!res.ok) {
-
-      s2ListBox.innerHTML = renderPreTableBox(`B\u0142\u0105d HTTP ${res.status}`, rawText);
-
-      showToast(`B\u0142\u0105d pobierania (${res.status})`, "error");
-
-      return;
-
-    }
-
-    if (!rows.length) {
-
-      s2ListBox.innerHTML = renderPreTableBox(
-
-        "Brak rozpoznanych danych. Surowa odpowied webhooka:",
-
-        rawText
-
-      );
-
-      showToast("Brak danych z webhooka", "error");
-
-      return;
-
-    }
-
-    let html = `
-      <table>
-        <tr>
-          <th>#</th>
-          <th>Reklamacja</th>
-          <th>Zamówienie</th>
-          <th>Klient</th>
-          <th>Marketplace</th>
-          <th>Status</th>
-          <th>Przyjęcie</th>
-          <th>Termin decyzji</th>
-          <th>Rozwiązanie</th>
-          <th>Akcja</th>
-        </tr>
-`;
-
-    rows.forEach((row, idx) => {
-      const claim = normalizeClaim(row);
-      const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
-
-      html += `
-        <tr>
-          <td>${claim.rowNumber ? claim.rowNumber : idx + 1}</td>
-          <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId || ""}'">${claim.claimId || "-"}</td>
-          <td>${claim.orderId || "-"}</td>
-          <td>${claim.customer || "-"}</td>
-          <td>${claim.marketplace || "-"}</td>
-          <td>${claim.status || "-"}</td>
-          <td>${formatDate(claim.receivedAt)}</td>
-          <td>${formatDate(claim.decisionDue)}</td>
-          <td>${formatDate(claim.resolvedAt)}</td>
-          <td>
-            <div class="action-cell">
-              <button class="expand-btn expand-btn--wide" onclick="handleExpand('${expId}', this)">Rozwiń ▼</button>
-              <button class="btn btn-dark" onclick="handleGenerateClick('${claim.claimId || claim.orderId || ""}')">Generuj odpowiedź</button>
-            </div>
-          </td>
-        </tr>
-        <tr class="expand-row" data-exp-id="${expId}" style="display:none">
-          <td colspan="10">
-            ${renderClaimCard(claim)}
-          </td>
-        </tr>`;
-    });
-
-    html += `</table>`;
-    s2ListBox.innerHTML = html;
-
-    showToast("Pobrano list\u0119 zg\u0142osze\u0144");
-
-  } catch {
-
-    showToast("B\u0142\u0105d pobierania", "error");
-
-  }
-
-  });
-}
-
-/* ============================================================
-
-   CZ\u0118 3  GENERATOR ODPOWIEDZI
-
-   ============================================================ */
-
-const s3FetchBtn = document.getElementById("s3-fetch");
-
-const s3NumberInput = document.getElementById("s3-number");
-
-const s3DetailsBox = document.getElementById("s3-details");
-
-const s3GenBtn = document.getElementById("s3-generate");
-const s3DocxBtn = document.getElementById("s3-docx");
-
-let selectedLang = "PL";
-const mapLangForBackend = (lang) => (lang === "CZ" ? "CS" : lang);
-
-let s3CurrentClaim = null;
-
-/* Zmiana jzyka tumaczenia */
-
-function attachLanguageListeners() {
-
-  const langButtons = document.querySelectorAll(".lang-btn");
-
-  langButtons.forEach((btn) => {
-
-    btn.addEventListener("click", () => {
-
-      selectedLang = btn.dataset.lang;
-
-      langButtons.forEach((b) => {
-        b.style.background = "";
-        b.style.color = "";
-      });
-
-      btn.style.background = "var(--orange)";
-
-      btn.style.color = "#fff";
-
-    });
-
+  addParagraph({
+    alignment: AlignmentType.CENTER,
+    children: [new TextRun({ text: "Decyzja reklamacyjna", bold: true })],
+    spacing: { after: 200 }
   });
 
-}
+  addParagraph({ children: [new TextRun({ text: "Szczeg??y produktu:", bold: true })], spacing: { after: 80 } });
 
-/* Pobieranie danych zgoszenia */
-
-function attachS3FetchListener() {
-
-  if (!s3FetchBtn) return;
-
-  s3FetchBtn.addEventListener("click", async () => {
-
-  const num = s3NumberInput.value.trim();
-
-  if (!num) return showToast("Podaj numer", "error");
-
-  try {
-
-    const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}?number=${encodeURIComponent(num)}`);
-
-    const data = await res.json();
-
-    const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
-
-    s3CurrentClaim = claim;
-
-    s3DetailsBox.classList.remove("hidden");
-
-    s3DetailsBox.innerHTML = "";
-
-    s3DetailsBox.insertAdjacentHTML("beforeend", renderClaimCard(claim));
-
-    // Ukryj pola Decyzja, Rozwiązanie i Data rozwiązania tylko w generatorze
-
-    const grid = s3DetailsBox.querySelector(".claim-card__grid");
-
-    if (grid) {
-
-      grid.querySelectorAll("div").forEach((block) => {
-
-        const label = block.querySelector(".label");
-
-        if (!label) return;
-
-        const text = label.textContent.trim().toLowerCase();
-
-        if (text.includes("decyzja") || text.includes("rozwizanie")) block.remove();
-
-      });
-
-    }
-
-    const timeline = s3DetailsBox.querySelector(".claim-card__timeline");
-
-    if (timeline) {
-
-      timeline.querySelectorAll("div").forEach((block) => {
-
-        const span = block.querySelector("span");
-
-        if (span && span.textContent.trim().toLowerCase().includes("data rozwizania")) {
-
-          block.remove();
-
-        }
-
-      });
-
-    }
-
-    showToast("Za\u0142adowano dane");
-
-  } catch {
-
-    showToast("Nie znaleziono", "error");
-
-  }
-
-  });
-}
-
-/* Generowanie PDF */
-
-function attachS3GenerateListener() {
-
-  if (!s3GenBtn) return;
-
-  s3GenBtn.addEventListener("click", async () => {
-    if (!window.docx) return showToast("Brak biblioteki DOCX", "error");
-
-    const num = s3NumberInput.value.trim();
-    const decision = document.getElementById("s3-decision").value;
-    const noResp = document.getElementById("s3-noresp").checked;
-
-    if (!num) return showToast("Podaj numer", "error");
-
-    const answer = noResp ? DEFAULT_NO_RESPONSE_TEXT : document.getElementById("s3-answer").value;
-
-    const payload = {
-      number: num,
-      decision,
-      language: mapLangForBackend(selectedLang),
-      answer,
-      noResponse: noResp,
-      products: Array.isArray(s3CurrentClaim?.products)
-        ? s3CurrentClaim.products.map((p) => ({
-            name: p.name,
-            sku: p.sku,
-            ean: p.ean,
-            quantity: p.quantity,
-            price: p.price,
-            currency: p.currency
-          }))
-        : [],
-      claim: s3CurrentClaim
-        ? {
-            claimId: s3CurrentClaim.claimId,
-            orderId: s3CurrentClaim.orderId,
-            customer: s3CurrentClaim.customer,
-            marketplace: s3CurrentClaim.marketplace,
-            status: s3CurrentClaim.status,
-            value: s3CurrentClaim.value,
-            reason: s3CurrentClaim.reason,
-            type: s3CurrentClaim.type,
-            decisionOriginal: s3CurrentClaim.decision,
-            resolution: s3CurrentClaim.resolution,
-            agent: s3CurrentClaim.agent,
-            note: s3CurrentClaim.note,
-            myNewField: s3CurrentClaim.myNewField,
-            receivedAt: s3CurrentClaim.receivedAt,
-            decisionDue: s3CurrentClaim.decisionDue,
-            resolvedAt: s3CurrentClaim.resolvedAt
-          }
-        : null
-    };
-
-    try {
-    const res = await fetch(GENERATE_WEBHOOK, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    const responseJson = await res.json();
-    const responseItem = Array.isArray(responseJson) ? responseJson[0] : responseJson;
-    const translations = Array.isArray(responseItem?.translations) ? responseItem.translations : [];
-    const translatedAnswer = translations[0]?.text || answer;
-    const translatedDecision = translations[1]?.text || decision;
-    const translatedReason = translations[2]?.text || s3CurrentClaim?.reason;
-    const translatedProductNames = translations.slice(3).map((t) => t?.text).filter(Boolean);
-    const translatedProducts =
-      Array.isArray(payload.products) && payload.products.length
-        ? payload.products.map((p, idx) => ({
-            ...p,
-            name: translatedProductNames[idx] || p.name
-          }))
-        : null;
-
-    const docClaim = {
-      ...s3CurrentClaim,
-      reason: translatedReason,
-      products: translatedProducts || s3CurrentClaim?.products
-    };
-    const lang = (selectedLang || "PL").toUpperCase();
-    const t = DOCX_TRANSLATIONS[lang] || DOCX_TRANSLATIONS.PL;
-    const decisionValue = translatedDecision || t.decisionValues?.[decision] || decision;
-
-    const blob = await buildDocx(docClaim, lang, translatedAnswer, decisionValue);
-    const defaultArchivePath = "W:\\Reklamacje\\Archiwum odpowiedzi na reklamacje";
-    const filename = `CER-${num}.docx`;
-    const folderName = sanitizePathSegment(num, "reklamacja");
-    let saved = false;
-
-    const writeBlobToHandle = async (fileHandle) => {
-      const writable = await fileHandle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-      saved = true;
-    };
-
-    const pickerTypes = [
-      {
-        description: "Dokument DOCX",
-        accept: { "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"] }
-      }
+  if (products.length) {
+    const bullets = [
+      { label: "Nazwa produktu", value: firstProduct.name },
+      { label: "SKU", value: firstProduct.sku },
+      { label: "EAN", value: firstProduct.ean },
+      { label: "Ilo??", value: firstProduct.quantity },
+      { label: "Warto?? produktu", value: priceText }
     ];
-
-    if (window.showDirectoryPicker) {
-      try {
-        const baseDir = await window.showDirectoryPicker({
-          mode: "readwrite",
-          id: "cer-archive-root",
-          startIn: archiveDirHandle || defaultArchivePath
-        });
-        archiveDirHandle = baseDir;
-        const claimDir = await baseDir.getDirectoryHandle(folderName, { create: true });
-        const fileHandle = await claimDir.getFileHandle(filename, { create: true });
-        await writeBlobToHandle(fileHandle);
-      } catch (dirErr) {
-        console.warn("Directory picker unavailable, trying file picker", dirErr);
-      }
-    }
-
-    if (!saved && window.showSaveFilePicker) {
-      const pickerOptions = {
-        suggestedName: filename,
-        startIn: archiveDirHandle || defaultArchivePath,
-        types: pickerTypes
-      };
-
-      try {
-        const handle = await window.showSaveFilePicker(pickerOptions);
-        await writeBlobToHandle(handle);
-      } catch (pickerErr) {
-        console.warn("Save picker unavailable with preferred location, retrying without startIn", pickerErr);
-        try {
-          const fallbackHandle = await window.showSaveFilePicker({
-            suggestedName: filename,
-            types: pickerTypes
-          });
-          await writeBlobToHandle(fallbackHandle);
-        } catch (fallbackErr) {
-          console.warn("Save picker unavailable, falling back to download attribute", fallbackErr);
-        }
-      }
-    }
-
-    if (!saved) {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      saved = true;
-    }
-
-    if (saved) showToast("Wygenerowano DOCX");
-    } catch (err) {
-      console.error(err);
-      showToast("Błąd generowania", "error");
-    }
-  });
-}
-
-function attachNoResponseToggle() {
-  const cb = document.getElementById("s3-noresp");
-  const area = document.getElementById("s3-answer");
-  const toggle = () => {
-    if (!area) return;
-    const hide = cb && cb.checked;
-    area.style.display = hide ? "none" : "block";
-    area.disabled = !!hide;
-    if (hide) area.value = "";
-  };
-  if (cb) cb.addEventListener("change", toggle);
-  toggle();
-}
-
-function attachProcessorForm() {
-  const nameInput = document.getElementById("home-proc-name");
-  const emailInput = document.getElementById("home-proc-email");
-  const addBtn = document.getElementById("home-proc-add");
-
-  if (!nameInput || !emailInput || !addBtn) return;
-
-  addBtn.addEventListener("click", async () => {
-    const name = nameInput.value.trim();
-    const email = emailInput.value.trim();
-    if (!name || !email) return showToast("Podaj imię i email", "error");
-
-    try {
-      const res = await fetch(PROCESSORS_WEBHOOK, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email })
+    bullets.forEach((item) => {
+      addParagraph({
+        children: [
+          new TextRun({ text: "?  " }),
+          new TextRun({ text: `${item.label}: `, bold: true }),
+          new TextRun({ text: item.value !== undefined && item.value !== null && item.value !== "" ? String(item.value) : "-" })
+        ],
+        spacing: { after: 40 }
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      showToast("Dodano osobę procesującą");
-      nameInput.value = "";
-      emailInput.value = "";
-    } catch (err) {
-      console.error(err);
-      showToast("Błąd dodawania", "error");
-    }
+    });
+  } else {
+    addParagraph({ children: [new TextRun({ text: "?  -" })], spacing: { after: 80 } });
+  }
+
+  const addLabelValue = (label, value) => {
+    addParagraph({
+      children: [new TextRun({ text: `${label}: `, bold: true }), new TextRun({ text: value || "-" })],
+      spacing: { after: 120 }
+    });
+  };
+
+  addLabelValue("Data zakupu", purchaseDate);
+  addLabelValue("Data zg?oszenia reklamacji", complaintDate);
+  addLabelValue("Pow?d reklamacji", claim.reason || "-");
+  addLabelValue("Decyzja", decisionText || "-");
+  addLabelValue("Uzasadnienie", answerText || "-");
+
+  addParagraph({
+    children: [
+      new TextRun({
+        text:
+          "Pa?stwa reklamacja zosta?a rozpatrzona zgodnie z obowi?zuj?cymi przepisami prawa oraz z uwzgl?dnieniem praw konsumenta. Informujemy, ?e od powy?szej decyzji przys?uguje Pa?stwu prawo do odwo?ania. W przypadku dodatkowych pyta? pozostajemy do Pa?stwa dyspozycji.",
+        bold: false
+      })
+    ],
+    spacing: { before: 160, after: 200 }
   });
+
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: "Z powa?aniem," })],
+    spacing: { after: 80 }
+  });
+
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: "Zesp?? INOPARTS" })],
+    spacing: { after: 120 }
+  });
+
+  return Packer.toBlob(
+    new Document({
+      sections: [{ children: docChildren }]
+    })
+  );
 }
 
-function initEvents() {
+function buildDocx(claim, lang, answerText, decisionValue) {
+  if (!window.docx) throw new Error("Brak biblioteki docx");
 
-  document.addEventListener("DOMContentLoaded", initPasswordGate);
+  const upperLang = (lang || "").toUpperCase();
+  if (upperLang === "DE") return buildDocxGerman(claim, answerText, decisionValue);
+  if (upperLang === "CZ") return buildDocxCzech(claim, answerText, decisionValue);
+  if (upperLang === "SK") return buildDocxSlovak(claim, answerText, decisionValue);
+  if (upperLang === "HU") return buildDocxHungarian(claim, answerText, decisionValue);
+  if (upperLang === "EN") return buildDocxEnglish(claim, answerText, decisionValue);
 
-  attachS1FetchListener();
-  attachS1SaveListener();
-  attachS2SearchListener();
-  attachS2RangeListener();
-  attachClaimEditHandlers();
-  attachLanguageListeners();
-  attachS3FetchListener();
-  attachS3GenerateListener();
-  attachNoResponseToggle();
-  attachProcessorForm();
-
+  return buildDocxPolish(claim, answerText, decisionValue);
 }
-
-initEvents();
