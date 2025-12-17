@@ -46,7 +46,32 @@
     <div class="home-grid">
       <div class="card home-primary">
         <h3>Instrukcja u&#380;ytkowania</h3>
-        <p class="muted">Tu wstawisz opis krok po kroku jak pracowa&#263; z modu&#322;ami CER.</p>
+        <ul class="muted" style="line-height:1.6; padding-left:18px;">
+          <li><strong>Start (hasło)</strong> – po wejściu wpisz hasło, odblokuj. Pasek górny przełącza moduły: Główna, Dodaj zgłoszenie, Ewidencja, Generator, Reset.</li>
+          <li><strong>Dodaj zgłoszenie</strong>:
+            <ul style="padding-left:14px; margin-top:6px;">
+              <li>1) Wpisz numer zamówienia, kliknij „Pobierz dane zamówienia”. System zaciągnie dane klienta, adres, produkty.</li>
+              <li>2) Zaznacz produkty do zgłoszenia (checkbox), ustaw ilość (domyślnie pełna ilość z zamówienia).</li>
+              <li>3) Wypełnij pola (powód, typ, notatka, pracownik – jeśli wymagane). Kliknij „Zapisz zgłoszenie” – trafia do CER.</li>
+            </ul>
+          </li>
+          <li><strong>Ewidencja</strong>:
+            <ul style="padding-left:14px; margin-top:6px;">
+              <li>Pojedyncze: wpisz numer w „Szukaj pojedynczego”, kliknij „Pobierz”. Otwórz kartę, przycisk „Edytuj” pozwala poprawić adres/powód/typ/dec./notatkę, potem „Zapisz”.</li>
+              <li>Lista: wybierz zakres (Ostatnie 7/14 dni, miesiąc, 20/50, wymagające odpowiedzi, status w trakcie/zakończone, wszystkie) i „Pobierz listę”. W tabeli masz daty zgłoszenia/terminu decyzji/zamknięcia. Przyciski: „Szczegóły” (rozwija kartę) i „Generuj” (przenosi numer do Generatora).</li>
+            </ul>
+          </li>
+          <li><strong>Generator</strong>:
+            <ul style="padding-left:14px; margin-top:6px;">
+              <li>1) Wpisz numer reklamacji/zamówienia, kliknij „Pokaż dane”.</li>
+              <li>2) Wybierz decyzję (Negatywna/Pozytywna), język tłumaczenia (PL/CZ/DE/SK/HU/EN). CZ w backendzie idzie jako CS.</li>
+              <li>3) Opcja „Brak odpowiedzi klienta” – chowa pole odpowiedzi i wstawia tekst automatyczny.</li>
+              <li>4) Kliknij „Generuj odpowiedź” – wygeneruje DOCX z danymi (klient, adres, produkty, daty). Plik pobierze się automatycznie.</li>
+            </ul>
+          </li>
+          <li><strong>Produkty/adresy/dat y</strong> – pobierane z webhooków Sellasist/CER. Jeśli czegoś brakuje lub wymaga korekty, popraw w Ewidencji (Edytuj → Zapisz), potem wróć do Generatora i wygeneruj ponownie.</li>
+          <li><strong>Reset</strong> – czyści formularze i chowa sekcje wyników (nie usuwa danych z CER).</li>
+        </ul>
       </div>
       <div class="home-right">
         <div class="card home-secondary">
