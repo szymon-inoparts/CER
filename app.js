@@ -2222,8 +2222,20 @@ function attachS3GenerateListener() {
     const translatedAnswer = translations[0]?.text || answer;
     const translatedDecision = translations[1]?.text || decision;
     const translatedReason = translations[2]?.text || s3CurrentClaim?.reason;
+    const translatedProductNames = translations.slice(3).map((t) => t?.text).filter(Boolean);
+    const translatedProducts =
+      Array.isArray(payload.products) && payload.products.length
+        ? payload.products.map((p, idx) => ({
+            ...p,
+            name: translatedProductNames[idx] || p.name
+          }))
+        : null;
 
-    const docClaim = { ...s3CurrentClaim, reason: translatedReason };
+    const docClaim = {
+      ...s3CurrentClaim,
+      reason: translatedReason,
+      products: translatedProducts || s3CurrentClaim?.products
+    };
     const lang = (selectedLang || "PL").toUpperCase();
     const t = DOCX_TRANSLATIONS[lang] || DOCX_TRANSLATIONS.PL;
     const decisionValue = translatedDecision || t.decisionValues?.[decision] || decision;
