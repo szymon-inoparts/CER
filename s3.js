@@ -78,6 +78,8 @@ function initS3() {
       language: mapLangForBackend(selectedLang),
       answer,
       noResponse: noResp,
+      fullClaim: s3CurrentClaim, // pełne dane przekazywane dalej
+      fullProducts: s3CurrentClaim?.products || [],
       products: Array.isArray(s3CurrentClaim?.products)
         ? s3CurrentClaim.products.map((p) => ({
             name: p.name,
