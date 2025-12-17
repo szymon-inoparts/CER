@@ -85,31 +85,28 @@ const DOCX_TRANSLATIONS = {
     decisionValues: { pozytywna: "Pozytywna", negatywna: "Negatywna" }
   },
   CZ: {
-    companyLabel: "?daje o spole?nosti:",
-    companyValue: "Ul. Adama Staszczyka 1/20, 30-123 Krak?w
-NIP: 6772477900",
-    customerLabel: "?daje o z?kazn?kovi:",
-    title: "Vyj?d?en? k reklamaci",
-    subjectLabel: "Vyj?d?en? k reklamaci",
+    companyLabel: "Údaje o společnosti:",
+    companyValue: "Ul. Adama Staszczyka 1/20, 30-123 Kraków\nNIP: 6772477900",
+    customerLabel: "Údaje o zákazníkovi:",
+    title: "Vyjádření k reklamaci",
+    subjectLabel: "Vyjádření k reklamaci",
     valueLabel: "Hodnota produktu:",
-    complaintDateLabel: "Datum p?ijet? reklamace:",
-    purchaseDateLabel: "Datum n?kupu:",
-    reasonLabel: "D?vod reklamace:",
-    descriptionLabel: "Od?vodn?n?:",
-    decisionLabel: "Rozhodnut? o reklamaci:",
-    resolutionLabel: "Od?vodn?n?:",
+    complaintDateLabel: "Datum přijetí reklamace:",
+    purchaseDateLabel: "Datum nákupu:",
+    reasonLabel: "Důvod reklamace:",
+    descriptionLabel: "Odůvodnění:",
+    decisionLabel: "Rozhodnutí o reklamaci:",
+    resolutionLabel: "Odůvodnění:",
     footer:
-      "Va?e reklamace byla posouzena v souladu se v?emi z?konn?mi pr?vy spot?ebitele. Upozor?ujeme, ?e m?te pr?vo podat proti tomuto rozhodnut? odvol?n?. V p??pad? dal??ch dotaz? jsme V?m pln? k dispozici.
-S pozdravem,
-T?m INOPARTS",
-    complaintTitle: "Vyj?d?en? k reklamaci",
+      "Vaše reklamace byla posouzena v souladu se všemi zákonnými právy spotřebitele. Upozorňujeme, že máte právo podat proti tomuto rozhodnutí odvolání. V případě dalších dotazů jsme Vám plně k dispozici.\nS pozdravem,\nTým INOPARTS",
+    complaintTitle: "Vyjádření k reklamaci",
     productsLabel: "Podrobnosti o produktu:",
-    productNameLabel: "N?zev:",
+    productNameLabel: "Název:",
     productSkuLabel: "SKU:",
     productEanLabel: "EAN:",
-    productQuantityLabel: "Mno?stv?:",
+    productQuantityLabel: "Množství:",
     complaintValueLabel: "Hodnota produktu:",
-    decisionValues: { pozytywna: "Uzn?no", negatywna: "Zam?tnuto" }
+    decisionValues: { pozytywna: "Uznáno", negatywna: "Zamítnuto" }
   },
   DE: {
     companyLabel: "INOPARTS SP. Z O.O.",
@@ -2121,3 +2118,8 @@ function buildDocx(claim, lang, answerText, decisionValue) {
 
   return buildDocxPolish(claim, answerText, decisionValue);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  initPasswordGate();
+  attachClaimEditHandlers();
+});
