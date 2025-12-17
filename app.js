@@ -2106,6 +2106,379 @@ function buildDocxPolish(claim, answerText, decisionValue) {
   );
 }
 
+// ------------------------------------------------------------
+//  OBSŁUGA APLIKACJI (S1/S2/S3)
+// ------------------------------------------------------------
+
+let s1FetchedOrder = null;
+let s3CurrentClaim = null;
+let selectedLang = "PL";
+
+function mapLangForBackend(lang) {
+  return (lang || "PL").toLowerCase();
+}
+
+function initS1() {
+  const fetchBtn = document.getElementById("s1-fetch");
+  const orderInput = document.getElementById("s1-order");
+  const orderBox = document.getElementById("s1-order-data");
+  const productsBox = document.getElementById("s1-products");
+  const saveBtn = document.getElementById("s1-save");
+  if (!fetchBtn || !orderInput || !orderBox || !productsBox || !saveBtn) return;
+
+  fetchBtn.addEventListener("click", async () => {
+    const num = orderInput.value.trim();
+    if (!num) return showToast("Wpisz numer zamówienia", "error");
+    try {
+      const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
+      const rawData = await res.json();
+      const dataItem = Array.isArray(rawData) ? rawData[0] : rawData;
+      const data = dataItem && typeof dataItem === "object" && dataItem.json ? dataItem.json : dataItem;
+      s1FetchedOrder = data;
+
+      orderBox.classList.remove("hidden");
+
+      const productsArr = Array.isArray(data?.products) ? data.products : [];
+      productsBox.innerHTML = productsArr.length
+        ? productsArr
+            .map(
+              (p, idx) => `
+        <div class="product-row">
+          <label>
+            <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
+            ${p.name} (${p.sku}) - ${p.price ?? ""} zł zamówiono: ${p.quantity}
+          </label>
+          <input type="number" class="s1-prod-qty" data-index="${idx}" min="1" max="${p.quantity || 1}" value="${p.quantity || 1}" />
+        </div>
+      `
+            )
+            .join("")
+        : `<div class="muted">Brak produktów w odpowiedzi</div>`;
+
+      const bill =
+        data.bill_address ||
+        data.billAddress ||
+        data.billAddressRaw ||
+        data.billAddressFull ||
+        (data.orderDetails && data.orderDetails.bill_address);
+      const billParts = [];
+      if (bill) {
+        const directAddress =
+          (typeof bill === "string" ? bill : null) ||
+          bill.address ||
+          bill.full ||
+          bill.fullAddress ||
+          bill.full_address;
+        billParts.push(...normalizeAddressParts(directAddress));
+        if (typeof bill === "object" && bill) {
+          if (bill.street) billParts.push(String(bill.street).trim());
+          if (bill.home_number) billParts.push(String(bill.home_number).trim());
+          if (bill.flat_number) billParts.push(String(bill.flat_number).trim());
+          if (bill.postcode) billParts.push(String(bill.postcode).trim());
+          if (bill.city) billParts.push(String(bill.city).trim());
+          const countryLine =
+            bill.country && typeof bill.country === "object" ? bill.country.code || bill.country.name : bill.country;
+          if (countryLine) billParts.push(String(countryLine).trim());
+        }
+      }
+      const billInput = document.getElementById("s1-bill-full");
+      if (billInput) billInput.value = billParts.filter(Boolean).join(", ");
+
+      document.getElementById("s1-client-name").value = data.clientName || "";
+      document.getElementById("s1-client-email").value = data.clientEmail || "";
+      document.getElementById("s1-client-phone").value = data.clientPhone || "";
+      document.getElementById("s1-client-nick").value = data.clientNick || "";
+      document.getElementById("s1-country").value = data.country || "";
+      document.getElementById("s1-date").value = data.orderDate || "";
+      document.getElementById("s1-platform").value = data.platform || "";
+      document.getElementById("s1-shipping").value = data.shippingCost ?? "";
+
+      showToast("Pobrano dane zamówienia");
+    } catch (err) {
+      showToast("Błąd pobierania", "error");
+    }
+  });
+
+  saveBtn.addEventListener("click", async () => {
+    const payload = {
+      order: orderInput.value,
+      orderDetails: s1FetchedOrder,
+      reportDate: document.getElementById("s1-report-date").value,
+      type: document.getElementById("s1-type").value,
+      reason: document.getElementById("s1-reason").value,
+      employee: document.getElementById("s1-employee").value,
+      note: document.getElementById("s1-note").value,
+      products: Array.from(document.querySelectorAll(".product-row"))
+        .map((row, idx) => {
+          const check = row.querySelector(".s1-prod-check");
+          const qty = row.querySelector(".s1-prod-qty");
+          const meta = s1FetchedOrder?.products?.[idx] || {};
+          return {
+            include: check?.checked,
+            qty: Number(qty?.value ?? 0),
+            sku: meta.sku,
+            name: meta.name,
+            orderedQuantity: meta.quantity,
+            price: Number(meta.price ?? 0)
+          };
+        })
+        .filter((p) => p.include && p.qty > 0)
+    };
+    try {
+      await fetch(SEND_TO_CER_WEBHOOK, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      showToast("Zapisano zgłoszenie");
+    } catch (err) {
+      showToast("Błąd zapisu", "error");
+    }
+  });
+}
+
+function initS2() {
+  const searchBtn = document.getElementById("s2-search-btn");
+  const searchInput = document.getElementById("s2-search");
+  const singleBox = document.getElementById("s2-single-result");
+  const rangeBtn = document.getElementById("s2-range-btn");
+  const rangeSelect = document.getElementById("s2-range");
+  const listBox = document.getElementById("s2-list");
+  if (!searchBtn || !searchInput || !singleBox || !rangeBtn || !rangeSelect || !listBox) return;
+
+  searchBtn.addEventListener("click", async () => {
+    const num = searchInput.value.trim();
+    if (!num) return showToast("Podaj numer", "error");
+    try {
+      const res = await fetch(`${GET_ONE_FROM_CER_WEBHOOK}?order=${encodeURIComponent(num)}`);
+      const data = await res.json();
+      const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
+      singleBox.classList.remove("hidden");
+      singleBox.innerHTML = renderClaimCard(
+        claim,
+        `<button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedź</button>`
+      );
+      showToast("Pobrano zgłoszenie");
+    } catch (err) {
+      showToast("Nie znaleziono", "error");
+    }
+  });
+
+  rangeBtn.addEventListener("click", async () => {
+    const range = rangeSelect.value;
+    try {
+      const params = new URLSearchParams({ preset: range, range });
+      const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
+      const rawText = await res.text();
+      let parsed;
+      try {
+        parsed = JSON.parse(rawText);
+      } catch {
+        parsed = rawText;
+      }
+      let rows = Array.isArray(parsed) ? parsed : parsed && typeof parsed === "object" ? [parsed] : [];
+      if (!rows.length) rows = parseObjectsFromText(rawText);
+      if (!rows.length) rows = unwrapArray(parsed);
+
+      listBox.classList.remove("hidden");
+      if (!res.ok) {
+        listBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Błąd HTTP ${res.status}
+${escapeHtml(rawText)}</pre></div>`;
+        showToast(`Błąd pobierania (${res.status})`, "error");
+        return;
+      }
+      if (!rows.length) {
+        listBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak rozpoznanych danych. Surowa odpowiedź webhooka:
+${escapeHtml(rawText)}</pre></div>`;
+        showToast("Brak danych z webhooka", "error");
+        return;
+      }
+
+      let html = `<table>
+        <tr>
+          <th>#</th>
+          <th>Reklamacja</th>
+          <th>Zamówienie</th>
+          <th>Klient</th>
+          <th>Marketplace</th>
+          <th>Status</th>
+          <th>Przyjęcie</th>
+          <th>Termin decyzji</th>
+          <th>Rozwiązanie</th>
+          <th>Akcja</th>
+        </tr>`;
+      rows.forEach((row, idx) => {
+        const claim = normalizeClaim(row);
+        const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
+        html += `
+        <tr>
+          <td>${claim.rowNumber ? claim.rowNumber : idx + 1}</td>
+          <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId}'">${claim.claimId || "-"}</td>
+          <td>${claim.orderId || "-"}</td>
+          <td>${claim.customer || "-"}</td>
+          <td>${claim.marketplace || "-"}</td>
+          <td>${claim.status || "-"}</td>
+          <td>${formatDate(claim.receivedAt)}</td>
+          <td>${formatDate(claim.decisionDue)}</td>
+          <td>${formatDate(claim.resolvedAt)}</td>
+          <td>
+            <div class="action-cell">
+              <button class="btn btn-link" onclick="handleExpand('${expId}', this)">Szczegóły</button>
+              <button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="expand-row" data-exp-id="${expId}" style="display:none;">
+          <td colspan="10">${renderClaimTable(claim)}</td>
+        </tr>`;
+      });
+      html += "</table>";
+      listBox.innerHTML = html;
+      showToast("Pobrano listę");
+    } catch (err) {
+      showToast("Błąd pobierania", "error");
+    }
+  });
+}
+
+function initLangButtons() {
+  document.querySelectorAll(".lang-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      selectedLang = btn.dataset.lang || "PL";
+      document.querySelectorAll(".lang-btn").forEach((b) => {
+        b.style.background = "";
+        b.style.color = "";
+      });
+      btn.style.background = "var(--orange)";
+      btn.style.color = "#fff";
+    });
+  });
+}
+
+function renderS3Details(claim) {
+  const box = document.getElementById("s3-details");
+  if (!box) return;
+  box.classList.remove("hidden");
+  box.innerHTML = renderClaimCard(claim);
+}
+
+function initS3() {
+  const fetchBtn = document.getElementById("s3-fetch");
+  const numInput = document.getElementById("s3-number");
+  const genBtn = document.getElementById("s3-generate");
+  if (!fetchBtn || !numInput || !genBtn) return;
+
+  fetchBtn.addEventListener("click", async () => {
+    const num = numInput.value.trim();
+    if (!num) return showToast("Podaj numer", "error");
+    try {
+      const res = await fetch(`${SHOW_FROM_CER_WEBHOOK}?number=${encodeURIComponent(num)}`);
+      const data = await res.json();
+      const claim = normalizeClaim(Array.isArray(data) ? data[0] : data);
+      s3CurrentClaim = claim;
+      renderS3Details(claim);
+      showToast("Załadowano dane");
+    } catch {
+      showToast("Nie znaleziono", "error");
+    }
+  });
+
+  genBtn.addEventListener("click", async () => {
+    if (!window.docx) return showToast("Brak biblioteki DOCX", "error");
+    const num = numInput.value.trim();
+    const decision = document.getElementById("s3-decision").value;
+    const noResp = document.getElementById("s3-noresp").checked;
+    if (!num) return showToast("Podaj numer", "error");
+    const answer = noResp ? DEFAULT_NO_RESPONSE_TEXT : document.getElementById("s3-answer").value;
+
+    const payload = {
+      number: num,
+      decision,
+      language: mapLangForBackend(selectedLang),
+      answer,
+      noResponse: noResp,
+      products: Array.isArray(s3CurrentClaim?.products)
+        ? s3CurrentClaim.products.map((p) => ({
+            name: p.name,
+            sku: p.sku,
+            ean: p.ean,
+            quantity: p.quantity,
+            price: p.price,
+            currency: p.currency
+          }))
+        : [],
+      claim: s3CurrentClaim
+        ? {
+            claimId: s3CurrentClaim.claimId,
+            orderId: s3CurrentClaim.orderId,
+            customer: s3CurrentClaim.customer,
+            marketplace: s3CurrentClaim.marketplace,
+            status: s3CurrentClaim.status,
+            value: s3CurrentClaim.value,
+            reason: s3CurrentClaim.reason,
+            type: s3CurrentClaim.type,
+            decisionOriginal: s3CurrentClaim.decision,
+            resolution: s3CurrentClaim.resolution,
+            agent: s3CurrentClaim.agent,
+            note: s3CurrentClaim.note,
+            myNewField: s3CurrentClaim.myNewField,
+            receivedAt: s3CurrentClaim.receivedAt,
+            decisionDue: s3CurrentClaim.decisionDue,
+            resolvedAt: s3CurrentClaim.resolvedAt
+          }
+        : null
+    };
+
+    try {
+      const res = await fetch(GENERATE_WEBHOOK, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const responseJson = await res.json();
+      const responseItem = Array.isArray(responseJson) ? responseJson[0] : responseJson;
+      const translations = Array.isArray(responseItem?.translations) ? responseItem.translations : [];
+      const translatedAnswer = translations[0]?.text || answer;
+      const translatedDecision = translations[1]?.text || decision;
+      const translatedReason = translations[2]?.text || s3CurrentClaim?.reason;
+      const translatedProductNames = translations.slice(3).map((t) => t?.text).filter(Boolean);
+      const translatedProducts =
+        Array.isArray(payload.products) && payload.products.length
+          ? payload.products.map((p, idx) => ({
+              ...p,
+              name: translatedProductNames[idx] || p.name
+            }))
+          : s3CurrentClaim?.products || [];
+
+      const docClaim = {
+        ...s3CurrentClaim,
+        reason: translatedReason,
+        products: translatedProducts
+      };
+      const lang = (selectedLang || "PL").toUpperCase();
+      const t = DOCX_TRANSLATIONS[lang] || DOCX_TRANSLATIONS.PL;
+      const decisionValue = translatedDecision || t.decisionValues?.[decision] || decision;
+
+      const blob = await buildDocx(docClaim, lang, translatedAnswer, decisionValue);
+      const filename = `CER-${num}.docx`;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast("Wygenerowano odpowiedź");
+    } catch (err) {
+      console.error(err);
+      showToast("Błąd generowania", "error");
+    }
+  });
+}
+
 function buildDocx(claim, lang, answerText, decisionValue) {
   if (!window.docx) throw new Error("Brak biblioteki docx");
 
@@ -2122,4 +2495,8 @@ function buildDocx(claim, lang, answerText, decisionValue) {
 document.addEventListener("DOMContentLoaded", () => {
   initPasswordGate();
   attachClaimEditHandlers();
+  initLangButtons();
+  initS1();
+  initS2();
+  initS3();
 });
