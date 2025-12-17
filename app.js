@@ -598,6 +598,66 @@ function normalizeAddressParts(value) {
 
 }
 
+function formatClientLines(claim = {}) {
+
+  const lines = [];
+
+  if (claim.customer) lines.push(String(claim.customer));
+
+  const parts = normalizeAddressParts(claim.address || claim.billAddressFull);
+
+  if (!parts.length) return lines;
+
+  const postalRegex = /^\d{2}-\d{3}$/;
+
+  let street = parts[0];
+
+  let postal = parts.find((p) => postalRegex.test(p));
+
+  let city = "";
+
+  let country = "";
+
+  if (postal) {
+
+    const idx = parts.indexOf(postal);
+
+    city = parts[idx + 1] || "";
+
+    country = parts[idx + 2] || parts[parts.length - 1] || "";
+
+  } else if (parts.length >= 3) {
+
+    street = parts[0];
+
+    postal = parts[1];
+
+    city = parts[2];
+
+    country = parts[3] || "";
+
+  } else if (parts.length === 2) {
+
+    street = parts[0];
+
+    city = parts[1];
+
+  } else {
+
+    street = parts.join(", ");
+
+  }
+
+  if (street) lines.push(street);
+
+  if (postal || city) lines.push(`${postal ? postal + " " : ""}${city}`.trim());
+
+  if (country && !lines.includes(country)) lines.push(country);
+
+  return lines.filter(Boolean);
+
+}
+
 function buildAddressFromBill(bill) {
 
   if (!bill) return "";
@@ -1313,17 +1373,23 @@ function appendCompanySection(docChildren, t, Paragraph, TextRun) {
 
 function appendClientSection(docChildren, t, claim, Paragraph, TextRun) {
 
-  docChildren.push(
+  docChildren.push(new Paragraph({ children: [new TextRun({ text: t.customerLabel, bold: true })], spacing: { before: 120, after: 80 } }));
 
-    new Paragraph({ children: [new TextRun({ text: t.customerLabel, bold: true })], spacing: { before: 120, after: 80 } })
+  const clientLines = formatClientLines(claim);
 
-  );
+  if (clientLines.length) {
 
-  if (claim.customer) docChildren.push(new Paragraph({ children: [new TextRun({ text: claim.customer })], spacing: { after: 40 } }));
+    clientLines.forEach((line, idx) =>
 
-  if (claim.address)
+      docChildren.push(new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: idx === clientLines.length - 1 ? 120 : 40 } }))
 
-    docChildren.push(new Paragraph({ children: [new TextRun({ text: claim.address })], spacing: { after: 120 } }));
+    );
+
+  } else {
+
+    docChildren.push(new Paragraph({ children: [new TextRun({ text: "-" })], spacing: { after: 120 } }));
+
+  }
 
 }
 
@@ -1427,13 +1493,15 @@ function buildDocxGerman(claim, answerText, decisionValue) {
   addParagraph({ children: [new TextRun({ text: "Ul. Adama Staszczyka 1/20, 30-123 Kraków" })], spacing: { after: 20 } });
   addParagraph({ children: [new TextRun({ text: "NIP: 6772477900" })], spacing: { after: 200 } });
 
-  if (claim.customer || claim.address) {
-    const clientLines = [claim.customer, claim.address].filter(Boolean).join("\n");
-    addParagraph({
-      alignment: AlignmentType.RIGHT,
-      children: [new TextRun({ text: clientLines })],
-      spacing: { after: 200 }
-    });
+  const clientLines = formatClientLines(claim);
+  if (clientLines.length) {
+    clientLines.forEach((line, idx) =>
+      addParagraph({
+        alignment: AlignmentType.RIGHT,
+        children: [new TextRun({ text: line })],
+        spacing: { after: idx === clientLines.length - 1 ? 200 : 40 }
+      })
+    );
   }
 
   addParagraph({
