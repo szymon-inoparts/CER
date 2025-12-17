@@ -1082,25 +1082,17 @@ function getTypeOptionsForEdit(selectedValue) {
 
     : [
 
-        { value: "1", text: "Typ 1" },
+        { value: "Wada produktu", text: "Wada produktu" },
 
-        { value: "2", text: "Typ 2" },
+        { value: "Uszkodzone przez klienta", text: "Uszkodzone przez klienta" },
 
-        { value: "3", text: "Typ 3" },
+        { value: "Błąd magazynowy", text: "Błąd magazynowy" },
 
-        { value: "4", text: "Typ 4" },
+        { value: "Brak informacji od klienta", text: "Brak informacji od klienta" },
 
-        { value: "5", text: "Typ 5" },
+        { value: "Brak możliwości weryfikacji", text: "Brak możliwości weryfikacji" },
 
-        { value: "6", text: "Typ 6" },
-
-        { value: "7", text: "Typ 7" },
-
-        { value: "8", text: "Typ 8" },
-
-        { value: "9", text: "Typ 9" },
-
-        { value: "10", text: "Typ 10" }
+        { value: "Utrata gwarancji", text: "Utrata gwarancji" }
 
       ];
 
