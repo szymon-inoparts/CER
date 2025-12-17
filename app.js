@@ -1691,6 +1691,123 @@ function buildDocxCzech(claim, answerText, decisionValue) {
   );
 }
 
+function buildDocxSlovak(claim, answerText, decisionValue) {
+  if (!window.docx) throw new Error("Brak biblioteki docx");
+  const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
+
+  const todayDot = formatDateDot(new Date());
+  const purchaseDate = formatDateDot(claim.purchaseDate || claim.orderDate);
+  const complaintDate = formatDateDot(claim.receivedAt || claim.decisionDue || new Date());
+  const decLower = String(decisionValue || "").toLowerCase();
+  const decisionText = decLower.includes("zam")
+    ? "Zamietnuté"
+    : decLower.includes("uzn") || decLower.includes("poz")
+    ? "Uznané"
+    : decisionValue || "Zamietnuté";
+  const products = Array.isArray(claim.products) ? claim.products : [];
+  const firstProduct = products[0] || {};
+  const priceText = `${firstProduct.price ?? ""} ${firstProduct.currency || claim.currency || ""}`.trim();
+
+  const docChildren = [];
+  const addParagraph = (opts) => docChildren.push(new Paragraph(opts));
+
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: `${todayDot}, Kraków`, bold: true })],
+    spacing: { after: 240 }
+  });
+
+  addParagraph({
+    children: [new TextRun({ text: "INOPARTS SP. Z O.O.", bold: true })],
+    spacing: { after: 40 }
+  });
+  addParagraph({ children: [new TextRun({ text: "Ul. Adama Staszczyka 1/20, 30-123 Kraków" })], spacing: { after: 20 } });
+  addParagraph({ children: [new TextRun({ text: "IČ DPH: PL6772477900" })], spacing: { after: 200 } });
+
+  const clientLines = formatClientLines(claim);
+  if (clientLines.length) {
+    clientLines.forEach((line, idx) =>
+      addParagraph({
+        alignment: AlignmentType.RIGHT,
+        children: [new TextRun({ text: line })],
+        spacing: { after: idx === clientLines.length - 1 ? 200 : 40 }
+      })
+    );
+  }
+
+  addParagraph({
+    alignment: AlignmentType.CENTER,
+    children: [new TextRun({ text: "Vyjadrenie k reklamácii", bold: true })],
+    spacing: { after: 200 }
+  });
+
+  addParagraph({ children: [new TextRun({ text: "Podrobnosti o produkte:", bold: true })], spacing: { after: 80 } });
+
+  if (products.length) {
+    const bullets = [
+      { label: "Názov", value: firstProduct.name },
+      { label: "SKU", value: firstProduct.sku },
+      { label: "EAN", value: firstProduct.ean },
+      { label: "Množstvo", value: firstProduct.quantity },
+      { label: "Hodnota produktu", value: priceText }
+    ];
+    bullets.forEach((item) => {
+      addParagraph({
+        children: [
+          new TextRun({ text: "•  " }),
+          new TextRun({ text: `${item.label}: `, bold: true }),
+          new TextRun({ text: item.value !== undefined && item.value !== null && item.value !== "" ? String(item.value) : "-" })
+        ],
+        spacing: { after: 40 }
+      });
+    });
+  } else {
+    addParagraph({ children: [new TextRun({ text: "•  -" })], spacing: { after: 80 } });
+  }
+
+  const addLabelValue = (label, value) => {
+    addParagraph({
+      children: [new TextRun({ text: `${label}: `, bold: true }), new TextRun({ text: value || "-" })],
+      spacing: { after: 120 }
+    });
+  };
+
+  addLabelValue("Dátum nákupu", purchaseDate);
+  addLabelValue("Dátum prijatia reklamácie", complaintDate);
+  addLabelValue("Dôvod reklamácie", claim.reason || "-");
+  addLabelValue("Rozhodnutie o reklamácii", decisionText || "-");
+  addLabelValue("Odôvodnenie", answerText || "-");
+
+  addParagraph({
+    children: [
+      new TextRun({
+        text:
+          "Vaša reklamácia bola posúdená v súlade so všetkými zákonnými právami spotrebiteľa. Upozorňujeme Vás, že máte právo podať proti tomuto rozhodnutiu odvolanie. V prípade ďalších otázok sme Vám plne k dispozícii.",
+        bold: false
+      })
+    ],
+    spacing: { before: 160, after: 200 }
+  });
+
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: "S pozdravom," })],
+    spacing: { after: 80 }
+  });
+
+  addParagraph({
+    alignment: AlignmentType.RIGHT,
+    children: [new TextRun({ text: "Tím INOPARTS" })],
+    spacing: { after: 120 }
+  });
+
+  return Packer.toBlob(
+    new Document({
+      sections: [{ children: docChildren }]
+    })
+  );
+}
+
 function buildDocx(claim, lang, answerText, decisionValue) {
   if (!window.docx) throw new Error("Brak biblioteki docx");
   const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
@@ -1698,6 +1815,7 @@ function buildDocx(claim, lang, answerText, decisionValue) {
 
   if (lang === "DE") return buildDocxGerman(claim, answerText, decisionValue);
   if (lang === "CZ") return buildDocxCzech(claim, answerText, decisionValue);
+  if (lang === "SK") return buildDocxSlovak(claim, answerText, decisionValue);
 
   const today = new Date().toISOString().slice(0, 10);
   const docChildren = [];
