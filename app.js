@@ -2270,17 +2270,18 @@ function initS2() {
       const params = new URLSearchParams({ preset: range, range });
       const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
       const rawText = await res.text();
+      console.info("GET_LAST_FROM_CER response", { status: res.status, ok: res.ok, rawText });
       let parsed;
       try {
         parsed = JSON.parse(rawText);
       } catch {
         parsed = rawText;
       }
-      let rows = Array.isArray(parsed) ? parsed : parsed && typeof parsed === "object" ? [parsed] : [];
-      if (!rows.length) rows = parseObjectsFromText(rawText);
-      if (!rows.length) rows = unwrapArray(parsed);
+    let rows = Array.isArray(parsed) ? parsed : parsed && typeof parsed === "object" ? [parsed] : [];
+    if (!rows.length) rows = parseObjectsFromText(rawText);
+    if (!rows.length) rows = unwrapArray(parsed);
 
-      listBox.classList.remove("hidden");
+    listBox.classList.remove("hidden");
       if (!res.ok) {
         listBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Błąd HTTP ${res.status}
 ${escapeHtml(rawText)}</pre></div>`;
@@ -2294,7 +2295,7 @@ ${escapeHtml(rawText)}</pre></div>`;
         return;
       }
 
-      let html = `<table>
+    let html = `<table>
         <tr>
           <th>#</th>
           <th>Reklamacja</th>
@@ -2333,12 +2334,13 @@ ${escapeHtml(rawText)}</pre></div>`;
         </tr>`;
       });
       html += "</table>";
-      listBox.innerHTML = html;
-      showToast("Pobrano listę");
-    } catch (err) {
-      showToast("Błąd pobierania", "error");
-    }
-  });
+    listBox.innerHTML = html;
+    showToast("Pobrano listę");
+  } catch (err) {
+    console.error("GET_LAST_FROM_CER error", err);
+    showToast("Błąd pobierania", "error");
+  }
+});
 }
 
 function initLangButtons() {
