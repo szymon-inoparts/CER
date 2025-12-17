@@ -1,0 +1,126 @@
+// Część 1: dodawanie zgłoszenia (pobieranie z Sellasist, zapis do CER)
+
+let s1FetchedOrder = null;
+let s1OrderBox;
+let s1Products;
+
+function initS1() {
+  const fetchBtn = document.getElementById("s1-fetch");
+  const orderInput = document.getElementById("s1-order");
+  s1OrderBox = document.getElementById("s1-order-data");
+  s1Products = document.getElementById("s1-products");
+  const saveBtn = document.getElementById("s1-save");
+  if (!fetchBtn || !orderInput || !s1OrderBox || !s1Products || !saveBtn) return;
+
+  fetchBtn.addEventListener("click", async () => {
+    const num = orderInput.value.trim();
+    if (!num) return showToast("Wpisz numer zamówienia", "error");
+    try {
+      const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
+      const rawData = await res.json();
+      const dataItem = Array.isArray(rawData) ? rawData[0] : rawData;
+      const data = dataItem && typeof dataItem === "object" && dataItem.json ? dataItem.json : dataItem;
+      s1FetchedOrder = data;
+
+      s1OrderBox.classList.remove("hidden");
+
+      const productsArr = Array.isArray(data?.products) ? data.products : [];
+      s1Products.innerHTML = productsArr.length
+        ? productsArr
+            .map(
+              (p, idx) => `
+        <div class="product-row">
+          <label>
+            <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
+            ${p.name} (${p.sku}) - ${p.price ?? ""} zł zamówiono: ${p.quantity}
+          </label>
+          <input type="number" class="s1-prod-qty" data-index="${idx}" min="1" max="${p.quantity || 1}" value="${p.quantity || 1}" />
+        </div>
+      `
+            )
+            .join("")
+        : `<div class="muted">Brak produktów w odpowiedzi</div>`;
+
+      const bill =
+        data.bill_address ||
+        data.billAddress ||
+        data.billAddressRaw ||
+        data.billAddressFull ||
+        (data.orderDetails && data.orderDetails.bill_address);
+      const billParts = [];
+      if (bill) {
+        const directAddress =
+          (typeof bill === "string" ? bill : null) ||
+          bill.address ||
+          bill.full ||
+          bill.fullAddress ||
+          bill.full_address;
+        billParts.push(...normalizeAddressParts(directAddress));
+        if (typeof bill === "object" && bill) {
+          if (bill.street) billParts.push(String(bill.street).trim());
+          if (bill.home_number) billParts.push(String(bill.home_number).trim());
+          if (bill.flat_number) billParts.push(String(bill.flat_number).trim());
+          if (bill.postcode) billParts.push(String(bill.postcode).trim());
+          if (bill.city) billParts.push(String(bill.city).trim());
+          const countryLine =
+            bill.country && typeof bill.country === "object" ? bill.country.code || bill.country.name : bill.country;
+          if (countryLine) billParts.push(String(countryLine).trim());
+        }
+      }
+      const billInput = document.getElementById("s1-bill-full");
+      if (billInput) billInput.value = billParts.filter(Boolean).join(", ");
+
+      document.getElementById("s1-client-name").value = data.clientName || "";
+      document.getElementById("s1-client-email").value = data.clientEmail || "";
+      document.getElementById("s1-client-phone").value = data.clientPhone || "";
+      document.getElementById("s1-client-nick").value = data.clientNick || "";
+      document.getElementById("s1-country").value = data.country || "";
+      document.getElementById("s1-date").value = data.orderDate || "";
+      document.getElementById("s1-platform").value = data.platform || "";
+      document.getElementById("s1-shipping").value = data.shippingCost ?? "";
+
+      showToast("Pobrano dane zamówienia");
+    } catch (err) {
+      showToast("Błąd pobierania", "error");
+    }
+  });
+
+  saveBtn.addEventListener("click", async () => {
+    const payload = {
+      order: orderInput.value,
+      orderDetails: s1FetchedOrder,
+      reportDate: document.getElementById("s1-report-date").value,
+      type: document.getElementById("s1-type").value,
+      reason: document.getElementById("s1-reason").value,
+      employee: document.getElementById("s1-employee").value,
+      note: document.getElementById("s1-note").value,
+      products: Array.from(document.querySelectorAll(".product-row"))
+        .map((row, idx) => {
+          const check = row.querySelector(".s1-prod-check");
+          const qty = row.querySelector(".s1-prod-qty");
+          const meta = s1FetchedOrder?.products?.[idx] || {};
+          return {
+            include: check?.checked,
+            qty: Number(qty?.value ?? 0),
+            sku: meta.sku,
+            name: meta.name,
+            orderedQuantity: meta.quantity,
+            price: Number(meta.price ?? 0)
+          };
+        })
+        .filter((p) => p.include && p.qty > 0)
+    };
+
+    try {
+      await fetch(SEND_TO_CER_WEBHOOK, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      showToast("Zapisano zgłoszenie");
+    } catch (err) {
+      showToast("Błąd zapisu", "error");
+    }
+  });
+}
+
