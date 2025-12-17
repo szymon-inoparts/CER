@@ -34,7 +34,20 @@ function initS3() {
   const fetchBtn = document.getElementById("s3-fetch");
   const numInput = document.getElementById("s3-number");
   const genBtn = document.getElementById("s3-generate");
+  const answerBox = document.getElementById("s3-answer");
+  const noRespCheckbox = document.getElementById("s3-noresp");
   if (!fetchBtn || !numInput || !genBtn) return;
+
+  if (noRespCheckbox && answerBox) {
+    const toggleAnswer = () => {
+      const isAuto = noRespCheckbox.checked;
+      const wrapper = answerBox.closest(".field");
+      if (wrapper) wrapper.style.display = isAuto ? "none" : "";
+      if (isAuto) answerBox.value = "";
+    };
+    noRespCheckbox.addEventListener("change", toggleAnswer);
+    toggleAnswer();
+  }
 
   fetchBtn.addEventListener("click", async () => {
     const num = numInput.value.trim();
