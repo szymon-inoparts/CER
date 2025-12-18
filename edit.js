@@ -38,11 +38,11 @@ function getTypeOptionsForEdit(selectedValue) {
 }
 
 function getStatusOptionsForEdit(selectedValue) {
-  const defaults = ["W trakcie", "Zakończone", "Wymaga odpowiedzi", "Nowa"];
-  const list = Array.from(new Set([selectedValue, ...defaults].filter(Boolean)));
-  return list
+  const allowed = ["W trakcie", "Zakończone"];
+  const selected = allowed.includes(selectedValue) ? selectedValue : allowed[0];
+  return allowed
     .map((status) => {
-      const isSelected = String(status) === String(selectedValue);
+      const isSelected = String(status) === String(selected);
       return `<option value="${escapeAttribute(status)}"${isSelected ? " selected" : ""}>${escapeHtml(status)}</option>`;
     })
     .join("");
