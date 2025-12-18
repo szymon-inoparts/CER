@@ -12,6 +12,17 @@
 </head>
 <body>
 
+<!-- BLOKADA HASŁEM -->
+<div id="password-overlay" class="auth-overlay">
+  <div class="auth-card">
+    <h2>Wprowadź hasło</h2>
+    <p>Aby przejść do systemu CER, wpisz hasło dostępu.</p>
+    <input id="password-input" type="password" placeholder="Hasło" autocomplete="off" />
+    <button class="btn btn-primary" id="password-submit">Odblokuj</button>
+    <p id="password-error" class="auth-error hidden">Nieprawidłowe hasło. Spróbuj ponownie.</p>
+  </div>
+</div>
+
 <div class="layout-main">
   <header class="topbar">
     <div class="topbar-progress"><div class="topbar-progress__fill"></div></div>

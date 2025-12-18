@@ -8,7 +8,7 @@ const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-o
 const PROCESSORS_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/procesorzy-reklamacji";
 const UPDATE_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/aktualizacja-CER";
 
-// Brak hasła – odblokowane
+const PASSWORD_VALUE = "inoparts";
 const DEFAULT_NO_RESPONSE_TEXT =
   "Brak możliwości weryfikacji: Pomimo naszych prób kontaktu nie otrzymaliśmy odpowiedzi, dlatego zamykamy zgłoszenie.";
 
