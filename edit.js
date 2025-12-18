@@ -37,6 +37,17 @@ function getTypeOptionsForEdit(selectedValue) {
     .join("");
 }
 
+function getStatusOptionsForEdit(selectedValue) {
+  const defaults = ["W trakcie", "Zakończone", "Wymaga odpowiedzi", "Nowa"];
+  const list = Array.from(new Set([selectedValue, ...defaults].filter(Boolean)));
+  return list
+    .map((status) => {
+      const isSelected = String(status) === String(selectedValue);
+      return `<option value="${escapeAttribute(status)}"${isSelected ? " selected" : ""}>${escapeHtml(status)}</option>`;
+    })
+    .join("");
+}
+
 function deriveTypeLabel(value) {
   const select = document.getElementById("s1-type");
   if (select) {
@@ -54,6 +65,9 @@ function buildEditControl(field, value) {
   if (field === "type") {
     return `<select ${baseAttr}>${getTypeOptionsForEdit(value)}</select>`;
   }
+  if (field === "status") {
+    return `<select ${baseAttr}>${getStatusOptionsForEdit(value)}</select>`;
+  }
   return `<input type="text" ${baseAttr} value="${escapeAttribute(value || "")}" />`;
 }
 
@@ -61,7 +75,7 @@ function enterClaimEdit(cardEl, triggerBtn) {
   if (!cardEl || cardEl.classList.contains("claim-card--editing")) return;
   const claim = getClaimFromCard(cardEl);
   if (!claim) return showToast("Brak danych do edycji", "error");
-  const editableFields = ["address", "reason", "type", "decision", "resolution", "note", "agent"];
+  const editableFields = ["address", "reason", "type", "status", "decision", "resolution", "note", "agent"];
   editableFields.forEach((field) => {
     const slot = cardEl.querySelector(`.value[data-field="${field}"]`);
     if (!slot) return;
@@ -104,6 +118,7 @@ function refreshCardAfterSave(cardEl, claim) {
   const updateFields = {
     reason: claim.reason,
     type: claim.type,
+    status: claim.status,
     decision: claim.decision,
     resolution: claim.resolution,
     note: claim.note,

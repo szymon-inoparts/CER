@@ -76,7 +76,7 @@ function renderClaimCard(raw, actionHtml = "") {
             <div class="claim-card__id">Reklamacja: ${claim.claimId || "-"}</div>
             <div class="claim-card__order">Zamówienie: ${claim.orderId || "-"}</div>
           </div>
-          ${claim.status ? `<div class="claim-card__status">${claim.status}</div>` : ""}
+          <div class="claim-card__status value" data-field="status">${claim.status || "-"}</div>
         </div>
 
         <div class="claim-card__keyline">
@@ -128,4 +128,3 @@ window.handleGenerateClick = handleGenerateClick;
 function renderClaimTable(claim) {
   return renderClaimCard(claim);
 }
-
