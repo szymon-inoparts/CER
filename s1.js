@@ -86,6 +86,20 @@ function initS1() {
   });
 
   saveBtn.addEventListener("click", async () => {
+    const requiredFields = [
+      { el: orderInput, name: "Numer zamówienia" },
+      { el: document.getElementById("s1-report-date"), name: "Data zgłoszenia" },
+      { el: document.getElementById("s1-type"), name: "Typ reklamacji" },
+      { el: document.getElementById("s1-reason"), name: "Powód reklamacji" },
+      { el: document.getElementById("s1-employee"), name: "Osoba odpowiedzialna" }
+    ];
+    const missing = requiredFields.filter((f) => !f.el || !String(f.el.value || "").trim());
+    if (missing.length) {
+      const names = missing.map((f) => f.name).join(", ");
+      showToast(`Uzupełnij pola: ${names}`, "error");
+      return;
+    }
+
     const payload = {
       order: orderInput.value,
       orderDetails: s1FetchedOrder,
@@ -123,4 +137,3 @@ function initS1() {
     }
   });
 }
-
