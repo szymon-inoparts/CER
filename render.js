@@ -4,7 +4,6 @@ function renderProductItem(p, currencyFallback) {
   return `<li>
               ${p.name ? `<strong>Nazwa:</strong> ${escapeHtml(p.name)}<br>` : ""}
               ${p.sku ? `<strong>SKU:</strong> ${escapeHtml(p.sku)}<br>` : ""}
-              ${p.ean ? `<strong>EAN:</strong> ${escapeHtml(p.ean)}<br>` : ""}
               ${
                 p.price !== undefined && p.price !== null && p.price !== ""
                   ? `<strong>Wartość:</strong> ${formatCurrency(p.price)} ${p.currency || currencyFallback}<br>`

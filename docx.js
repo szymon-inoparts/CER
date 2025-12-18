@@ -62,7 +62,6 @@ function buildDocxGerman(claim, answerText, decisionValue) {
     const bullets = [
       { label: "Name", value: firstProduct.name },
       { label: "SKU", value: firstProduct.sku },
-      { label: "EAN", value: firstProduct.ean },
       { label: "Menge", value: firstProduct.quantity },
       { label: "Produktwert", value: priceText }
     ];
@@ -141,7 +140,6 @@ function buildDocxCzech(claim, answerText, decisionValue) {
     const bullets = [
       { label: "Název", value: firstProduct.name },
       { label: "SKU", value: firstProduct.sku },
-      { label: "EAN", value: firstProduct.ean },
       { label: "Množství", value: firstProduct.quantity },
       { label: "Hodnota produktu", value: priceText }
     ];
@@ -221,7 +219,6 @@ function buildDocxSlovak(claim, answerText, decisionValue) {
     const bullets = [
       { label: "Názov", value: firstProduct.name },
       { label: "SKU", value: firstProduct.sku },
-      { label: "EAN", value: firstProduct.ean },
       { label: "Množstvo", value: firstProduct.quantity },
       { label: "Hodnota produktu", value: priceText }
     ];
@@ -305,7 +302,6 @@ function buildDocxHungarian(claim, answerText, decisionValue) {
     const bullets = [
       { label: "Terméknév", value: firstProduct.name },
       { label: "SKU", value: firstProduct.sku },
-      { label: "EAN", value: firstProduct.ean },
       { label: "Mennyiség", value: firstProduct.quantity },
       { label: "Termék értéke", value: priceText }
     ];
@@ -389,7 +385,6 @@ function buildDocxEnglish(claim, answerText, decisionValue) {
     const bullets = [
       { label: "Product Name", value: firstProduct.name },
       { label: "SKU", value: firstProduct.sku },
-      { label: "EAN", value: firstProduct.ean },
       { label: "Quantity", value: firstProduct.quantity },
       { label: "Product Value", value: priceText }
     ];
@@ -473,7 +468,6 @@ function buildDocxPolish(claim, answerText, decisionValue) {
     const bullets = [
       { label: "Nazwa produktu", value: firstProduct.name },
       { label: "SKU", value: firstProduct.sku },
-      { label: "EAN", value: firstProduct.ean },
       { label: "Ilość", value: firstProduct.quantity },
       { label: "Wartość produktu", value: priceText }
     ];
@@ -528,4 +522,3 @@ function buildDocx(claim, lang, answerText, decisionValue) {
   if (upperLang === "EN") return buildDocxEnglish(claim, answerText, decisionValue);
   return buildDocxPolish(claim, answerText, decisionValue);
 }
-

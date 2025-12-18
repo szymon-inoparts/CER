@@ -84,7 +84,6 @@ function initS3() {
         ? s3CurrentClaim.products.map((p) => ({
             name: p.name,
             sku: p.sku,
-            ean: p.ean,
             quantity: p.quantity,
             price: p.price,
             currency: p.currency

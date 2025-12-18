@@ -227,27 +227,26 @@ function normalizeProductArray(productsArr, currencyValue) {
   if (typeof productsArr === "string") return splitSemicolons(productsArr).map((name) => ({ name }));
   if (!Array.isArray(productsArr)) return [];
   return productsArr.map((p) => {
+    const { ean, ...rest } = p || {};
     const quantity = p.quantity ?? p.qty ?? p.orderedQuantity ?? p.ordered_quantity ?? p.amount;
     const priceValue = p.price ?? p.value ?? p.valueRaw ?? p.amount;
     const currencyGuess = p.currency ?? p.curr ?? currencyValue;
-    return { ...p, quantity, price: priceValue, currency: currencyGuess };
+    return { ...rest, quantity, price: priceValue, currency: currencyGuess };
   });
 }
 
 function buildProductsFromFields(flat, currencyValue) {
   const names = splitSemicolons(pickField(flat, ["Produkt Nazwa", "productName", "product_name"]));
   const skus = splitSemicolons(pickField(flat, ["Produkt SKU", "productSku", "product_sku", "skus"]));
-  const eans = splitSemicolons(pickField(flat, ["Produkt EAN", "productEan", "product_ean", "eans"]));
   const qtys = splitSemicolons(pickField(flat, ["Produkt Ilość", "Produkt Ilosc", "productQty", "product_qty", "quantities"]));
   const vals = splitSemicolons(pickField(flat, ["Wartość", "Wartosc", "valueRaw", "value", "prices"]));
   const currsSource = pickField(flat, ["Waluta", "currency", "orderCurrency"]) || currencyValue;
   const currs = splitSemicolons(currsSource);
-  const maxLen = Math.max(names.length, skus.length, eans.length, qtys.length, vals.length, currs.length);
+  const maxLen = Math.max(names.length, skus.length, qtys.length, vals.length, currs.length);
   if (!maxLen) return [];
   return Array.from({ length: maxLen }).map((_, i) => ({
     name: names[i],
     sku: skus[i],
-    ean: eans[i],
     quantity: qtys[i],
     price: vals[i],
     currency: currs[i]
