@@ -156,7 +156,9 @@ function initS3() {
       const decisionValue = translatedDecision || t.decisionValues?.[decision] || decision;
 
       const blob = await buildDocx(docClaim, lang, translatedAnswer, decisionValue);
-      const filename = `CER-${num}.docx`;
+      const orderPart = sanitizePathSegment(s3CurrentClaim?.orderId, "zamowienie");
+      const claimPart = sanitizePathSegment(s3CurrentClaim?.claimId || num, "reklamacja");
+      const filename = `RMA_${orderPart}_${claimPart}.docx`;
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
