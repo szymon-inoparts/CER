@@ -128,11 +128,30 @@ function initS1() {
     };
 
     try {
-      await fetch(SEND_TO_CER_WEBHOOK, {
+      const res = await fetch(SEND_TO_CER_WEBHOOK, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
+      const rawText = await res.text();
+      const tryParseMessage = (text) => {
+        if (!text) return null;
+        try {
+          const json = JSON.parse(text);
+          if (Array.isArray(json) && json[0]?.message) return json[0].message;
+          if (json && typeof json === "object" && json.message) return json.message;
+        } catch {
+          return null;
+        }
+        return null;
+      };
+      const apiMessage = tryParseMessage(rawText);
+
+      if (!res.ok || apiMessage) {
+        showToast(apiMessage || `Błąd zapisu (${res.status})`, "error");
+        return;
+      }
+
       showToast("Zapisano zgłoszenie");
     } catch (err) {
       showToast("Błąd zapisu", "error");
