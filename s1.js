@@ -100,6 +100,8 @@ function initS1() {
       return;
     }
 
+    const noteInput = document.getElementById("s1-note");
+
     const payload = {
       order: orderInput.value,
       orderDetails: s1FetchedOrder,
@@ -107,7 +109,7 @@ function initS1() {
       type: document.getElementById("s1-type").value,
       reason: document.getElementById("s1-reason").value,
       employee: document.getElementById("s1-employee").value,
-      note: document.getElementById("s1-note").value,
+      note: noteInput ? noteInput.value : "",
       products: Array.from(document.querySelectorAll(".product-row"))
         .map((row, idx) => {
           const check = row.querySelector(".s1-prod-check");
