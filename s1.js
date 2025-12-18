@@ -86,14 +86,21 @@ function initS1() {
   });
 
   saveBtn.addEventListener("click", async () => {
+    const typeSelect = document.getElementById("s1-type");
+    const typeValue = typeSelect ? typeSelect.value : "";
     const requiredFields = [
       { el: orderInput, name: "Numer zamówienia" },
       { el: document.getElementById("s1-report-date"), name: "Data zgłoszenia" },
-      { el: document.getElementById("s1-type"), name: "Typ reklamacji" },
+      { el: typeSelect, name: "Typ reklamacji" },
       { el: document.getElementById("s1-reason"), name: "Powód reklamacji" },
       { el: document.getElementById("s1-employee"), name: "Osoba odpowiedzialna" }
     ];
-    const missing = requiredFields.filter((f) => !f.el || !String(f.el.value || "").trim());
+    const missing = requiredFields.filter((f) => {
+      if (!f.el) return true;
+      const val = String(f.el.value || "").trim();
+      if (f.el.id === "s1-type" && val === "-") return true;
+      return !val;
+    });
     if (missing.length) {
       const names = missing.map((f) => f.name).join(", ");
       showToast(`Uzupełnij pola: ${names}`, "error");
