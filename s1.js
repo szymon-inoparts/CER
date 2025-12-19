@@ -141,6 +141,7 @@ function initS1() {
         body: JSON.stringify(payload)
       });
       showToast("Zapisano zgłoszenie");
+      if (typeof resetAllForms === "function") resetAllForms();
     } catch (err) {
       showToast("Błąd zapisu", "error");
     }
