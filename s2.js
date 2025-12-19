@@ -72,6 +72,7 @@ ${escapeHtml(rawText)}</pre></div>`;
           <th>Data zgłoszenia</th>
           <th>Termin decyzji</th>
           <th>Data zamknięcia</th>
+          <th>Pracownik</th>
           <th>Akcja</th>
         </tr>`;
       rows.forEach((row, idx) => {
@@ -88,6 +89,7 @@ ${escapeHtml(rawText)}</pre></div>`;
           <td>${formatDate(claim.dates?.receivedAt || claim.receivedAt)}</td>
           <td>${formatDate(claim.dates?.decisionDue || claim.decisionDue)}</td>
           <td>${formatDate(claim.dates?.resolvedAt || claim.resolvedAt)}</td>
+          <td>${claim.agent || "-"}</td>
           <td>
             <div class="action-cell">
               <button class="btn btn-link" onclick="handleExpand('${expId}', this)">Szczegóły</button>
@@ -96,7 +98,7 @@ ${escapeHtml(rawText)}</pre></div>`;
           </td>
         </tr>
         <tr class="expand-row" data-exp-id="${expId}" style="display:none;">
-          <td colspan="10">${renderClaimTable(claim)}</td>
+          <td colspan="11">${renderClaimTable(claim)}</td>
         </tr>`;
       });
       html += "</table>";
