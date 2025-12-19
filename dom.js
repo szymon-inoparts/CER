@@ -1,31 +1,4 @@
-// Obsługa UI: hasło, nawigacja, reset formularzy, toast
-
-function initPasswordGate() {
-  const overlay = document.getElementById("password-overlay");
-  const input = document.getElementById("password-input");
-  const submit = document.getElementById("password-submit");
-  const errorBox = document.getElementById("password-error");
-  if (!overlay || !input || !submit || !errorBox) return;
-
-  const unlock = () => {
-    if (input.value.trim() === PASSWORD_VALUE) {
-      overlay.classList.add("hidden");
-      errorBox.classList.add("hidden");
-      input.value = "";
-    } else {
-      errorBox.classList.remove("hidden");
-      input.value = "";
-      input.focus();
-    }
-  };
-
-  submit.addEventListener("click", unlock);
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") unlock();
-  });
-
-  setTimeout(() => input.focus(), 0);
-}
+// Obsluga UI: nawigacja, reset formularzy, toast
 
 function switchPage(pageIndex) {
   const pages = document.querySelectorAll(".page");
@@ -37,9 +10,7 @@ function switchPage(pageIndex) {
 window.switchPage = switchPage;
 
 function resetAllForms() {
-  const skipIds = new Set(["password-input", "password-submit"]);
   document.querySelectorAll("input, textarea, select").forEach((el) => {
-    if (skipIds.has(el.id)) return;
     if (el.type === "checkbox" || el.type === "radio") {
       el.checked = false;
     } else if (el.tagName === "SELECT") {
