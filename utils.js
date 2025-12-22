@@ -2,7 +2,8 @@
 
 function sanitizePathSegment(segment, fallback = "reklamacja") {
   if (!segment) return fallback;
-  return segment.replace(/[\\/:*?"<>|]/g, "-").trim() || fallback;
+  const str = String(segment);
+  return str.replace(/[\\/:*?"<>|]/g, "-").trim() || fallback;
 }
 
 function formatDate(value) {
