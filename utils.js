@@ -1,9 +1,9 @@
 // Funkcje pomocnicze (formatowanie, parsowanie, normalizacja)
 
 function sanitizePathSegment(segment, fallback = "reklamacja") {
-  if (!segment) return fallback;
+  if (segment === undefined || segment === null) return fallback;
   const str = String(segment);
-  return str.replace(/[\\/:*?"<>|]/g, "-").trim() || fallback;
+  return typeof str.replace === "function" ? str.replace(/[\\/:*?"<>|]/g, "-").trim() || fallback : fallback;
 }
 
 function formatDate(value) {
