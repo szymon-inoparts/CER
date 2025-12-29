@@ -193,7 +193,50 @@ function formatClientLines(claim = {}) {
   if (street) lines.push(street);
   if (postal || city) lines.push(`${postal ? postal + " " : ""}${city}`.trim());
   if (country && !lines.includes(country)) lines.push(country);
-  return lines.filter(Boolean);
+  return lines
+    .filter(Boolean)
+    .map((line) => localizeCountryName(line) || line);
+}
+
+function localizeCountryName(value) {
+  if (!value) return null;
+  const key = normalizeCountryKey(value);
+  if (!key) return null;
+  const map = {
+    slovakia: "Slovensko",
+    "slovak republic": "Slovensko",
+    slowacja: "Slovensko",
+    slovensko: "Slovensko",
+    sk: "Slovensko",
+    czechia: "Česko",
+    "czech republic": "Česko",
+    czech: "Česko",
+    cesko: "Česko",
+    cz: "Česko",
+    germany: "Deutschland",
+    niemcy: "Deutschland",
+    deutschland: "Deutschland",
+    de: "Deutschland",
+    hungary: "Magyarország",
+    wegry: "Magyarország",
+    magyarorszag: "Magyarország",
+    hu: "Magyarország",
+    poland: "Polska",
+    polska: "Polska",
+    pl: "Polska"
+  };
+  return map[key] || null;
+}
+
+function normalizeCountryKey(value) {
+  const normalized = String(value).trim().toLowerCase();
+  if (!normalized) return "";
+  return normalized
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function buildAddressFromBill(bill) {
