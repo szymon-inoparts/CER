@@ -551,22 +551,22 @@ th {
 
 .filters-group-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(200px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 8px;
 }
 
 .filter-group {
   background: #f5fbf7;
   border: 1px solid #d9efe1;
   border-radius: 12px;
-  padding: 10px;
+  padding: 8px;
 }
 
 .filter-group__title {
   font-size: 12px;
   font-weight: 700;
   color: #155724;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -574,11 +574,11 @@ th {
 .filter-group__fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
 }
 
 .filter-group input[type="date"] {
-  max-width: 150px;
+  max-width: 130px;
 }
 
 .filter-group .field {
@@ -601,7 +601,7 @@ th {
 .filters-grid--narrow {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
+  gap: 6px;
   max-width: 260px;
 }
 
@@ -629,7 +629,7 @@ th {
   background: #e7f4ea;
   border: 1px solid #c9e6d1;
   border-radius: 16px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   display: grid;
   gap: 8px;
 }
@@ -640,6 +640,10 @@ th {
   color: #0f5132;
   text-transform: uppercase;
   letter-spacing: 0.4px;
+}
+
+.filters-status {
+  max-width: 260px;
 }
 
 @media (max-width: 1200px) {
