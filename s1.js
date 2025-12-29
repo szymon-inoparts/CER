@@ -98,7 +98,6 @@ function initS1() {
     const missing = requiredFields.filter((f) => {
       if (!f.el) return true;
       const val = String(f.el.value || "").trim();
-      if (f.el.id === "s1-type" && val === "-") return true;
       return !val;
     });
     if (missing.length) {

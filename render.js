@@ -1,4 +1,4 @@
-// Renderowanie kart/sekcji oraz helpery akcji
+ï»¿// Renderowanie kart/sekcji oraz helpery akcji
 
 function renderProductItem(p, currencyFallback) {
   return `<li>
@@ -30,8 +30,8 @@ function renderClaimTimeline(claim) {
   return `<div class="claim-card__timeline-wrap">
           <div class="claim-card__timeline">
             <div><span>Data zakupu</span><strong>${formatDate(purchaseDate)}</strong></div>
-            <div><span>Data przyjŽtcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
-            <div><span>Data rozwiŽ©zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+            <div><span>Data przyjÄ™cia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+            <div><span>Data rozwiÄ…zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
           </div>
           <div class="claim-card__deadline">
             <span>Termin decyzji</span>
@@ -134,5 +134,7 @@ window.handleGenerateClick = handleGenerateClick;
 function renderClaimTable(claim) {
   return renderClaimCard(claim);
 }
+
+
 
 

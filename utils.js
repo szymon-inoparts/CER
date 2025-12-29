@@ -333,10 +333,14 @@ function collectProducts(flat, currencyValue) {
 function buildClaimPayload(flat, dates, customerValue, currencyValue) {
   const orderDate =
     pickField(flat, ["orderDate", "order_date"]) ||
-    (flat.orderDetails && pickField(flat.orderDetails, ["orderDate"]));
+    (flat.orderDetails && pickField(flat.orderDetails, ["orderDate", "order_date"])) ||
+    dates.orderDate ||
+    dates.order_date;
   const purchaseDate =
     pickField(flat, ["purchaseDate", "purchase_date"]) ||
-    (flat.orderDetails && pickField(flat.orderDetails, ["purchaseDate"]));
+    (flat.orderDetails && pickField(flat.orderDetails, ["purchaseDate", "purchase_date"])) ||
+    dates.purchaseDate ||
+    dates.purchase_date;
 
   return {
     claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",

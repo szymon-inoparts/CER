@@ -450,7 +450,7 @@ function buildDocxPolish(claim, answerText, decisionValue) {
   const addParagraph = (opts) => docChildren.push(new Paragraph(opts));
 
   addParagraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: `${todayDot}, Kraków`, bold: true })], spacing: { after: 240 } });
-  addParagraph({ children: [new TextRun({ text: "Sprzedawca: INOPARTS SP. Z O.O.", bold: true })], spacing: { after: 40 } });
+  addParagraph({ children: [new TextRun({ text: "INOPARTS SP. Z O.O.", bold: true })], spacing: { after: 40 } });
   addParagraph({ children: [new TextRun({ text: "Ul. Adama Staszczyka 1/20, 30-123 Kraków" })], spacing: { after: 20 } });
   addParagraph({ children: [new TextRun({ text: "NIP: 6772477900" })], spacing: { after: 200 } });
 
