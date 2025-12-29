@@ -211,17 +211,6 @@
     <h1>Ewidencja zg&#322;osze&#324;</h1>
 
     <div class="s2-controls s2-controls--grid">
-      <div class="s2-filter-panel s2-filter-panel--search">
-        <div class="s2-filter-title">Szukaj pojedynczego zg&#322;oszenia</div>
-        <div class="field s2-search-inline">
-          <label>Numer reklamacji lub zam&#243;wienia</label>
-          <div class="row-inline">
-            <input id="s2-search" type="text" placeholder="Numer reklamacji lub zam&#243;wienia" />
-            <button class="btn" id="s2-search-btn">Pobierz</button>
-          </div>
-        </div>
-      </div>
-
       <div class="s2-filter-panel s2-filter-panel--default">
         <div class="s2-filter-title">Filtry (AND)</div>
         <div class="filters-group-grid">
@@ -279,31 +268,44 @@
           </div>
         </div>
 
-        <div class="filters-grid filters-grid--narrow">
-          <div class="field">
-            <label>Pracownik</label>
-            <select id="s2-filter-employee">
-              <option value="">Wszyscy</option>
-            </select>
+        <div class="filters-bottom">
+          <div class="filters-bottom__left">
+            <div class="filters-grid filters-grid--narrow">
+              <div class="field">
+                <label>Pracownik</label>
+                <select id="s2-filter-employee">
+                  <option value="">Wszyscy</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Typ reklamacji</label>
+                <select id="s2-filter-type">
+                  <option value="">Wszystkie</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Status</label>
+                <select id="s2-filter-status">
+                  <option value="">Wszystkie</option>
+                </select>
+              </div>
+            </div>
+            <div class="filters-actions">
+              <button class="btn btn-primary" id="s2-filter-apply">Filtruj</button>
+              <button class="btn btn-ghost" id="s2-filter-reset">Wyczy&#347;&#263;</button>
+            </div>
           </div>
-          <div class="field">
-            <label>Typ reklamacji</label>
-            <select id="s2-filter-type">
-              <option value="">Wszystkie</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Status</label>
-            <select id="s2-filter-status">
-              <option value="">Wszystkie</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="filters-actions">
-          <div class="filters-actions__left">
-            <button class="btn btn-primary" id="s2-filter-apply">Filtruj</button>
-            <button class="btn btn-ghost" id="s2-filter-reset">Wyczy&#347;&#263;</button>
+          <div class="filters-bottom__right">
+            <div class="s2-search-box">
+              <div class="s2-search-title">Szukaj pojedynczego zg&#322;oszenia</div>
+              <div class="field">
+                <label>Numer reklamacji lub zam&#243;wienia</label>
+                <div class="row-inline">
+                  <input id="s2-search" type="text" placeholder="Numer reklamacji lub zam&#243;wienia" />
+                  <button class="btn" id="s2-search-btn">Pobierz</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
