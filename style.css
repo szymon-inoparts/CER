@@ -560,9 +560,16 @@ th {
   margin: 14px 0;
 }
 
+.claim-card__timeline-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 12px;
+  margin: 14px 0;
+}
+
 .claim-card__timeline {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
   gap: 12px;
   padding: 12px;
   background: var(--orange);
@@ -571,15 +578,32 @@ th {
   text-align: left;
 }
 
-.claim-card__timeline span {
+.claim-card__timeline span,
+.claim-card__timeline strong,
+.claim-card__deadline span,
+.claim-card__deadline strong {
   color: #fff;
-  font-size: 12px;
 }
 
-.claim-card__timeline strong {
+.claim-card__timeline strong,
+.claim-card__deadline strong {
   display: block;
   margin-top: 4px;
-  color: #fff;
+}
+
+.claim-card__deadline {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px;
+  background: #d3402f;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.claim-card__deadline span {
+  font-size: 12px;
 }
 
 .claim-card .value {

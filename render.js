@@ -26,10 +26,17 @@ function renderProductsBlock(claim) {
 }
 
 function renderClaimTimeline(claim) {
-  return `<div class="claim-card__timeline">
-          <div><span>Data przyjÄ™cia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
-          <div><span>Termin decyzji</span><strong>${formatDate(claim.decisionDue)}</strong></div>
-          <div><span>Data rozwiÄ…zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+  const purchaseDate = claim.purchaseDate || claim.orderDate;
+  return `<div class="claim-card__timeline-wrap">
+          <div class="claim-card__timeline">
+            <div><span>Data zakupu</span><strong>${formatDate(purchaseDate)}</strong></div>
+            <div><span>Data przyjŽtcia</span><strong>${formatDate(claim.receivedAt)}</strong></div>
+            <div><span>Data rozwiŽ©zania</span><strong>${formatDate(claim.resolvedAt)}</strong></div>
+          </div>
+          <div class="claim-card__deadline">
+            <span>Termin decyzji</span>
+            <strong>${formatDate(claim.decisionDue)}</strong>
+          </div>
         </div>`;
 }
 
@@ -127,3 +134,5 @@ window.handleGenerateClick = handleGenerateClick;
 function renderClaimTable(claim) {
   return renderClaimCard(claim);
 }
+
+
