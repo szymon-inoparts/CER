@@ -8,6 +8,7 @@ const SHOW_FROM_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/wy%C
 const GENERATE_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/generuj-odpowiedz";
 const PROCESSORS_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/procesorzy-reklamacji";
 const UPDATE_CER_WEBHOOK = "https://kamil-inoparts.app.n8n.cloud/webhook/aktualizacja-CER";
+const FILTER_CER_WEBHOOK = "";
 
 const DEFAULT_NO_RESPONSE_TEXT =
   "Brak możliwości weryfikacji: Pomimo naszych prób kontaktu nie otrzymaliśmy odpowiedzi, dlatego zamykamy zgłoszenie.";

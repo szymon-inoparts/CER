@@ -210,8 +210,8 @@
   <section id="page-3" class="page">
     <h1>Ewidencja zg&#322;osze&#324;</h1>
 
-    <div class="s2-controls">
-      <div class="field">
+    <div class="s2-controls s2-controls--grid">
+      <div class="field s2-col">
         <label>Szukaj pojedynczego zg&#322;oszenia</label>
         <div class="row-inline">
           <input id="s2-search" type="text" placeholder="Numer reklamacji lub zam&#243;wienia" />
@@ -219,8 +219,70 @@
         </div>
       </div>
 
-      <div class="field">
-        <label>Pobierz wiele zg&#322;osze&#324;</label>
+      <div class="field s2-col s2-filters">
+        <label>Filtry (AND)</label>
+        <div class="filters-grid">
+          <div class="field">
+            <label>Data zam&#243;wienia od</label>
+            <input id="s2-order-from" type="date" />
+          </div>
+          <div class="field">
+            <label>Data zam&#243;wienia do</label>
+            <input id="s2-order-to" type="date" />
+          </div>
+          <div class="field">
+            <label>Data zg&#322;oszenia od</label>
+            <input id="s2-received-from" type="date" />
+          </div>
+          <div class="field">
+            <label>Data zg&#322;oszenia do</label>
+            <input id="s2-received-to" type="date" />
+          </div>
+          <div class="field">
+            <label>Termin decyzji od</label>
+            <input id="s2-decision-from" type="date" />
+          </div>
+          <div class="field">
+            <label>Termin decyzji do</label>
+            <input id="s2-decision-to" type="date" />
+          </div>
+          <div class="field">
+            <label>Data rozwi&#261;zania od</label>
+            <input id="s2-resolved-from" type="date" />
+          </div>
+          <div class="field">
+            <label>Data rozwi&#261;zania do</label>
+            <input id="s2-resolved-to" type="date" />
+          </div>
+        </div>
+        <div class="filters-grid filters-grid--narrow">
+          <div class="field">
+            <label>Pracownik</label>
+            <select id="s2-filter-employee">
+              <option value="">Wszyscy</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Typ reklamacji</label>
+            <select id="s2-filter-type">
+              <option value="">Wszystkie</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="s2-filter-status">
+              <option value="">Wszystkie</option>
+            </select>
+          </div>
+        </div>
+        <div class="filters-actions">
+          <button class="btn btn-primary" id="s2-filter-apply">Filtruj</button>
+          <button class="btn btn-ghost" id="s2-filter-reset">Wyczy&#347;&#263;</button>
+        </div>
+      </div>
+
+      <div class="field s2-col">
+        <label>Predefiniowane filtry</label>
         <div class="row-inline">
           <select id="s2-range">
             <option value="last-7">Ostatnie 7 dni</option>

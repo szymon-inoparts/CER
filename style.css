@@ -510,6 +510,40 @@ th {
   margin: 0;
 }
 
+.s2-controls--grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(360px, 2fr) minmax(260px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.s2-col {
+  margin: 0;
+}
+
+.s2-filters .filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.filters-grid--narrow {
+  margin-top: 8px;
+}
+
+.filters-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1200px) {
+  .s2-controls--grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ============================================================
    KARTY REKLAMACJI (ewidencja)
    ============================================================ */
