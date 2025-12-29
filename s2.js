@@ -1,4 +1,4 @@
-// Część 2: ewidencja – pobieranie pojedynczych i listy zgłoszeń
+// CzÄ™Ĺ›Ä‡ 2: ewidencja â€“ pobieranie pojedynczych i listy zgĹ‚oszeĹ„
 
 let s2SingleBox;
 let s2ListBox;
@@ -26,7 +26,7 @@ const getFilters = () => ({
 const renderList = (rows) => {
   if (!s2ListBox) return;
   if (!rows.length) {
-    s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak danych dla wybranych filtrów.</pre></div>`;
+    s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak danych dla wybranych filtrĂłw.</pre></div>`;
     return;
   }
 
@@ -34,13 +34,13 @@ const renderList = (rows) => {
         <tr>
           <th>#</th>
           <th>Reklamacja</th>
-          <th>Zamówienie</th>
+          <th>ZamĂłwienie</th>
           <th>Klient</th>
           <th>Marketplace</th>
           <th>Status</th>
-          <th>Data zgłoszenia</th>
+          <th>Data zgĹ‚oszenia</th>
           <th>Termin decyzji</th>
-          <th>Data zamknięcia</th>
+          <th>Data zamkniÄ™cia</th>
           <th>Pracownik</th>
           <th>Akcja</th>
         </tr>`;
@@ -62,7 +62,7 @@ const renderList = (rows) => {
           <td>${claim.agent || "-"}</td>
           <td>
             <div class="action-cell">
-              <button class="btn btn-link" onclick="handleExpand('${expId}', this)">Szczegóły</button>
+              <button class="btn btn-link" onclick="handleExpand('${expId}', this)">SzczegĂłĹ‚y</button>
               <button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button>
             </div>
           </td>
@@ -148,13 +148,13 @@ const requestFilteredList = async () => {
 
     s2ListBox.classList.remove("hidden");
     if (!res.ok) {
-      s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Błąd HTTP ${res.status}
+      s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">BĹ‚Ä…d HTTP ${res.status}
 ${escapeHtml(rawText)}</pre></div>`;
-      showToast(`Błąd pobierania (${res.status})`, "error");
+      showToast(`BĹ‚Ä…d pobierania (${res.status})`, "error");
       return;
     }
     if (!rows.length) {
-      s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak rozpoznanych danych. Surowa odpowiedź webhooka:
+      s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak rozpoznanych danych. Surowa odpowiedĹş webhooka:
 ${escapeHtml(rawText)}</pre></div>`;
       showToast("Brak danych z webhooka", "error");
       return;
@@ -166,21 +166,19 @@ ${escapeHtml(rawText)}</pre></div>`;
     showToast("Zastosowano filtry");
   } catch (err) {
     console.error("FILTER_CER_WEBHOOK error", err);
-    showToast("Błąd filtrowania", "error");
+    showToast("BĹ‚Ä…d filtrowania", "error");
   }
 };
 
 function initS2() {
   const searchBtn = document.getElementById("s2-search-btn");
   const searchInput = document.getElementById("s2-search");
-  s2SingleBox = document.getElementById("s2-single-result");
-  const rangeBtn = document.getElementById("s2-range-btn");
-  const rangeSelect = document.getElementById("s2-range");
+  s2SingleBox = document.getElementById("s2-single-result");\n
   s2ListBox = document.getElementById("s2-list");
   const filterBtn = document.getElementById("s2-filter-apply");
   const filterReset = document.getElementById("s2-filter-reset");
 
-  if (!searchBtn || !searchInput || !s2SingleBox || !rangeBtn || !rangeSelect || !s2ListBox) return;
+  if (!searchBtn || !searchInput || !s2SingleBox || !s2ListBox) return;
 
   searchBtn.addEventListener("click", async () => {
     const num = searchInput.value.trim();
@@ -192,54 +190,13 @@ function initS2() {
       s2SingleBox.classList.remove("hidden");
       s2SingleBox.innerHTML = renderClaimCard(
         claim,
-        `<button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedź</button>`
+        `<button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedĹş</button>`
       );
-      showToast("Pobrano zgłoszenie");
+      showToast("Pobrano zgĹ‚oszenie");
     } catch (err) {
       showToast("Nie znaleziono", "error");
     }
-  });
-
-  rangeBtn.addEventListener("click", async () => {
-    const range = rangeSelect.value;
-    try {
-      const params = new URLSearchParams({ preset: range, range });
-      const res = await fetch(`${GET_LAST_FROM_CER_WEBHOOK}?${params.toString()}`);
-      const rawText = await res.text();
-      let parsed;
-      try {
-        parsed = JSON.parse(rawText);
-      } catch {
-        parsed = rawText;
-      }
-      let rows = Array.isArray(parsed) ? parsed : parsed && typeof parsed === "object" ? [parsed] : [];
-      if (!rows.length) rows = parseObjectsFromText(rawText);
-      if (!rows.length) rows = unwrapArray(parsed);
-
-      s2ListBox.classList.remove("hidden");
-      if (!res.ok) {
-        s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Błąd HTTP ${res.status}
-${escapeHtml(rawText)}</pre></div>`;
-        showToast(`Błąd pobierania (${res.status})`, "error");
-        return;
-      }
-      if (!rows.length) {
-        s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak rozpoznanych danych. Surowa odpowiedź webhooka:
-${escapeHtml(rawText)}</pre></div>`;
-        showToast("Brak danych z webhooka", "error");
-        return;
-      }
-
-      s2Rows = rows;
-      updateFilterOptions(rows);
-      renderList(rows);
-      showToast("Pobrano listę");
-    } catch (err) {
-      console.error("GET_LAST_FROM_CER error", err);
-      showToast("Błąd pobierania", "error");
-    }
-  });
-
+  });\n
   if (filterBtn) {
     filterBtn.addEventListener("click", requestFilteredList);
   }
