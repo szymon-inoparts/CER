@@ -263,6 +263,23 @@ function collectProducts(flat, currencyValue) {
 }
 
 function buildClaimPayload(flat, dates, customerValue, currencyValue) {
+  const rawPurchaseDate = pickField(flat, [
+    "purchaseDate",
+    "orderDate",
+    "date",
+    "order_date",
+    "purchase_date"
+  ]) ||
+    (flat.orderDetails && pickField(flat.orderDetails, ["orderDate", "purchaseDate", "date"])) ||
+    dates.orderDate ||
+    dates.purchaseDate ||
+    flat.receivedAt ||
+    dates.receivedAt ||
+    flat.reportDate ||
+    new Date().toISOString().slice(0, 10);
+  const orderDate = pickField(flat, ["orderDate", "order_date"]) || rawPurchaseDate;
+  const purchaseDate = pickField(flat, ["purchaseDate", "purchase_date"]) || rawPurchaseDate;
+
   return {
     claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
     orderId: flat.orderId || flat.order || "",
@@ -289,6 +306,8 @@ function buildClaimPayload(flat, dates, customerValue, currencyValue) {
     resolvedAt: flat.resolvedAt || dates.resolvedAt,
     rowNumber: flat.rowNumber,
     address: deriveAddress(flat),
+    orderDate,
+    purchaseDate,
     products: collectProducts(flat, currencyValue)
   };
 }
