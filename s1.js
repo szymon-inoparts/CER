@@ -1,4 +1,4 @@
-// Część 1: dodawanie zgłoszenia (pobieranie z Sellasist, zapis do CER)
+﻿// CzÄ™Ĺ›Ä‡ 1: dodawanie zgĹ‚oszenia (pobieranie z Sellasist, zapis do CER)
 
 let s1FetchedOrder = null;
 let s1OrderBox;
@@ -14,7 +14,7 @@ function initS1() {
 
   fetchBtn.addEventListener("click", async () => {
     const num = orderInput.value.trim();
-    if (!num) return showToast("Wpisz numer zamówienia", "error");
+    if (!num) return showToast("Wpisz numer zamĂłwienia", "error");
     try {
       const res = await fetch(`${SELLASIST_WEBHOOK}?order=${encodeURIComponent(num)}`);
       const rawData = await res.json();
@@ -32,14 +32,14 @@ function initS1() {
         <div class="product-row">
           <label>
             <input type="checkbox" class="s1-prod-check" data-index="${idx}" />
-            ${p.name} (${p.sku}) - ${p.price ?? ""} zł zamówiono: ${p.quantity}
+            ${p.name} (${p.sku}) - ${p.price ?? ""} zĹ‚ zamĂłwiono: ${p.quantity}
           </label>
           <input type="number" class="s1-prod-qty" data-index="${idx}" min="1" max="${p.quantity || 1}" value="${p.quantity || 1}" />
         </div>
       `
             )
             .join("")
-        : `<div class="muted">Brak produktów w odpowiedzi</div>`;
+        : `<div class="muted">Brak produktĂłw w odpowiedzi</div>`;
 
       const bill =
         data.bill_address ||
@@ -79,9 +79,9 @@ function initS1() {
       document.getElementById("s1-platform").value = data.platform || "";
       document.getElementById("s1-shipping").value = data.shippingCost ?? "";
 
-      showToast("Pobrano dane zamówienia");
+      showToast("Pobrano dane zamĂłwienia");
     } catch (err) {
-      showToast("Błąd pobierania", "error");
+      showToast("BĹ‚Ä…d pobierania", "error");
     }
   });
 
@@ -89,10 +89,10 @@ function initS1() {
     const typeSelect = document.getElementById("s1-type");
     const typeValue = typeSelect ? typeSelect.value : "";
     const requiredFields = [
-      { el: orderInput, name: "Numer zamówienia" },
-      { el: document.getElementById("s1-report-date"), name: "Data zgłoszenia" },
+      { el: orderInput, name: "Numer zamĂłwienia" },
+      { el: document.getElementById("s1-report-date"), name: "Data zgĹ‚oszenia" },
       { el: typeSelect, name: "Typ reklamacji" },
-      { el: document.getElementById("s1-reason"), name: "Powód reklamacji" },
+      { el: document.getElementById("s1-reason"), name: "PowĂłd reklamacji" },
       { el: document.getElementById("s1-employee"), name: "Osoba odpowiedzialna" }
     ];
     const missing = requiredFields.filter((f) => {
@@ -102,7 +102,7 @@ function initS1() {
     });
     if (missing.length) {
       const names = missing.map((f) => f.name).join(", ");
-      showToast(`Uzupełnij pola: ${names}`, "error");
+      showToast(`UzupeĹ‚nij pola: ${names}`, "error");
       return;
     }
 
@@ -146,15 +146,27 @@ function initS1() {
     };
 
     try {
-      await fetch(SEND_TO_CER_WEBHOOK, {
+      const res = await fetch(SEND_TO_CER_WEBHOOK, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
+      let responseData = null;
+      try {
+        responseData = await res.json();
+      } catch (err) {
+        responseData = null;
+      }
+      const responseItem = Array.isArray(responseData) ? responseData[0] : responseData;
+      if (responseItem && responseItem.error) {
+        showToast(responseItem.error, "error");
+        return;
+      }
       showToast("Zapisano zgłoszenie");
       if (typeof resetAllForms === "function") resetAllForms();
     } catch (err) {
-      showToast("Błąd zapisu", "error");
+      showToast("BĹ‚Ä…d zapisu", "error");
     }
   });
 }
+
