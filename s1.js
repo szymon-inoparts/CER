@@ -118,6 +118,7 @@ function initS1() {
       s1FetchedOrder?.orderDetails?.purchaseDate ||
       s1FetchedOrder?.orderDetails?.purchase_date;
 
+    const employeeValue = document.getElementById("s1-employee").value;
     const payload = {
       order: orderInput.value,
       orderDetails: s1FetchedOrder,
@@ -126,7 +127,7 @@ function initS1() {
       reportDate: document.getElementById("s1-report-date").value,
       type: document.getElementById("s1-type").value,
       reason: document.getElementById("s1-reason").value,
-      employee: document.getElementById("s1-employee").value,
+      employee: employeeValue,
       note: noteInput ? noteInput.value : "",
       products: Array.from(document.querySelectorAll(".product-row"))
         .map((row, idx) => {
@@ -146,6 +147,30 @@ function initS1() {
     };
 
     try {
+      const missingProcessorMessage =
+        "Brak danych osoby procesującej w bazie. Aby zapisać poprawnie zgłoszenie, popraw dane pracownika lub dodaj nową osobę procesującą reklamacje.";
+      const checkRes = await fetch(CHECK_PROCESSOR_WEBHOOK, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employee: employeeValue })
+      });
+      if (!checkRes.ok) {
+        showToast("Błąd weryfikacji osoby procesującej", "error");
+        return;
+      }
+      let checkData = null;
+      try {
+        checkData = await checkRes.json();
+      } catch (err) {
+        checkData = null;
+      }
+      const checkItem = Array.isArray(checkData) ? checkData[0] : checkData;
+      const statusValue = String(checkItem && checkItem.status).toLowerCase();
+      if ((checkItem && checkItem.error) || (statusValue && statusValue !== "ok")) {
+        showToast(checkItem && checkItem.error ? checkItem.error : missingProcessorMessage, "error");
+        return;
+      }
+
       const res = await fetch(SEND_TO_CER_WEBHOOK, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
