@@ -211,50 +211,74 @@
     <h1>Ewidencja zg&#322;osze&#324;</h1>
 
     <div class="s2-controls s2-controls--grid">
-      <div class="field s2-col s2-col--search">
-        <label>Szukaj pojedynczego zg&#322;oszenia</label>
-        <div class="row-inline">
-          <input id="s2-search" type="text" placeholder="Numer reklamacji lub zam&#243;wienia" />
-          <button class="btn" id="s2-search-btn">Pobierz</button>
+      <div class="s2-filter-panel s2-filter-panel--search">
+        <div class="s2-filter-title">Szukaj pojedynczego zg&#322;oszenia</div>
+        <div class="field s2-search-inline">
+          <label>Numer reklamacji lub zam&#243;wienia</label>
+          <div class="row-inline">
+            <input id="s2-search" type="text" placeholder="Numer reklamacji lub zam&#243;wienia" />
+            <button class="btn" id="s2-search-btn">Pobierz</button>
+          </div>
         </div>
       </div>
 
-      <div class="field s2-col s2-filters">
-        <label>Filtry (AND)</label>
-        <div class="filters-grid">
-          <div class="field">
-            <label>Data zam&#243;wienia od</label>
-            <input id="s2-order-from" type="date" />
+      <div class="s2-filter-panel s2-filter-panel--default">
+        <div class="s2-filter-title">Filtry (AND)</div>
+        <div class="filters-group-grid">
+          <div class="filter-group">
+            <div class="filter-group__title">Data zam&#243;wienia</div>
+            <div class="filter-group__fields">
+              <div class="field">
+                <label>Od</label>
+                <input id="s2-order-from" type="date" />
+              </div>
+              <div class="field">
+                <label>Do</label>
+                <input id="s2-order-to" type="date" />
+              </div>
+            </div>
           </div>
-          <div class="field">
-            <label>Data zam&#243;wienia do</label>
-            <input id="s2-order-to" type="date" />
+          <div class="filter-group">
+            <div class="filter-group__title">Data zg&#322;oszenia</div>
+            <div class="filter-group__fields">
+              <div class="field">
+                <label>Od</label>
+                <input id="s2-received-from" type="date" />
+              </div>
+              <div class="field">
+                <label>Do</label>
+                <input id="s2-received-to" type="date" />
+              </div>
+            </div>
           </div>
-          <div class="field">
-            <label>Data zg&#322;oszenia od</label>
-            <input id="s2-received-from" type="date" />
+          <div class="filter-group">
+            <div class="filter-group__title">Termin decyzji</div>
+            <div class="filter-group__fields">
+              <div class="field">
+                <label>Od</label>
+                <input id="s2-decision-from" type="date" />
+              </div>
+              <div class="field">
+                <label>Do</label>
+                <input id="s2-decision-to" type="date" />
+              </div>
+            </div>
           </div>
-          <div class="field">
-            <label>Data zg&#322;oszenia do</label>
-            <input id="s2-received-to" type="date" />
-          </div>
-          <div class="field">
-            <label>Termin decyzji od</label>
-            <input id="s2-decision-from" type="date" />
-          </div>
-          <div class="field">
-            <label>Termin decyzji do</label>
-            <input id="s2-decision-to" type="date" />
-          </div>
-          <div class="field">
-            <label>Data rozwi&#261;zania od</label>
-            <input id="s2-resolved-from" type="date" />
-          </div>
-          <div class="field">
-            <label>Data rozwi&#261;zania do</label>
-            <input id="s2-resolved-to" type="date" />
+          <div class="filter-group">
+            <div class="filter-group__title">Data rozwi&#261;zania</div>
+            <div class="filter-group__fields">
+              <div class="field">
+                <label>Od</label>
+                <input id="s2-resolved-from" type="date" />
+              </div>
+              <div class="field">
+                <label>Do</label>
+                <input id="s2-resolved-to" type="date" />
+              </div>
+            </div>
           </div>
         </div>
+
         <div class="filters-grid filters-grid--narrow">
           <div class="field">
             <label>Pracownik</label>
@@ -275,9 +299,12 @@
             </select>
           </div>
         </div>
+
         <div class="filters-actions">
-          <button class="btn btn-primary" id="s2-filter-apply">Filtruj</button>
-          <button class="btn btn-ghost" id="s2-filter-reset">Wyczy&#347;&#263;</button>
+          <div class="filters-actions__left">
+            <button class="btn btn-primary" id="s2-filter-apply">Filtruj</button>
+            <button class="btn btn-ghost" id="s2-filter-reset">Wyczy&#347;&#263;</button>
+          </div>
         </div>
       </div>
     </div>

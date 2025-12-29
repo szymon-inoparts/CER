@@ -512,7 +512,7 @@ th {
 
 .s2-controls--grid {
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(520px, 3fr);
+  grid-template-columns: 1fr;
   gap: 16px;
   align-items: start;
 }
@@ -525,9 +525,77 @@ th {
   max-width: 420px;
 }
 
+.s2-filter-panel {
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  box-shadow: var(--shadow-soft);
+}
+
+.s2-filter-panel--search {
+  background: #e7f4ea;
+  border: 1px solid #c9e6d1;
+}
+
+.s2-filter-panel--default {
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.s2-filter-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.s2-filter-panel--search .s2-filter-title {
+  color: #0f5132;
+}
+
+.s2-filter-panel--default .s2-filter-title {
+  color: #111827;
+}
+
+.filters-group-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.filter-group {
+  background: #f5fbf7;
+  border: 1px solid #d9efe1;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.filter-group__title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #155724;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.filter-group__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.filter-group input[type="date"] {
+  max-width: 150px;
+}
+
+.filter-group .field {
+  width: fit-content;
+}
+
 .s2-filters .filters-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
   gap: 10px;
   align-items: end;
 }
@@ -551,6 +619,23 @@ th {
   gap: 10px;
   margin-top: 10px;
   flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.filters-actions__left {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.s2-search-inline {
+  margin-left: auto;
+  min-width: 320px;
+}
+
+.s2-search-inline .row-inline {
+  justify-content: flex-end;
 }
 
 @media (max-width: 1200px) {
@@ -560,8 +645,17 @@ th {
 }
 
 @media (max-width: 980px) {
+  .filters-group-grid {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+
   .s2-filters .filters-grid {
     grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+
+  .s2-search-inline {
+    margin-left: 0;
+    width: 100%;
   }
 }
 
