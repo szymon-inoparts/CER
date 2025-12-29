@@ -6,11 +6,35 @@ function sanitizePathSegment(segment, fallback = "reklamacja") {
   return typeof str.replace === "function" ? str.replace(/[\\/:*?"<>|]/g, "-").trim() || fallback : fallback;
 }
 
+function getTodayIso() {
+  const now = new Date();
+  const yyyy = String(now.getFullYear());
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function parseDateOnly(value) {
+  if (!value) return null;
+  const str = String(value).trim();
+  const match = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]) - 1;
+  const day = Number(match[3]);
+  if (!year || month < 0 || month > 11 || day < 1 || day > 31) return null;
+  return new Date(year, month, day);
+}
+
 function formatDate(value) {
   if (!value) return "-";
-  const date = new Date(value);
+  const dateOnly = parseDateOnly(value);
+  const date = dateOnly || new Date(value);
   if (Number.isNaN(date.getTime())) return value;
-  return date.toISOString().slice(0, 10);
+  const yyyy = String(date.getFullYear());
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 function formatDateTable(value) {
@@ -148,7 +172,8 @@ function formatDateDot(value) {
     const yyyy = yyyyRaw.length === 2 ? `20${yyyyRaw}` : yyyyRaw;
     return `${dd.padStart(2, "0")}.${mm.padStart(2, "0")}.${yyyy}`;
   }
-  const date = new Date(value);
+  const dateOnly = parseDateOnly(value);
+  const date = dateOnly || new Date(value);
   if (Number.isNaN(date.getTime())) return str;
   const dd = String(date.getDate()).padStart(2, "0");
   const mm = String(date.getMonth() + 1).padStart(2, "0");
@@ -306,22 +331,12 @@ function collectProducts(flat, currencyValue) {
 }
 
 function buildClaimPayload(flat, dates, customerValue, currencyValue) {
-  const rawPurchaseDate = pickField(flat, [
-    "purchaseDate",
-    "orderDate",
-    "date",
-    "order_date",
-    "purchase_date"
-  ]) ||
-    (flat.orderDetails && pickField(flat.orderDetails, ["orderDate", "purchaseDate", "date"])) ||
-    dates.orderDate ||
-    dates.purchaseDate ||
-    flat.receivedAt ||
-    dates.receivedAt ||
-    flat.reportDate ||
-    new Date().toISOString().slice(0, 10);
-  const orderDate = pickField(flat, ["orderDate", "order_date"]) || rawPurchaseDate;
-  const purchaseDate = pickField(flat, ["purchaseDate", "purchase_date"]) || rawPurchaseDate;
+  const orderDate =
+    pickField(flat, ["orderDate", "order_date"]) ||
+    (flat.orderDetails && pickField(flat.orderDetails, ["orderDate"]));
+  const purchaseDate =
+    pickField(flat, ["purchaseDate", "purchase_date"]) ||
+    (flat.orderDetails && pickField(flat.orderDetails, ["purchaseDate"]));
 
   return {
     claimId: flat.claimId || flat.caseNumber || flat.rowNumber || flat.orderId || flat.order || "",
@@ -344,7 +359,7 @@ function buildClaimPayload(flat, dates, customerValue, currencyValue) {
     resolution: flat.resolution,
     agent: flat.agent,
     myNewField: flat.myNewField,
-    receivedAt: flat.receivedAt || dates.receivedAt || new Date().toISOString().slice(0, 10),
+    receivedAt: flat.receivedAt || dates.receivedAt,
     decisionDue: flat.decisionDue || dates.decisionDue,
     resolvedAt: flat.resolvedAt || dates.resolvedAt,
     rowNumber: flat.rowNumber,
