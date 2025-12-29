@@ -107,10 +107,22 @@ function initS1() {
     }
 
     const noteInput = document.getElementById("s1-note");
+    const orderDate =
+      s1FetchedOrder?.orderDate ||
+      s1FetchedOrder?.order_date ||
+      s1FetchedOrder?.orderDetails?.orderDate ||
+      s1FetchedOrder?.orderDetails?.order_date;
+    const purchaseDate =
+      s1FetchedOrder?.purchaseDate ||
+      s1FetchedOrder?.purchase_date ||
+      s1FetchedOrder?.orderDetails?.purchaseDate ||
+      s1FetchedOrder?.orderDetails?.purchase_date;
 
     const payload = {
       order: orderInput.value,
       orderDetails: s1FetchedOrder,
+      orderDate,
+      purchaseDate,
       reportDate: document.getElementById("s1-report-date").value,
       type: document.getElementById("s1-type").value,
       reason: document.getElementById("s1-reason").value,
