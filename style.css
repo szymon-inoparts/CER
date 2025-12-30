@@ -552,7 +552,7 @@ th {
 .filters-group-grid {
   display: grid;
   grid-template-columns: repeat(4, max-content);
-  gap: 6px;
+  gap: 4px;
   justify-content: start;
 }
 
@@ -609,15 +609,15 @@ th {
 
 .filters-bottom {
   display: grid;
-  grid-template-columns: minmax(220px, 260px) minmax(240px, 1fr);
+  grid-template-columns: max-content max-content;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 6px;
   align-items: start;
 }
 
 .filters-bottom__left {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .filters-grid--narrow {
@@ -643,20 +643,29 @@ th {
 
 .filters-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .filters-status {
-  max-width: 240px;
+  max-width: 220px;
 }
 
 .s2-search-inline {
-  max-width: 300px;
+  max-width: 260px;
 }
 
 .s2-search-inline .row-inline {
   justify-content: flex-start;
+}
+
+.filters-bottom__right {
+  display: grid;
+  gap: 4px;
+}
+
+.s2-filter-panel .row-inline {
+  gap: 6px;
 }
 
 @media (max-width: 1200px) {
