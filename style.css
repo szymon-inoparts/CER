@@ -550,10 +550,10 @@ th {
 }
 
 .filters-group-grid {
-  display: grid;
-  grid-template-columns: repeat(4, max-content);
-  gap: 6px;
-  justify-content: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: stretch;
 }
 
 .filter-group {
@@ -561,7 +561,7 @@ th {
   border: 1px solid #d9efe1;
   border-radius: 12px;
   padding: 4px 6px 6px;
-  width: 230px;
+  width: 220px;
 }
 
 .filter-group__title {
@@ -676,6 +676,7 @@ th {
 .filters-bottom__right {
   display: grid;
   gap: 4px;
+  align-content: start;
 }
 
 .s2-filter-panel .row-inline {
