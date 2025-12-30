@@ -581,6 +581,14 @@ th {
   width: fit-content;
 }
 
+.s2-filter-panel .field {
+  min-width: 0;
+}
+
+.filter-group .field {
+  width: auto;
+}
+
 .date-input {
   position: relative;
   width: 120px;
@@ -601,6 +609,10 @@ th {
 .date-input input:not(.has-value):not(:focus)::-webkit-datetime-edit-month-field,
 .date-input input:not(.has-value):not(:focus)::-webkit-datetime-edit-day-field,
 .date-input input:not(.has-value):not(:focus)::-webkit-datetime-edit-year-field {
+  color: transparent;
+}
+
+.date-input input::placeholder {
   color: transparent;
 }
 
