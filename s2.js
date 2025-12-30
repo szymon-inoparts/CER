@@ -124,6 +124,22 @@ const resetFilters = () => {
   }
 };
 
+const initDatePlaceholders = () => {
+  document.querySelectorAll(".date-input input[type=\"date\"]").forEach((input) => {
+    const update = () => {
+      if (input.value) {
+        input.classList.add("has-value");
+      } else {
+        input.classList.remove("has-value");
+      }
+    };
+    update();
+    input.addEventListener("change", update);
+    input.addEventListener("input", update);
+    input.addEventListener("blur", update);
+  });
+};
+
 const requestFilteredList = async () => {
   if (!FILTER_CER_WEBHOOK) {
     showToast("Brak webhooka filtrowania", "error");
@@ -204,4 +220,6 @@ function initS2() {
   if (filterReset) {
     filterReset.addEventListener("click", resetFilters);
   }
+
+  initDatePlaceholders();
 }

@@ -579,8 +579,28 @@ th {
   gap: 2px;
 }
 
-.filter-group input {
+.date-input {
+  position: relative;
   width: 120px;
+}
+
+.date-input input {
+  width: 100%;
+}
+
+.date-placeholder {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.date-input input:focus + .date-placeholder,
+.date-input input.has-value + .date-placeholder {
+  display: none;
 }
 
 .filter-group .field {
