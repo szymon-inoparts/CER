@@ -219,9 +219,20 @@ const requestFilteredList = async () => {
     } catch {
       parsed = rawText;
     }
-    let rows = Array.isArray(parsed) ? parsed : parsed && typeof parsed === "object" ? [parsed] : [];
+    let rows = Array.isArray(parsed) ? parsed : [];
+    if (!rows.length && parsed && typeof parsed === "object") {
+      const unwrapped = unwrapArray(parsed);
+      rows = Array.isArray(unwrapped) ? unwrapped : [];
+      if (!rows.length && parsed.data && typeof parsed.data === "string") {
+        const parsedData = safeJsonParse(parsed.data);
+        if (Array.isArray(parsedData.value)) rows = parsedData.value;
+      }
+      if (!rows.length && parsed.items && typeof parsed.items === "string") {
+        const parsedItems = safeJsonParse(parsed.items);
+        if (Array.isArray(parsedItems.value)) rows = parsedItems.value;
+      }
+    }
     if (!rows.length) rows = parseObjectsFromText(rawText);
-    if (!rows.length) rows = unwrapArray(parsed);
 
     s2ListBox.classList.remove("hidden");
     if (!res.ok) {

@@ -603,6 +603,9 @@ th {
   min-width: 168px;
   max-width: 168px;
   padding-right: 30px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
 }
 
 .date-input input:not(.has-value):not(:focus) {
@@ -623,13 +626,13 @@ th {
 
 .date-input input::-webkit-calendar-picker-indicator {
   opacity: 0;
-  width: 0;
-  height: 0;
   display: none;
+  -webkit-appearance: none;
 }
 
 .date-input input::-moz-calendar-picker-indicator {
   opacity: 0;
+  display: none;
 }
 
 .date-input input::-webkit-inner-spin-button,

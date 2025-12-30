@@ -166,6 +166,11 @@ function flattenClaim(raw = {}) {
 function formatDateDot(value) {
   if (!value) return "-";
   const str = String(value).trim();
+  const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoMatch) {
+    const [_, yyyy, mm, dd] = isoMatch;
+    return `${dd}.${mm}.${yyyy}`;
+  }
   const dotMatch = str.match(/(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{2,4})/);
   if (dotMatch) {
     const [_, dd, mm, yyyyRaw] = dotMatch;
