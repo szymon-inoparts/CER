@@ -551,15 +551,15 @@ th {
 
 .filters-group-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 4px;
 }
 
 .filter-group {
   background: #f5fbf7;
   border: 1px solid #d9efe1;
   border-radius: 12px;
-  padding: 6px;
+  padding: 4px 6px 6px;
 }
 
 .filter-group__title {
@@ -574,11 +574,11 @@ th {
 .filter-group__fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px;
+  gap: 2px;
 }
 
 .filter-group input[type="date"] {
-  max-width: 110px;
+  max-width: 96px;
 }
 
 .filter-group .field {
@@ -587,21 +587,21 @@ th {
 
 .filters-bottom {
   display: grid;
-  grid-template-columns: minmax(220px, 260px) minmax(320px, 1fr);
-  gap: 16px;
-  margin-top: 12px;
-  align-items: end;
+  grid-template-columns: minmax(220px, 260px) minmax(240px, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+  align-items: start;
 }
 
 .filters-bottom__left {
   display: grid;
-  gap: 10px;
+  gap: 6px;
 }
 
 .filters-grid--narrow {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 4px;
+  gap: 2px;
   max-width: 260px;
 }
 
@@ -621,16 +621,16 @@ th {
 
 .filters-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .filters-status {
-  max-width: 260px;
+  max-width: 240px;
 }
 
 .s2-search-inline {
-  max-width: 360px;
+  max-width: 300px;
 }
 
 .s2-search-inline .row-inline {
