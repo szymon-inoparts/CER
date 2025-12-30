@@ -1,4 +1,4 @@
-// CzÄ‚â€žĂ˘â€žËĂ„Ä…Ă˘â‚¬ĹźÄ‚â€žĂ˘â‚¬Ë‡ 2: ewidencja Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬Ĺ› pobieranie pojedynczych i listy zgĂ„Ä…Ă˘â‚¬ĹˇoszeĂ„Ä…Ă˘â‚¬Ĺľ
+// Sekcja 2: ewidencja - pobieranie pojedynczych i listy zgłoszeń
 
 let s2SingleBox;
 let s2ListBox;
@@ -23,10 +23,68 @@ const getFilters = () => ({
   status: getFilterValue("s2-filter-status")
 });
 
+const isSheetRow = (row) =>
+  row &&
+  typeof row === "object" &&
+  (
+    "Nr. Rek." in row ||
+    "Data przyjęcia" in row ||
+    "W trakcie/Zakończone" in row ||
+    "Zamówienie" in row
+  );
+
+const getRowValue = (row, keys) => {
+  for (const key of keys) {
+    if (row && row[key] !== undefined && row[key] !== null && row[key] !== "") return row[key];
+  }
+  return "";
+};
+
+const buildProductsFromRow = (row) => {
+  const names = splitSemicolons(getRowValue(row, ["Produkt Nazwa", "Produkt Nazwa "]));
+  const skus = splitSemicolons(getRowValue(row, ["Produkt SKU", "Produkt SKU "]));
+  const qtys = splitSemicolons(getRowValue(row, ["Produkt Ilość", "Produkt Ilosc"]));
+  const vals = splitSemicolons(getRowValue(row, ["Wartość", "Wartosc"]));
+  const currs = splitSemicolons(getRowValue(row, ["Waluta", "Currency"]));
+  const maxLen = Math.max(names.length, skus.length, qtys.length, vals.length, currs.length);
+  if (!maxLen) return [];
+  return Array.from({ length: maxLen }).map((_, i) => ({
+    name: names[i] || "",
+    sku: skus[i] || "",
+    quantity: qtys[i] || "",
+    price: vals[i] || "",
+    currency: currs[i] || ""
+  }));
+};
+
+const toClaimFromSheetRow = (row) => ({
+  claimId: getRowValue(row, ["Nr. Rek.", "Nr. Rek", "Nr Rek", "Nr"]),
+  orderId: getRowValue(row, ["Zamówienie", "Zamowienie"]),
+  customer: getRowValue(row, ["Klient imię i nazwisko", "Klient imie i nazwisko", "Klient login"]),
+  customerLogin: getRowValue(row, ["Klient login"]),
+  marketplace: getRowValue(row, ["Marketplace"]),
+  status: getRowValue(row, ["W trakcie/Zakończone", "Status"]),
+  receivedAt: getRowValue(row, ["Data przyjęcia", "Data przyjecia"]),
+  decisionDue: getRowValue(row, ["Czas decyzji do", "Termin decyzji do"]),
+  resolvedAt: getRowValue(row, ["Data rozwiązania", "Data rozwiazania"]),
+  type: getRowValue(row, ["Typ"]),
+  decision: getRowValue(row, ["Decyzja"]),
+  resolution: getRowValue(row, ["Rozwiązanie", "Rozwiazanie"]),
+  agent: getRowValue(row, ["Pracownik"]),
+  note: getRowValue(row, ["Notatka/Uwagi", "Notatka"]),
+  orderDate: getRowValue(row, ["Data zamówienia", "Data zamowienia"]),
+  purchaseDate: getRowValue(row, ["Data zamówienia", "Data zamowienia"]),
+  value: getRowValue(row, ["Wartość", "Wartosc"]),
+  currency: getRowValue(row, ["Waluta"]),
+  address: getRowValue(row, ["Adres"]),
+  products: buildProductsFromRow(row),
+  rowNumber: getRowValue(row, ["row_number", "rowNumber"])
+});
+
 const renderList = (rows) => {
   if (!s2ListBox) return;
   if (!rows.length) {
-    s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak danych dla wybranych filtrĂ„â€šÄąâ€šw.</pre></div>`;
+    s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak danych dla wybranych filtrów.</pre></div>`;
     return;
   }
 
@@ -34,36 +92,39 @@ const renderList = (rows) => {
         <tr>
           <th>#</th>
           <th>Reklamacja</th>
-          <th>ZamĂ„â€šÄąâ€šwienie</th>
+          <th>Zamówienie</th>
           <th>Klient</th>
           <th>Marketplace</th>
           <th>Status</th>
-          <th>Data zgĂ„Ä…Ă˘â‚¬Ĺˇoszenia</th>
+          <th>Data zgłoszenia</th>
           <th>Termin decyzji</th>
-          <th>Data zamkniÄ‚â€žĂ˘â€žËcia</th>
+          <th>Data rozwiązania</th>
           <th>Pracownik</th>
           <th>Akcja</th>
         </tr>`;
 
   rows.forEach((row, idx) => {
-    const claim = normalizeClaim(row);
+    const claim = isSheetRow(row) ? toClaimFromSheetRow(row) : normalizeClaim(row);
+    const claimIdEsc = escapeAttribute(claim.claimId || "");
     const expId = `exp-${claim.claimId || claim.rowNumber || idx}`;
     html += `
         <tr>
-          <td>${claim.rowNumber ? claim.rowNumber : idx + 1}</td>
-          <td class="link" onclick="document.getElementById('s2-search').value='${claim.claimId}'">${claim.claimId || "-"}</td>
-          <td>${claim.orderId || "-"}</td>
-          <td>${claim.customer || "-"}</td>
-          <td>${claim.marketplace || "-"}</td>
-          <td>${claim.status || "-"}</td>
-          <td>${formatDateDot(claim.receivedAt)}</td>
-          <td>${formatDateDot(claim.decisionDue)}</td>
-          <td>${formatDateDot(claim.resolvedAt)}</td>
-          <td>${claim.agent || "-"}</td>
+          <td>${escapeHtml(claim.rowNumber ? claim.rowNumber : idx + 1)}</td>
+          <td class="link" onclick="document.getElementById('s2-search').value='${claimIdEsc}'">${escapeHtml(
+            claim.claimId || "-"
+          )}</td>
+          <td>${escapeHtml(claim.orderId || "-")}</td>
+          <td>${escapeHtml(claim.customer || "-")}</td>
+          <td>${escapeHtml(claim.marketplace || "-")}</td>
+          <td>${escapeHtml(claim.status || "-")}</td>
+          <td>${escapeHtml(formatDateDot(claim.receivedAt))}</td>
+          <td>${escapeHtml(formatDateDot(claim.decisionDue))}</td>
+          <td>${escapeHtml(formatDateDot(claim.resolvedAt))}</td>
+          <td>${escapeHtml(claim.agent || "-")}</td>
           <td>
             <div class="action-cell">
-              <button class="btn btn-link" onclick="handleExpand('${expId}', this)">SzczegĂ„â€šÄąâ€šĂ„Ä…Ă˘â‚¬Ĺˇy</button>
-              <button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedź</button>
+              <button class="btn btn-link" onclick="handleExpand('${expId}', this)">Szczegóły</button>
+              <button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claimIdEsc}'">Generuj odpowiedź</button>
             </div>
           </td>
         </tr>
@@ -89,10 +150,10 @@ const updateFilterOptions = (rows) => {
   const statuses = new Set();
 
   rows.forEach((row) => {
-    const claim = normalizeClaim(row);
-    if (claim.agent) employees.add(claim.agent);
-    if (claim.type) types.add(claim.type);
-    if (claim.status) statuses.add(claim.status);
+    const claim = isSheetRow(row) ? toClaimFromSheetRow(row) : normalizeClaim(row);
+    if (claim.agent) employees.add(String(claim.agent));
+    if (claim.type) types.add(String(claim.type));
+    if (claim.status) statuses.add(String(claim.status));
   });
 
   fillSelectOptions(document.getElementById("s2-filter-employee"), employees);
@@ -164,9 +225,9 @@ const requestFilteredList = async () => {
 
     s2ListBox.classList.remove("hidden");
     if (!res.ok) {
-      s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">BĂ„Ä…Ă˘â‚¬ĹˇÄ‚â€žĂ˘â‚¬Â¦d HTTP ${res.status}
+      s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Błąd HTTP ${res.status}
 ${escapeHtml(rawText)}</pre></div>`;
-      showToast(`BĂ„Ä…Ă˘â‚¬ĹˇÄ‚â€žĂ˘â‚¬Â¦d pobierania (${res.status})`, "error");
+      showToast(`Błąd pobierania (${res.status})`, "error");
       return;
     }
     if (!rows.length) {
@@ -206,7 +267,9 @@ function initS2() {
       s2SingleBox.classList.remove("hidden");
       s2SingleBox.innerHTML = renderClaimCard(
         claim,
-        `<button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedź</button>`
+        `<button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${escapeAttribute(
+          claim.claimId || ""
+        )}'">Generuj odpowiedź</button>`
       );
       showToast("Pobrano zgłoszenie");
     } catch (err) {

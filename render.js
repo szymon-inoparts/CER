@@ -1,4 +1,4 @@
-﻿// Renderowanie kart/sekcji oraz helpery akcji
+// Renderowanie kart/sekcji oraz helpery akcji
 
 function renderProductItem(p, currencyFallback) {
   return `<li>
@@ -134,7 +134,3 @@ window.handleGenerateClick = handleGenerateClick;
 function renderClaimTable(claim) {
   return renderClaimCard(claim);
 }
-
-
-
-

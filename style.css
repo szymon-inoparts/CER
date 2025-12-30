@@ -552,8 +552,9 @@ th {
 .filters-group-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   align-items: flex-start;
+  align-content: flex-start;
 }
 
 .filter-group {
@@ -562,6 +563,7 @@ th {
   border-radius: 12px;
   padding: 4px 6px 6px;
   width: fit-content;
+  flex: 0 0 auto;
 }
 
 .filter-group__title {
@@ -575,7 +577,9 @@ th {
 }
 
 .filter-group__fields {
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
   gap: 6px;
   align-items: center;
   width: fit-content;
@@ -591,18 +595,14 @@ th {
 
 .date-input {
   position: relative;
-  width: 160px;
+  width: 168px;
 }
 
 .date-input input {
-  width: 160px;
-  min-width: 160px;
-  max-width: 160px;
-  padding-right: 32px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px 16px;
+  width: 168px;
+  min-width: 168px;
+  max-width: 168px;
+  padding-right: 30px;
 }
 
 .date-input input:not(.has-value):not(:focus) {
@@ -623,6 +623,31 @@ th {
 
 .date-input input::-webkit-calendar-picker-indicator {
   opacity: 0;
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.date-input input::-moz-calendar-picker-indicator {
+  opacity: 0;
+}
+
+.date-input input::-webkit-inner-spin-button,
+.date-input input::-webkit-clear-button {
+  display: none;
+}
+
+.date-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  pointer-events: none;
 }
 
 .date-placeholder {
@@ -638,6 +663,11 @@ th {
 .date-input input:focus + .date-placeholder,
 .date-input input.has-value + .date-placeholder {
   display: none;
+}
+
+#s2-list.table-box {
+  max-height: none;
+  overflow-y: visible;
 }
 
 .filter-group .field {

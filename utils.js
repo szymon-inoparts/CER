@@ -233,26 +233,25 @@ function localizeCountryName(value) {
     slowacja: "Slovensko",
     slovensko: "Slovensko",
     sk: "Slovensko",
-    czechia: "Česko",
-    "czech republic": "Česko",
-    czech: "Česko",
-    cesko: "Česko",
-    cz: "Česko",
+    czechia: "?esko",
+    "czech republic": "?esko",
+    czech: "?esko",
+    cesko: "?esko",
+    cz: "?esko",
     germany: "Deutschland",
     niemcy: "Deutschland",
     deutschland: "Deutschland",
     de: "Deutschland",
-    hungary: "Magyarország",
-    wegry: "Magyarország",
-    magyarorszag: "Magyarország",
-    hu: "Magyarország",
+    hungary: "Magyarorsz?g",
+    wegry: "Magyarorsz?g",
+    magyarorszag: "Magyarorsz?g",
+    hu: "Magyarorsz?g",
     poland: "Polska",
     polska: "Polska",
     pl: "Polska"
   };
   return map[key] || null;
 }
-
 function normalizeCountryKey(value) {
   const normalized = String(value).trim().toLowerCase();
   if (!normalized) return "";
@@ -307,8 +306,8 @@ function normalizeProductArray(productsArr, currencyValue) {
 function buildProductsFromFields(flat, currencyValue) {
   const names = splitSemicolons(pickField(flat, ["Produkt Nazwa", "productName", "product_name"]));
   const skus = splitSemicolons(pickField(flat, ["Produkt SKU", "productSku", "product_sku", "skus"]));
-  const qtys = splitSemicolons(pickField(flat, ["Produkt Ilość", "Produkt Ilosc", "productQty", "product_qty", "quantities"]));
-  const vals = splitSemicolons(pickField(flat, ["Wartość", "Wartosc", "valueRaw", "value", "prices"]));
+  const qtys = splitSemicolons(pickField(flat, ["Produkt Ilo??", "Produkt Ilosc", "productQty", "product_qty", "quantities"]));
+  const vals = splitSemicolons(pickField(flat, ["Warto??", "Wartosc", "valueRaw", "value", "prices"]));
   const currsSource = pickField(flat, ["Waluta", "currency", "orderCurrency"]) || currencyValue;
   const currs = splitSemicolons(currsSource);
   const maxLen = Math.max(names.length, skus.length, qtys.length, vals.length, currs.length);
@@ -348,7 +347,7 @@ function buildClaimPayload(flat, dates, customerValue, currencyValue) {
     customer: customerValue !== undefined && customerValue !== null ? String(customerValue) : "",
     customerLogin: pickField(flat, ["customerLogin", "clientNick", "customerNick"]),
     marketplace: flat.marketplace || flat.platform || "",
-    status: flat.status || (flat.isClosed ? "Zakończone" : ""),
+    status: flat.status || (flat.isClosed ? "Zako?czone" : ""),
     value:
       flat.value ??
       flat.valueNumber ??
@@ -361,6 +360,12 @@ function buildClaimPayload(flat, dates, customerValue, currencyValue) {
     type: flat.type,
     decision: flat.decision,
     resolution: flat.resolution,
+    note:
+      flat.note ||
+      flat.noteText ||
+      flat.notes ||
+      flat["Notatka/Uwagi"] ||
+      flat["Notatka"],
     agent: flat.agent,
     myNewField: flat.myNewField,
     receivedAt: flat.receivedAt || dates.receivedAt,
