@@ -551,8 +551,9 @@ th {
 
 .filters-group-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(150px, 1fr));
-  gap: 4px;
+  grid-template-columns: repeat(4, max-content);
+  gap: 6px;
+  justify-content: start;
 }
 
 .filter-group {
@@ -560,6 +561,7 @@ th {
   border: 1px solid #d9efe1;
   border-radius: 12px;
   padding: 4px 6px 6px;
+  width: max-content;
 }
 
 .filter-group__title {
@@ -577,8 +579,8 @@ th {
   gap: 2px;
 }
 
-.filter-group input[type="date"] {
-  max-width: 96px;
+.filter-group input {
+  width: 120px;
 }
 
 .filter-group .field {
