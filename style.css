@@ -553,7 +553,7 @@ th {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  align-items: stretch;
+  align-items: flex-start;
 }
 
 .filter-group {
@@ -561,7 +561,7 @@ th {
   border: 1px solid #d9efe1;
   border-radius: 12px;
   padding: 4px 6px 6px;
-  width: 220px;
+  width: fit-content;
 }
 
 .filter-group__title {
@@ -575,19 +575,21 @@ th {
 }
 
 .filter-group__fields {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
   gap: 6px;
-  width: 100%;
+  align-items: center;
+  width: fit-content;
 }
 
 .date-input {
   position: relative;
-  width: 100%;
+  width: 120px;
 }
 
 .date-input input {
-  width: 100%;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
 }
 
 .date-input input:not(.has-value):not(:focus) {
