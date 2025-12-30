@@ -574,18 +574,30 @@ th {
 }
 
 .filter-group__fields {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
 }
 
 .date-input {
   position: relative;
-  width: 120px;
+  width: 110px;
 }
 
 .date-input input {
   width: 100%;
+}
+
+.date-input input:not(.has-value) {
+  color: transparent;
+  caret-color: transparent;
+}
+
+.date-input input:not(.has-value)::-webkit-datetime-edit-text,
+.date-input input:not(.has-value)::-webkit-datetime-edit-month-field,
+.date-input input:not(.has-value)::-webkit-datetime-edit-day-field,
+.date-input input:not(.has-value)::-webkit-datetime-edit-year-field {
+  color: transparent;
 }
 
 .date-placeholder {
