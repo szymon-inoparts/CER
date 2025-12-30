@@ -293,28 +293,20 @@
         </div>
 
         <div class="filters-bottom">
-          <div class="filters-bottom__left">
-            <div class="filters-grid filters-grid--narrow">
-              <div class="field">
-                <label>Pracownik</label>
-                <select id="s2-filter-employee">
-                  <option value="">Wszyscy</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Typ reklamacji</label>
-                <select id="s2-filter-type">
-                  <option value="">Wszystkie</option>
-                </select>
-              </div>
+          <div class="filters-row">
+            <div class="field">
+              <label>Typ reklamacji</label>
+              <select id="s2-filter-type">
+                <option value="">Wszystkie</option>
+              </select>
             </div>
-            <div class="filters-actions">
-              <button class="btn btn-primary" id="s2-filter-apply">Filtruj</button>
-              <button class="btn btn-ghost" id="s2-filter-reset">Wyczy&#347;&#263;</button>
+            <div class="field">
+              <label>Pracownik</label>
+              <select id="s2-filter-employee">
+                <option value="">Wszyscy</option>
+              </select>
             </div>
-          </div>
-          <div class="filters-bottom__right">
-            <div class="field filters-status">
+            <div class="field">
               <label>Status</label>
               <select id="s2-filter-status">
                 <option value="">Wszystkie</option>
@@ -327,6 +319,10 @@
                 <button class="btn" id="s2-search-btn">Pobierz</button>
               </div>
             </div>
+          </div>
+          <div class="filters-actions">
+            <button class="btn btn-primary" id="s2-filter-apply">Filtruj</button>
+            <button class="btn btn-ghost" id="s2-filter-reset">Wyczy&#347;&#263;</button>
           </div>
         </div>
       </div>

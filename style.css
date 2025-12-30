@@ -591,13 +591,14 @@ th {
 
 .date-input {
   position: relative;
-  width: 120px;
+  width: 160px;
 }
 
 .date-input input {
-  width: 120px;
-  min-width: 120px;
-  max-width: 120px;
+  width: 160px;
+  min-width: 160px;
+  max-width: 160px;
+  padding-right: 32px;
 }
 
 .date-input input:not(.has-value):not(:focus) {
@@ -614,6 +615,10 @@ th {
 
 .date-input input::placeholder {
   color: transparent;
+}
+
+.date-input input::-webkit-calendar-picker-indicator {
+  opacity: 1;
 }
 
 .date-placeholder {
@@ -637,15 +642,9 @@ th {
 
 .filters-bottom {
   display: grid;
-  grid-template-columns: max-content max-content;
   gap: 8px;
   margin-top: 6px;
   align-items: start;
-}
-
-.filters-bottom__left {
-  display: grid;
-  gap: 4px;
 }
 
 .filters-grid--narrow {
@@ -675,22 +674,19 @@ th {
   flex-wrap: wrap;
 }
 
-.filters-status {
-  max-width: 220px;
+.filters-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
+  gap: 10px;
+  align-items: end;
 }
 
 .s2-search-inline {
-  max-width: 260px;
+  min-width: 260px;
 }
 
 .s2-search-inline .row-inline {
   justify-content: flex-start;
-}
-
-.filters-bottom__right {
-  display: grid;
-  gap: 4px;
-  align-content: start;
 }
 
 .s2-filter-panel .row-inline {
