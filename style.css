@@ -552,7 +552,7 @@ th {
 .filters-group-grid {
   display: grid;
   grid-template-columns: repeat(4, max-content);
-  gap: 4px;
+  gap: 6px;
   justify-content: start;
 }
 
@@ -561,7 +561,7 @@ th {
   border: 1px solid #d9efe1;
   border-radius: 12px;
   padding: 4px 6px 6px;
-  width: max-content;
+  width: 230px;
 }
 
 .filter-group__title {
@@ -571,17 +571,19 @@ th {
   margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.4px;
+  white-space: normal;
 }
 
 .filter-group__fields {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
-  align-items: center;
+  width: 100%;
 }
 
 .date-input {
   position: relative;
-  width: 110px;
+  width: 100%;
 }
 
 .date-input input {
