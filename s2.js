@@ -1,4 +1,4 @@
-// CzÄ™Ĺ›Ä‡ 2: ewidencja â€“ pobieranie pojedynczych i listy zgĹ‚oszeĹ„
+// CzÄ‚â€žĂ˘â€žËĂ„Ä…Ă˘â‚¬ĹźÄ‚â€žĂ˘â‚¬Ë‡ 2: ewidencja Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬Ĺ› pobieranie pojedynczych i listy zgĂ„Ä…Ă˘â‚¬ĹˇoszeĂ„Ä…Ă˘â‚¬Ĺľ
 
 let s2SingleBox;
 let s2ListBox;
@@ -26,7 +26,7 @@ const getFilters = () => ({
 const renderList = (rows) => {
   if (!s2ListBox) return;
   if (!rows.length) {
-    s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak danych dla wybranych filtrĂłw.</pre></div>`;
+    s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak danych dla wybranych filtrĂ„â€šÄąâ€šw.</pre></div>`;
     return;
   }
 
@@ -34,13 +34,13 @@ const renderList = (rows) => {
         <tr>
           <th>#</th>
           <th>Reklamacja</th>
-          <th>ZamĂłwienie</th>
+          <th>ZamĂ„â€šÄąâ€šwienie</th>
           <th>Klient</th>
           <th>Marketplace</th>
           <th>Status</th>
-          <th>Data zgĹ‚oszenia</th>
+          <th>Data zgĂ„Ä…Ă˘â‚¬Ĺˇoszenia</th>
           <th>Termin decyzji</th>
-          <th>Data zamkniÄ™cia</th>
+          <th>Data zamkniÄ‚â€žĂ˘â€žËcia</th>
           <th>Pracownik</th>
           <th>Akcja</th>
         </tr>`;
@@ -62,8 +62,8 @@ const renderList = (rows) => {
           <td>${claim.agent || "-"}</td>
           <td>
             <div class="action-cell">
-              <button class="btn btn-link" onclick="handleExpand('${expId}', this)">SzczegĂłĹ‚y</button>
-              <button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj</button>
+              <button class="btn btn-link" onclick="handleExpand('${expId}', this)">SzczegĂ„â€šÄąâ€šĂ„Ä…Ă˘â‚¬Ĺˇy</button>
+              <button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedź</button>
             </div>
           </td>
         </tr>
@@ -142,7 +142,7 @@ const initDatePlaceholders = () => {
 
 const requestFilteredList = async () => {
   if (!FILTER_CER_WEBHOOK) {
-    showToast("Brak webhooka filtrowania", "error");
+    showToast("Błąd filtrowania", "error");
     return;
   }
   try {
@@ -164,13 +164,13 @@ const requestFilteredList = async () => {
 
     s2ListBox.classList.remove("hidden");
     if (!res.ok) {
-      s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">BĹ‚Ä…d HTTP ${res.status}
+      s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">BĂ„Ä…Ă˘â‚¬ĹˇÄ‚â€žĂ˘â‚¬Â¦d HTTP ${res.status}
 ${escapeHtml(rawText)}</pre></div>`;
-      showToast(`BĹ‚Ä…d pobierania (${res.status})`, "error");
+      showToast(`BĂ„Ä…Ă˘â‚¬ĹˇÄ‚â€žĂ˘â‚¬Â¦d pobierania (${res.status})`, "error");
       return;
     }
     if (!rows.length) {
-      s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak rozpoznanych danych. Surowa odpowiedĹş webhooka:
+      s2ListBox.innerHTML = `<div class="table-box"><pre style="white-space:pre-wrap; padding:12px;">Brak rozpoznanych danych. Surowa odpowiedź webhooka:
 ${escapeHtml(rawText)}</pre></div>`;
       showToast("Brak danych z webhooka", "error");
       return;
@@ -182,14 +182,14 @@ ${escapeHtml(rawText)}</pre></div>`;
     showToast("Zastosowano filtry");
   } catch (err) {
     console.error("FILTER_CER_WEBHOOK error", err);
-    showToast("BĹ‚Ä…d filtrowania", "error");
+    showToast("Błąd filtrowania", "error");
   }
 };
 
 function initS2() {
   const searchBtn = document.getElementById("s2-search-btn");
   const searchInput = document.getElementById("s2-search");
-  s2SingleBox = document.getElementById("s2-single-result");\n
+  s2SingleBox = document.getElementById("s2-single-result");
   s2ListBox = document.getElementById("s2-list");
   const filterBtn = document.getElementById("s2-filter-apply");
   const filterReset = document.getElementById("s2-filter-reset");
@@ -206,13 +206,13 @@ function initS2() {
       s2SingleBox.classList.remove("hidden");
       s2SingleBox.innerHTML = renderClaimCard(
         claim,
-        `<button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedĹş</button>`
+        `<button class="btn btn-primary" onclick="switchPage(4); document.getElementById('s3-number').value='${claim.claimId}'">Generuj odpowiedź</button>`
       );
-      showToast("Pobrano zgĹ‚oszenie");
+      showToast("Pobrano zgłoszenie");
     } catch (err) {
       showToast("Nie znaleziono", "error");
     }
-  });\n
+  });
   if (filterBtn) {
     filterBtn.addEventListener("click", requestFilteredList);
   }
