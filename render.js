@@ -113,7 +113,7 @@ function toggleRowDetails(id, btn) {
   if (!row) return;
   const isOpen = row.style.display !== "none";
   row.style.display = isOpen ? "none" : "table-row";
-  if (btn) btn.textContent = isOpen ? "Rozwiń" : "Zwiń";
+  if (btn) btn.textContent = isOpen ? "Szczegóły" : "Zwiń";
 }
 window.toggleRowDetails = toggleRowDetails;
 

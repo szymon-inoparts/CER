@@ -125,6 +125,7 @@ const toClaimFromSheetRow = (row) => ({
   type: getRowValue(row, ["Typ"]),
   decision: getRowValue(row, ["Decyzja"]),
   resolution: getRowValue(row, ["Rozwiązanie", "Rozwiazanie"]),
+  reason: getRowValue(row, ["Powód zgłoszenia", "Powod zgloszenia"]),
   agent: getRowValue(row, ["Pracownik"]),
   note: getRowValue(row, ["Notatka/Uwagi", "Notatka"]),
   orderDate: getRowValue(row, ["Data zamówienia", "Data zamowienia"]),
