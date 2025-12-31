@@ -9,19 +9,26 @@ const getFilterValue = (id) => {
   return el ? String(el.value || "").trim() : "";
 };
 
-const getFilters = () => ({
-  orderDateFrom: getFilterValue("s2-order-from"),
-  orderDateTo: getFilterValue("s2-order-to"),
-  receivedAtFrom: getFilterValue("s2-received-from"),
-  receivedAtTo: getFilterValue("s2-received-to"),
-  decisionDueFrom: getFilterValue("s2-decision-from"),
-  decisionDueTo: getFilterValue("s2-decision-to"),
-  resolvedAtFrom: getFilterValue("s2-resolved-from"),
-  resolvedAtTo: getFilterValue("s2-resolved-to"),
-  employee: getFilterValue("s2-filter-employee"),
-  type: getFilterValue("s2-filter-type"),
-  status: getFilterValue("s2-filter-status")
-});
+const getFilters = () => {
+  const base = {
+    orderDateFrom: getFilterValue("s2-order-from"),
+    orderDateTo: getFilterValue("s2-order-to"),
+    receivedAtFrom: getFilterValue("s2-received-from"),
+    receivedAtTo: getFilterValue("s2-received-to"),
+    decisionDueFrom: getFilterValue("s2-decision-from"),
+    decisionDueTo: getFilterValue("s2-decision-to"),
+    resolvedAtFrom: getFilterValue("s2-resolved-from"),
+    resolvedAtTo: getFilterValue("s2-resolved-to"),
+    employee: getFilterValue("s2-filter-employee"),
+    type: getFilterValue("s2-filter-type"),
+    status: getFilterValue("s2-filter-status")
+  };
+  const cleaned = {};
+  Object.keys(base).forEach((key) => {
+    if (base[key]) cleaned[key] = base[key];
+  });
+  return cleaned;
+};
 
 const isSheetRow = (row) =>
   row &&

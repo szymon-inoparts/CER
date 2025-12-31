@@ -35,7 +35,7 @@
     <p class="section-desc">Szybki start i skr&#243;ty do modu&#322;&#243;w.</p>
     <div class="home-grid">
       <div class="card home-primary">
-        <h3>Instrukcja u&#380;ytkowania</h3>
+        <h3>Instrukcja u?ytkowania</h3>
         <ul class="muted" style="line-height:1.6; padding-left:18px;">
           <li><strong>Start</strong> - aplikacja jest od razu dost?pna; pasek g?rny prze??cza modu?y: G??wna, Dodaj zg?oszenie, Ewidencja, Generator, Reset.</li>
           <li><strong>Dodaj zg?oszenie</strong>:
@@ -61,42 +61,6 @@
           </li>
           <li><strong>Produkty/adresy/daty</strong> - pobierane z webhook?w Sellasist/CER. Je?li czego? brakuje lub wymaga korekty, popraw w Ewidencji, potem wr?? do Generatora i wygeneruj ponownie.</li>
           <li><strong>Reset</strong> - czy?ci formularze i chowa sekcje wynik?w (nie usuwa danych z CER).</li>
-        </ul>
-          </li>
-          <li><strong>Ewidencja</strong>:
-            <ul style="padding-left:14px; margin-top:6px;">
-              <li>Pojedyncze: wpisz numer w ?Szukaj pojedynczego?, kliknij ?Pobierz?. Otw?rz kart?, ?Edytuj? pozwala poprawi? adres/pow?d/typ/dec./notatk?, potem ?Zapisz?.</li>
-              <li>Lista: wybierz zakres i kliknij ?Filtruj?. W tabeli s? daty zg?oszenia/terminu decyzji/rozwi?zania. Przyciski: ?Szczeg??y? (rozwija kart?) i ?Generuj? (przenosi numer do Generatora).</li>
-            </ul>
-          </li>
-          <li><strong>Generator</strong>:
-            <ul style="padding-left:14px; margin-top:6px;">
-              <li>1) Wpisz numer reklamacji/zam?wienia, kliknij ?Poka? dane?.</li>
-              <li>2) Wybierz decyzj? (Negatywna/Pozytywna) i j?zyk t?umaczenia (PL/CZ/DE/SK/HU/EN). CZ w backendzie idzie jako CS.</li>
-              <li>3) Opcja ?Brak odpowiedzi klienta? chowa pole odpowiedzi i wstawia tekst automatyczny.</li>
-              <li>4) Kliknij ?Generuj odpowied?? - pobierze DOCX z danymi.</li>
-            </ul>
-          </li>
-          <li><strong>Produkty/adresy/daty</strong> - pobierane z webhook?w Sellasist/CER. Je?li czego? brakuje lub wymaga korekty, popraw w Ewidencji, potem wr?? do Generatora i wygeneruj ponownie.</li>
-          <li><strong>Reset</strong> - czy?ci formularze i chowa sekcje wynik?w (nie usuwa danych z CER).</li>
-        </ul>
-          </li>
-          <li><strong>Ewidencja</strong>:
-            <ul style="padding-left:14px; margin-top:6px;">
-              <li>Pojedyncze: wpisz numer w â€žSzukaj pojedynczegoâ€ť, kliknij â€žPobierzâ€ť. OtwĂłrz kartÄ™, przycisk â€žEdytujâ€ť pozwala poprawiÄ‡ adres/powĂłd/typ/dec./notatkÄ™, potem â€žZapiszâ€ť.</li>
-              <li>Lista: wybierz zakres (Ostatnie 7/14 dni, miesiÄ…c, 20/50, wymagajÄ…ce odpowiedzi, status w trakcie/zakoĹ„czone, wszystkie) i â€žPobierz listÄ™â€ť. W tabeli masz daty zgĹ‚oszenia/terminu decyzji/zamkniÄ™cia. Przyciski: â€žSzczegĂłĹ‚yâ€ť (rozwija kartÄ™) i â€žGenerujâ€ť (przenosi numer do Generatora).</li>
-            </ul>
-          </li>
-          <li><strong>Generator</strong>:
-            <ul style="padding-left:14px; margin-top:6px;">
-              <li>1) Wpisz numer reklamacji/zamĂłwienia, kliknij â€žPokaĹĽ daneâ€ť.</li>
-              <li>2) Wybierz decyzjÄ™ (Negatywna/Pozytywna), jÄ™zyk tĹ‚umaczenia (PL/CZ/DE/SK/HU/EN). CZ w backendzie idzie jako CS.</li>
-              <li>3) Opcja â€žBrak odpowiedzi klientaâ€ť â€“ chowa pole odpowiedzi i wstawia tekst automatyczny.</li>
-              <li>4) Kliknij â€žGeneruj odpowiedĹşâ€ť â€“ wygeneruje DOCX z danymi (klient, adres, produkty, daty). Plik pobierze siÄ™ automatycznie.</li>
-            </ul>
-          </li>
-          <li><strong>Produkty/adresy/dat y</strong> â€“ pobierane z webhookĂłw Sellasist/CER. JeĹ›li czegoĹ› brakuje lub wymaga korekty, popraw w Ewidencji (Edytuj â†’ Zapisz), potem wrĂłÄ‡ do Generatora i wygeneruj ponownie.</li>
-          <li><strong>Reset</strong> â€“ czyĹ›ci formularze i chowa sekcje wynikĂłw (nie usuwa danych z CER).</li>
         </ul>
       </div>
       <div class="home-right">
@@ -258,7 +222,6 @@
                 <div class="date-input">
                   <input id="s2-order-from" type="date" />
                   <span class="date-placeholder">dd.mm.yyyy</span>
-                  <span class="date-icon" aria-hidden="true"></span>
                 </div>
               </div>
               <div class="field">
@@ -266,7 +229,6 @@
                 <div class="date-input">
                   <input id="s2-order-to" type="date" />
                   <span class="date-placeholder">dd.mm.yyyy</span>
-                  <span class="date-icon" aria-hidden="true"></span>
                 </div>
               </div>
             </div>
@@ -279,7 +241,6 @@
                 <div class="date-input">
                   <input id="s2-received-from" type="date" />
                   <span class="date-placeholder">dd.mm.yyyy</span>
-                  <span class="date-icon" aria-hidden="true"></span>
                 </div>
               </div>
               <div class="field">
@@ -287,7 +248,6 @@
                 <div class="date-input">
                   <input id="s2-received-to" type="date" />
                   <span class="date-placeholder">dd.mm.yyyy</span>
-                  <span class="date-icon" aria-hidden="true"></span>
                 </div>
               </div>
             </div>
@@ -300,7 +260,6 @@
                 <div class="date-input">
                   <input id="s2-decision-from" type="date" />
                   <span class="date-placeholder">dd.mm.yyyy</span>
-                  <span class="date-icon" aria-hidden="true"></span>
                 </div>
               </div>
               <div class="field">
@@ -308,7 +267,6 @@
                 <div class="date-input">
                   <input id="s2-decision-to" type="date" />
                   <span class="date-placeholder">dd.mm.yyyy</span>
-                  <span class="date-icon" aria-hidden="true"></span>
                 </div>
               </div>
             </div>
@@ -321,7 +279,6 @@
                 <div class="date-input">
                   <input id="s2-resolved-from" type="date" />
                   <span class="date-placeholder">dd.mm.yyyy</span>
-                  <span class="date-icon" aria-hidden="true"></span>
                 </div>
               </div>
               <div class="field">
@@ -329,7 +286,6 @@
                 <div class="date-input">
                   <input id="s2-resolved-to" type="date" />
                   <span class="date-placeholder">dd.mm.yyyy</span>
-                  <span class="date-icon" aria-hidden="true"></span>
                 </div>
               </div>
             </div>
