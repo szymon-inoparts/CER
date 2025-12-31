@@ -678,8 +678,13 @@ th {
 
 .filters-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
+}
+
+.filters-actions--inline {
+  align-self: end;
+  justify-content: flex-start;
 }
 
 .filters-row {
