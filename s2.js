@@ -330,6 +330,9 @@ function initS2() {
 
   if (!searchBtn || !searchInput || !s2SingleBox || !s2ListBox) return;
 
+  // Prefill selects with domyślne wartości, nawet przed pierwszym pobraniem z webhooka.
+  updateFilterOptions(s2Rows);
+
   searchBtn.addEventListener("click", async () => {
     const num = searchInput.value.trim();
     if (!num) return showToast("Podaj numer", "error");
