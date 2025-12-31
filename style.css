@@ -526,11 +526,11 @@ th {
 }
 
 .s2-filter-panel {
-  border-radius: var(--radius-lg);
-  padding: 14px;
-  box-shadow: var(--shadow-soft);
-  background: var(--panel);
-  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 18px;
+  box-shadow: 0 18px 50px rgba(17, 24, 39, 0.08);
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 60%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
 }
 
 .s2-filter-title {
@@ -550,29 +550,27 @@ th {
 }
 
 .filters-group-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: flex-start;
-  align-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+  align-items: stretch;
 }
 
 .filter-group {
-  background: #f5fbf7;
-  border: 1px solid #d9efe1;
-  border-radius: 12px;
-  padding: 4px 6px 6px;
-  width: fit-content;
-  flex: 0 0 auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.06);
 }
 
 .filter-group__title {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  color: #155724;
-  margin-bottom: 4px;
+  color: #0f172a;
+  margin-bottom: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.6px;
   white-space: normal;
 }
 
@@ -590,18 +588,17 @@ th {
 }
 
 .filter-group .field {
-  width: auto;
+  width: 100%;
 }
 
 .date-input {
   position: relative;
-  width: 168px;
+  width: 100%;
 }
 
 .date-input input {
-  width: 168px;
-  min-width: 168px;
-  max-width: 168px;
+  width: 100%;
+  min-width: 0;
   padding-right: 30px;
 }
 
@@ -652,9 +649,10 @@ th {
 
 .filters-bottom {
   display: grid;
-  gap: 8px;
-  margin-top: 6px;
-  align-items: start;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  margin-top: 10px;
+  align-items: end;
 }
 
 .filters-grid--narrow {
@@ -686,13 +684,16 @@ th {
 
 .filters-row {
   display: grid;
-  grid-template-columns: repeat(4, minmax(200px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
   align-items: end;
 }
 
 .s2-search-inline {
-  min-width: 260px;
+  min-width: 280px;
+  grid-column: span 2;
+  justify-self: end;
+  max-width: 420px;
 }
 
 .s2-search-inline .row-inline {
