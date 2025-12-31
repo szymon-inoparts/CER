@@ -49,13 +49,12 @@ function parseDateFlexible(value) {
 
 function formatDate(value) {
   if (!value) return "-";
-  const dateOnly = parseDateOnly(value);
-  const date = dateOnly || new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
+  const date = parseDateFlexible(value);
+  if (!date) return String(value);
   const yyyy = String(date.getFullYear());
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   const dd = String(date.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
+  return `${mm}.${dd}.${yyyy}`;
 }
 
 function formatDateTable(value) {

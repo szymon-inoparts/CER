@@ -3,7 +3,7 @@
 let s2SingleBox;
 let s2ListBox;
 let s2Rows = [];
-const FILTER_EMPLOYEES = ["Izabela", "Iza", "Maks F.", "Adam"];
+const FILTER_EMPLOYEES = ["Izabela", "Maks F.", "Adam"];
 const FILTER_STATUSES = ["Zakończone", "W trakcie"];
 const FILTER_TYPES = [
   "Wada produktu",
