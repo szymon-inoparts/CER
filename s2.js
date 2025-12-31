@@ -3,6 +3,17 @@
 let s2SingleBox;
 let s2ListBox;
 let s2Rows = [];
+const FILTER_EMPLOYEES = ["Izabela", "Iza", "Maks F.", "Adam"];
+const FILTER_STATUSES = ["Zakończone", "W trakcie"];
+const FILTER_TYPES = [
+  "Wada produktu",
+  "Uszkodzone przez klienta",
+  "Błąd magazynowy",
+  "Brak informacji od klienta",
+  "Brak możliwości weryfikacji",
+  "Utrata gwarancji",
+  "-"
+];
 
 const getFilterValue = (id) => {
   const el = document.getElementById(id);
@@ -29,6 +40,37 @@ const getFilters = () => {
   });
   return cleaned;
 };
+
+const matchesOption = (value, expected) => {
+  if (!expected) return true;
+  const val = String(value || "").trim().toLowerCase();
+  const exp = String(expected || "").trim().toLowerCase();
+  if (!exp) return true;
+  return val === exp || val.startsWith(exp) || exp.startsWith(val);
+};
+
+const isDateInRange = (value, from, to) => {
+  const date = parseDateFlexible(value);
+  const fromDate = parseDateFlexible(from);
+  const toDate = parseDateFlexible(to);
+  if (fromDate && (!date || date < fromDate)) return false;
+  if (toDate && (!date || date > toDate)) return false;
+  return true;
+};
+
+const applyLocalFilters = (rows, filters) =>
+  rows.filter((row) => {
+    const claim = isSheetRow(row) ? toClaimFromSheetRow(row) : normalizeClaim(row);
+    return (
+      isDateInRange(claim.orderDate || claim.purchaseDate, filters.orderDateFrom, filters.orderDateTo) &&
+      isDateInRange(claim.receivedAt, filters.receivedAtFrom, filters.receivedAtTo) &&
+      isDateInRange(claim.decisionDue, filters.decisionDueFrom, filters.decisionDueTo) &&
+      isDateInRange(claim.resolvedAt, filters.resolvedAtFrom, filters.resolvedAtTo) &&
+      matchesOption(claim.agent, filters.employee) &&
+      matchesOption(claim.type, filters.type) &&
+      matchesOption(claim.status, filters.status)
+    );
+  });
 
 const isSheetRow = (row) =>
   row &&
@@ -152,9 +194,9 @@ const fillSelectOptions = (selectEl, values) => {
 };
 
 const updateFilterOptions = (rows) => {
-  const employees = new Set();
-  const types = new Set();
-  const statuses = new Set();
+  const employees = new Set(FILTER_EMPLOYEES);
+  const types = new Set(FILTER_TYPES);
+  const statuses = new Set(FILTER_STATUSES);
 
   rows.forEach((row) => {
     const claim = isSheetRow(row) ? toClaimFromSheetRow(row) : normalizeClaim(row);
@@ -213,11 +255,12 @@ const requestFilteredList = async () => {
     showToast("Błąd filtrowania", "error");
     return;
   }
+  const filters = getFilters();
   try {
     const res = await fetch(FILTER_CER_WEBHOOK, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ filters: getFilters() })
+      body: JSON.stringify({ filters })
     });
     const rawText = await res.text();
     const parsedResult = safeJsonParse(rawText);
@@ -268,7 +311,8 @@ ${escapeHtml(rawText)}</pre></div>`;
 
     s2Rows = rows;
     updateFilterOptions(rows);
-    renderList(rows);
+    const filteredRows = applyLocalFilters(rows, filters);
+    renderList(filteredRows);
     showToast("Zastosowano filtry");
   } catch (err) {
     console.error("FILTER_CER_WEBHOOK error", err);

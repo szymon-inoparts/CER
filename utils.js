@@ -26,6 +26,27 @@ function parseDateOnly(value) {
   return new Date(year, month, day);
 }
 
+function parseDateFlexible(value) {
+  if (!value) return null;
+  if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
+  const str = String(value).trim();
+  const isoMatch = str.match(/^(\d{4})[-/.](\d{2})[-/.](\d{2})$/);
+  if (isoMatch) {
+    const [, yyyy, mm, dd] = isoMatch;
+    return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+  }
+  const dotMatch = str.match(/^(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{2,4})$/);
+  if (dotMatch) {
+    const [, dd, mm, yyyyRaw] = dotMatch;
+    const yyyy = yyyyRaw.length === 2 ? `20${yyyyRaw}` : yyyyRaw;
+    return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+  }
+  const dateOnly = parseDateOnly(str);
+  if (dateOnly) return dateOnly;
+  const fallback = new Date(str);
+  return Number.isNaN(fallback.getTime()) ? null : fallback;
+}
+
 function formatDate(value) {
   if (!value) return "-";
   const dateOnly = parseDateOnly(value);
