@@ -220,24 +220,35 @@ const requestFilteredList = async () => {
       body: JSON.stringify({ filters: getFilters() })
     });
     const rawText = await res.text();
-    let parsed;
-    try {
-      parsed = JSON.parse(rawText);
-    } catch {
-      parsed = rawText;
-    }
+    const parsedResult = safeJsonParse(rawText);
+    let parsed = parsedResult.value;
     let rows = Array.isArray(parsed) ? parsed : [];
     if (!rows.length && parsed && typeof parsed === "object") {
       const unwrapped = unwrapArray(parsed);
       rows = Array.isArray(unwrapped) ? unwrapped : [];
-      if (!rows.length && parsed.data && typeof parsed.data === "string") {
+      if (!rows.length && typeof parsed.data === "string") {
         const parsedData = safeJsonParse(parsed.data);
-        if (Array.isArray(parsedData.value)) rows = parsedData.value;
+        const unwrappedData = unwrapArray(parsedData.value);
+        if (Array.isArray(unwrappedData)) rows = unwrappedData;
       }
-      if (!rows.length && parsed.items && typeof parsed.items === "string") {
+      if (!rows.length && typeof parsed.items === "string") {
         const parsedItems = safeJsonParse(parsed.items);
-        if (Array.isArray(parsedItems.value)) rows = parsedItems.value;
+        const unwrappedItems = unwrapArray(parsedItems.value);
+        if (Array.isArray(unwrappedItems)) rows = unwrappedItems;
       }
+      if (!rows.length) {
+        const keys = Object.keys(parsed);
+        if (keys.length && keys.every((key) => /^\d+$/.test(key))) {
+          rows = keys
+            .sort((a, b) => Number(a) - Number(b))
+            .map((key) => parsed[key]);
+        }
+      }
+    }
+    if (!rows.length && typeof parsed === "string") {
+      const parsedString = safeJsonParse(parsed);
+      const unwrappedString = unwrapArray(parsedString.value);
+      if (Array.isArray(unwrappedString)) rows = unwrappedString;
     }
     if (!rows.length) rows = parseObjectsFromText(rawText);
 
