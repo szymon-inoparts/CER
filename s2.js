@@ -207,7 +207,10 @@ const updateFilterOptions = (rows) => {
 
   rows.forEach((row) => {
     const claim = isSheetRow(row) ? toClaimFromSheetRow(row) : normalizeClaim(row);
-    if (claim.agent) employees.add(String(claim.agent));
+    if (claim.agent) {
+      const agentNorm = String(claim.agent).trim();
+      if (FILTER_EMPLOYEES.includes(agentNorm)) employees.add(agentNorm);
+    }
     if (claim.type) types.add(String(claim.type));
     if (claim.status) statuses.add(String(claim.status));
   });
@@ -229,12 +232,18 @@ const resetFilters = () => {
     "s2-resolved-to",
     "s2-filter-employee",
     "s2-filter-type",
-    "s2-filter-status"
+    "s2-filter-status",
+    "s2-search"
   ].forEach((id) => {
     const el = document.getElementById(id);
     if (!el) return;
     el.value = "";
   });
+
+  if (s2SingleBox) {
+    s2SingleBox.innerHTML = "";
+    s2SingleBox.classList.add("hidden");
+  }
 
   if (s2Rows.length) {
     renderList(s2Rows);

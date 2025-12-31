@@ -52,9 +52,9 @@ function formatDate(value) {
   const date = parseDateFlexible(value);
   if (!date) return String(value);
   const yyyy = String(date.getFullYear());
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
   const dd = String(date.getDate()).padStart(2, "0");
-  return `${mm}.${dd}.${yyyy}`;
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  return `${dd}.${mm}.${yyyy}`;
 }
 
 function formatDateTable(value) {
@@ -187,10 +187,10 @@ function formatDateDot(value) {
   if (!value) return "-";
   const parsed = parseDateFlexible(value);
   if (parsed) {
-    const mm = String(parsed.getMonth() + 1).padStart(2, "0");
     const dd = String(parsed.getDate()).padStart(2, "0");
+    const mm = String(parsed.getMonth() + 1).padStart(2, "0");
     const yyyy = parsed.getFullYear();
-    return `${mm}.${dd}.${yyyy}`;
+    return `${dd}.${mm}.${yyyy}`;
   }
   const str = String(value).trim();
   return str;
