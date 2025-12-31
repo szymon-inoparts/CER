@@ -186,25 +186,15 @@ function flattenClaim(raw = {}) {
 
 function formatDateDot(value) {
   if (!value) return "-";
+  const parsed = parseDateFlexible(value);
+  if (parsed) {
+    const mm = String(parsed.getMonth() + 1).padStart(2, "0");
+    const dd = String(parsed.getDate()).padStart(2, "0");
+    const yyyy = parsed.getFullYear();
+    return `${mm}.${dd}.${yyyy}`;
+  }
   const str = String(value).trim();
-  const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (isoMatch) {
-    const [_, yyyy, mm, dd] = isoMatch;
-    return `${dd}.${mm}.${yyyy}`;
-  }
-  const dotMatch = str.match(/(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{2,4})/);
-  if (dotMatch) {
-    const [_, dd, mm, yyyyRaw] = dotMatch;
-    const yyyy = yyyyRaw.length === 2 ? `20${yyyyRaw}` : yyyyRaw;
-    return `${dd.padStart(2, "0")}.${mm.padStart(2, "0")}.${yyyy}`;
-  }
-  const dateOnly = parseDateOnly(value);
-  const date = dateOnly || new Date(value);
-  if (Number.isNaN(date.getTime())) return str;
-  const dd = String(date.getDate()).padStart(2, "0");
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const yyyy = date.getFullYear();
-  return `${dd}.${mm}.${yyyy}`;
+  return str;
 }
 
 function normalizeAddressParts(value) {

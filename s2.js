@@ -49,6 +49,12 @@ const matchesOption = (value, expected) => {
   return val === exp || val.startsWith(exp) || exp.startsWith(val);
 };
 
+const isTemplateRow = (row) => {
+  const claim = isSheetRow(row) ? toClaimFromSheetRow(row) : normalizeClaim(row);
+  const id = String(claim.claimId || "").trim().toLowerCase();
+  return id === "wzór" || id === "wzor";
+};
+
 const isDateInRange = (value, from, to) => {
   const date = parseDateFlexible(value);
   const fromDate = parseDateFlexible(from);
@@ -309,9 +315,10 @@ ${escapeHtml(rawText)}</pre></div>`;
       return;
     }
 
-    s2Rows = rows;
-    updateFilterOptions(rows);
-    const filteredRows = applyLocalFilters(rows, filters);
+    const cleanedRows = rows.filter((row) => !isTemplateRow(row));
+    s2Rows = cleanedRows;
+    updateFilterOptions(cleanedRows);
+    const filteredRows = applyLocalFilters(cleanedRows, filters);
     renderList(filteredRows);
     showToast("Zastosowano filtry");
   } catch (err) {
